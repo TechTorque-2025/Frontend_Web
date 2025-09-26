@@ -8,15 +8,24 @@ export default function Home() {
       <header className="theme-bg-secondary shadow-lg border-b theme-border">
         <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center">
-            <div>
-              <h1 className="text-4xl font-bold theme-text-primary bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                TechTorque Auto Services
-              </h1>
-              <div className="flex items-center mt-3 text-lg theme-text-muted font-medium">
-                <svg className="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+            <div className="flex items-center space-x-4">
+              <div className="w-16 h-16 rounded-full bg-gradient-to-r from-blue-500 to-cyan-400 flex items-center justify-center shadow-lg">
+                <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
                 </svg>
-                Advanced Service Management & Appointment System
+              </div>
+              <div>
+                <h1 className="text-4xl font-bold theme-text-primary bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                  TechTorque Auto Services
+                </h1>
+                <div className="flex items-center mt-2 space-x-4">
+                  <span className="px-3 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-full text-sm font-semibold">
+                    CERTIFIED SERVICE
+                  </span>
+                  <span className="px-3 py-1 bg-orange-100 dark:bg-orange-900/30 text-orange-600 dark:text-orange-400 rounded-full text-sm font-semibold">
+                    24/7 SUPPORT
+                  </span>
+                </div>
               </div>
             </div>
             <ThemeToggle />
@@ -25,17 +34,27 @@ export default function Home() {
       </header>
 
       {/* Hero Section */}
-      <section className="relative py-20 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-5xl font-extrabold theme-text-primary mb-6">
-            Welcome to the Future of
+      <section className="automotive-hero relative py-24 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-6xl mx-auto text-center">
+          <div className="mb-8">
+            <span className="inline-block px-6 py-2 bg-gradient-to-r from-blue-500/20 to-cyan-500/20 rounded-full border border-blue-300/30 text-blue-600 dark:text-blue-400 font-semibold text-sm uppercase tracking-wider mb-6">
+              Automotive Excellence Since 2024
+            </span>
+          </div>
+          
+          <h2 className="text-6xl lg:text-7xl font-black theme-text-primary mb-8 leading-tight">
+            Revolutionary
             <span className="block text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-purple-600 to-teal-500">
-              Auto Service Management
+              Auto Service
+            </span>
+            <span className="block text-4xl lg:text-5xl font-bold theme-text-secondary mt-2">
+              Management Platform
             </span>
           </h2>
-          <p className="text-xl theme-text-secondary mb-12 max-w-2xl mx-auto leading-relaxed">
-            Streamline your automotive service experience with our cutting-edge platform. 
-            Real-time tracking, seamless appointments, and professional service management.
+          
+          <p className="text-2xl theme-text-secondary mb-12 max-w-3xl mx-auto leading-relaxed font-medium">
+            Experience the future of automotive care with real-time tracking, AI-powered diagnostics, 
+            and seamless appointment management designed for modern vehicle owners.
           </p>
           
           {/* Authentication Buttons */}
@@ -77,55 +96,55 @@ export default function Home() {
             Platform Features
           </h3>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <div className="theme-card p-8 group">
-              <div className="flex justify-center mb-6">
-                <div className="w-16 h-16 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
-                  <svg className="w-8 h-8 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+            <div className="automotive-card p-10 group">
+              <div className="flex justify-center mb-8">
+                <div className="w-20 h-20 rounded-full bg-gradient-to-br from-blue-500 to-cyan-400 flex items-center justify-center shadow-xl">
+                  <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                   </svg>
                 </div>
               </div>
-              <h4 className="text-2xl font-bold theme-text-primary mb-4 text-center">
-                Customer Portal
+              <h4 className="text-2xl font-black theme-text-primary mb-6 text-center">
+                Customer Experience Hub
               </h4>
               <p className="theme-text-secondary text-lg leading-relaxed text-center">
-                Track service progress in real-time, book appointments effortlessly, 
-                and request custom modifications with our intuitive interface.
+                Advanced customer portal with real-time vehicle tracking, instant appointment booking, 
+                service history analytics, and personalized maintenance recommendations.
               </p>
             </div>
             
-            <div className="theme-card p-8 group">
-              <div className="flex justify-center mb-6">
-                <div className="w-16 h-16 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center">
-                  <svg className="w-8 h-8 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="automotive-card p-10 group">
+              <div className="flex justify-center mb-8">
+                <div className="w-20 h-20 rounded-full bg-gradient-to-br from-emerald-500 to-teal-400 flex items-center justify-center shadow-xl">
+                  <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                   </svg>
                 </div>
               </div>
-              <h4 className="text-2xl font-bold theme-text-primary mb-4 text-center">
-                Employee Dashboard
+              <h4 className="text-2xl font-black theme-text-primary mb-6 text-center">
+                Technician Workspace
               </h4>
               <p className="theme-text-secondary text-lg leading-relaxed text-center">
-                Comprehensive time logging, progress tracking, and appointment 
-                management tools designed for maximum efficiency.
+                Professional dashboard with diagnostic tools integration, time tracking systems, 
+                parts inventory management, and performance analytics for service optimization.
               </p>
             </div>
             
-            <div className="theme-card p-8 group">
-              <div className="flex justify-center mb-6">
-                <div className="w-16 h-16 rounded-full bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center">
-                  <svg className="w-8 h-8 text-purple-600 dark:text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="automotive-card p-10 group">
+              <div className="flex justify-center mb-8">
+                <div className="w-20 h-20 rounded-full bg-gradient-to-br from-violet-500 to-purple-400 flex items-center justify-center shadow-xl">
+                  <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
                   </svg>
                 </div>
               </div>
-              <h4 className="text-2xl font-bold theme-text-primary mb-4 text-center">
-                Real-time Updates
+              <h4 className="text-2xl font-black theme-text-primary mb-6 text-center">
+                Smart Notifications
               </h4>
               <p className="theme-text-secondary text-lg leading-relaxed text-center">
-                Instant notifications via WebSocket technology. Stay informed 
-                about service status changes and important updates.
+                AI-powered notification system with WebSocket technology, predictive maintenance alerts, 
+                service reminders, and multi-channel communication preferences.
               </p>
             </div>
           </div>
@@ -143,11 +162,20 @@ export default function Home() {
               Built with Modern Technology
             </h3>
           </div>
-          <div className="flex flex-wrap justify-center gap-4">
-            {['Next.js', 'TypeScript', 'Tailwind CSS', 'WebSocket', 'Docker', 'Kubernetes'].map((tech) => (
-              <span key={tech} className="glass px-4 py-2 rounded-full theme-text-primary font-medium">
+          <div className="flex flex-wrap justify-center gap-6">
+            {[
+              'Next.js',
+              'TypeScript', 
+              'Tailwind CSS',
+              'WebSocket',
+              'Docker',
+              'Kubernetes',
+              'PostgreSQL',
+              'Redis'
+            ].map((tech) => (
+              <div key={tech} className="tech-stack-item">
                 {tech}
-              </span>
+              </div>
             ))}
           </div>
         </div>
