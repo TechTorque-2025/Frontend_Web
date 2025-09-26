@@ -1,36 +1,58 @@
 @import "tailwindcss";
 
-/* CSS Variables for theme colors */
+/* CSS Variables for theme colors - Automotive Theme */
 :root {
-  /* Light theme colors */
+  /* Light theme colors - Automotive inspired */
   --bg-primary: #ffffff;
-  --bg-secondary: #f9fafb;
-  --bg-tertiary: #f3f4f6;
-  --text-primary: #111827;
-  --text-secondary: #374151;
-  --text-muted: #6b7280;
-  --border-color: #d1d5db;
-  --accent-primary: #3b82f6;
-  --accent-hover: #2563eb;
+  --bg-secondary: #f8fafc;
+  --bg-tertiary: #f1f5f9;
+  --bg-accent: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+  --text-primary: #0f172a;
+  --text-secondary: #334155;
+  --text-muted: #64748b;
+  --border-color: #cbd5e1;
+  --accent-primary: #0ea5e9;
+  --accent-hover: #0284c7;
+  --accent-secondary: #f59e0b;
+  --accent-secondary-hover: #d97706;
   --success: #10b981;
   --success-hover: #059669;
-  --shadow-color: rgba(0, 0, 0, 0.1);
+  --warning: #f59e0b;
+  --warning-hover: #d97706;
+  --danger: #ef4444;
+  --danger-hover: #dc2626;
+  --automotive-blue: #1e40af;
+  --automotive-orange: #ea580c;
+  --automotive-silver: #94a3b8;
+  --shadow-color: rgba(15, 23, 42, 0.1);
+  --shadow-accent: rgba(14, 165, 233, 0.2);
 }
 
-/* Dark theme colors */
+/* Dark theme colors - Automotive Night Mode */
 html.dark {
-  --bg-primary: #111827;
-  --bg-secondary: #1f2937;
-  --bg-tertiary: #374151;
-  --text-primary: #f9fafb;
-  --text-secondary: #e5e7eb;
-  --text-muted: #9ca3af;
-  --border-color: #4b5563;
-  --accent-primary: #6366f1;
-  --accent-hover: #4f46e5;
-  --success: #34d399;
-  --success-hover: #10b981;
-  --shadow-color: rgba(0, 0, 0, 0.5);
+  --bg-primary: #0f172a;
+  --bg-secondary: #1e293b;
+  --bg-tertiary: #334155;
+  --bg-accent: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  --text-primary: #f8fafc;
+  --text-secondary: #cbd5e1;
+  --text-muted: #94a3b8;
+  --border-color: #475569;
+  --accent-primary: #38bdf8;
+  --accent-hover: #0ea5e9;
+  --accent-secondary: #fbbf24;
+  --accent-secondary-hover: #f59e0b;
+  --success: #22d3ee;
+  --success-hover: #06b6d4;
+  --warning: #fbbf24;
+  --warning-hover: #f59e0b;
+  --danger: #f87171;
+  --danger-hover: #ef4444;
+  --automotive-blue: #60a5fa;
+  --automotive-orange: #fb923c;
+  --automotive-silver: #64748b;
+  --shadow-color: rgba(0, 0, 0, 0.6);
+  --shadow-accent: rgba(56, 189, 248, 0.3);
 }
 
 /* Base styles */
@@ -76,39 +98,101 @@ body {
   color: var(--text-muted);
 }
 
-/* Enhanced button styles */
+/* Enhanced button styles - Automotive Design */
 .theme-button-primary {
   background: linear-gradient(135deg, var(--accent-primary), var(--accent-hover));
   color: white;
   border: none;
-  border-radius: 8px;
-  padding: 12px 24px;
-  font-weight: 600;
-  transition: all 0.2s ease;
+  border-radius: 12px;
+  padding: 14px 28px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   cursor: pointer;
   transform: translateY(0);
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 4px 15px var(--shadow-accent);
+}
+
+.theme-button-primary::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  transition: left 0.5s;
+}
+
+.theme-button-primary:hover::before {
+  left: 100%;
 }
 
 .theme-button-primary:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px var(--shadow-accent);
 }
 
 .theme-button-success {
   background: linear-gradient(135deg, var(--success), var(--success-hover));
   color: white;
   border: none;
-  border-radius: 8px;
-  padding: 12px 24px;
-  font-weight: 600;
-  transition: all 0.2s ease;
+  border-radius: 12px;
+  padding: 14px 28px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   cursor: pointer;
   transform: translateY(0);
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+}
+
+.theme-button-success::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  transition: left 0.5s;
+}
+
+.theme-button-success:hover::before {
+  left: 100%;
 }
 
 .theme-button-success:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4);
+}
+
+.theme-button-secondary {
+  background: linear-gradient(135deg, var(--accent-secondary), var(--accent-secondary-hover));
+  color: white;
+  border: none;
+  border-radius: 12px;
+  padding: 14px 28px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+  transform: translateY(0);
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);
+}
+
+.theme-button-secondary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(245, 158, 11, 0.4);
 }
 
 /* Enhanced card styles */
@@ -199,14 +283,176 @@ body {
   animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
 
-/* Glass morphism effect */
-.glass {
+/* Automotive-specific styling elements */
+.automotive-hero {
+  background: linear-gradient(135deg, 
+    var(--bg-primary) 0%, 
+    var(--bg-secondary) 50%, 
+    var(--bg-tertiary) 100%);
+  position: relative;
+}
+
+.automotive-hero::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23cbd5e1' fill-opacity='0.05'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  pointer-events: none;
+}
+
+.automotive-card {
+  background: linear-gradient(145deg, var(--bg-secondary), var(--bg-primary));
+  border: 2px solid var(--border-color);
+  border-radius: 20px;
+  box-shadow: 
+    0 10px 30px var(--shadow-color),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.automotive-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, 
+    var(--accent-primary), 
+    var(--accent-secondary), 
+    var(--success));
+}
+
+.automotive-card:hover {
+  transform: translateY(-5px) scale(1.02);
+  box-shadow: 
+    0 20px 40px var(--shadow-color),
+    0 0 30px var(--shadow-accent);
+  border-color: var(--accent-primary);
+}
+
+.service-badge {
+  background: linear-gradient(135deg, var(--accent-primary), var(--accent-hover));
+  color: white;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-weight: 600;
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 4px 15px var(--shadow-accent);
+}
+
+.tech-stack-item {
   background: rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 12px 20px;
+  border-radius: 25px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.tech-stack-item::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, 
+    transparent, 
+    rgba(255,255,255,0.1), 
+    transparent);
+  transition: left 0.5s;
+}
+
+.tech-stack-item:hover::before {
+  left: 100%;
+}
+
+.tech-stack-item:hover {
+  transform: translateY(-2px);
+  border-color: var(--accent-primary);
+  box-shadow: 0 5px 20px var(--shadow-accent);
+}
+
+/* Automotive gradient backgrounds */
+.automotive-gradient {
+  background: linear-gradient(135deg, 
+    #0ea5e9 0%, 
+    #3b82f6 25%, 
+    #6366f1 50%, 
+    #8b5cf6 75%, 
+    #a855f7 100%);
+  background-size: 200% 200%;
+  animation: automotiveFlow 8s ease infinite;
+}
+
+@keyframes automotiveFlow {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Professional header styling */
+.automotive-header {
+  background: var(--bg-accent);
+  backdrop-filter: blur(20px);
+  border-bottom: 3px solid transparent;
+  border-image: linear-gradient(90deg, 
+    var(--accent-primary), 
+    var(--accent-secondary), 
+    var(--success)) 1;
+}
+
+/* Enhanced form styling */
+.theme-form-group {
+  position: relative;
+  margin-bottom: 24px;
+}
+
+.theme-input {
+  background: linear-gradient(145deg, var(--bg-primary), var(--bg-secondary));
+  border: 2px solid var(--border-color);
+  color: var(--text-primary);
+  border-radius: 12px;
+  padding: 16px 20px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  font-size: 16px;
+  width: 100%;
+  box-shadow: inset 0 2px 4px var(--shadow-color);
+}
+
+.theme-input:focus {
+  outline: none;
+  border-color: var(--accent-primary);
+  box-shadow: 
+    0 0 0 3px var(--shadow-accent),
+    inset 0 2px 4px var(--shadow-color);
+  transform: translateY(-1px);
+}
+
+/* Glass morphism effect */
+.glass {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
 }
 
 html.dark .glass {
   background: rgba(0, 0, 0, 0.2);
   border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
 }
