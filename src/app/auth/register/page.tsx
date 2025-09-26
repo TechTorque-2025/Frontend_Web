@@ -41,19 +41,25 @@ export default function RegisterPage() {
         </div>
         <div>
           <div className="text-center">
-            <div className="flex justify-center mb-4">
-              <div className="w-16 h-16 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center">
-                <svg className="w-8 h-8 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
+            <div className="flex justify-center mb-6">
+              <div className="w-20 h-20 rounded-full bg-gradient-to-br from-emerald-500 to-teal-400 flex items-center justify-center shadow-xl">
+                <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
                 </svg>
               </div>
             </div>
-            <h2 className="text-4xl font-bold theme-text-primary">
-              Create Account
+            <h2 className="text-5xl font-black automotive-gradient bg-clip-text text-transparent mb-2">
+              Join TechTorque
             </h2>
+            <div className="service-badge mx-auto mb-4" style={{background: 'linear-gradient(135deg, var(--success), var(--success-hover))'}}>
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              New Member Registration
+            </div>
           </div>
-          <p className="mt-3 text-center text-lg theme-text-muted font-medium">
-            Join TechTorque Auto Services
+          <p className="mt-4 text-center text-xl theme-text-secondary font-semibold">
+            Start your premium automotive service experience today
           </p>
         </div>
         <form className="mt-12 space-y-8" onSubmit={handleSubmit}>
