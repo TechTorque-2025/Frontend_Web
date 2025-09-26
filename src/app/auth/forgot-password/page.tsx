@@ -44,7 +44,7 @@ export default function ForgotPasswordPage() {
                       <svg className="h-8 w-8 text-green-600 dark:text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
                   </div>
                   <h2 className="text-4xl font-bold theme-text-primary">Check your email</h2>
-                  <p className="mt-4 text-lg theme-text-secondary">We've sent a verification code to <strong>{email}</strong></p>
+                  <p className="mt-4 text-lg theme-text-secondary">We&apos;ve sent a verification code to <strong>{email}</strong></p>
                   <p className="mt-6 text-base theme-text-muted animate-pulse">Redirecting to OTP verification...</p>
               </div>
             ) : (

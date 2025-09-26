@@ -81,7 +81,7 @@ export default function OtpVerifyPage() {
             </form>
              <div className="text-center pt-8">
                 <p className="text-base theme-text-muted">
-                  Didn't receive the code?{' '}
+                  Didn&apos;t receive the code?{' '}
                   <button className="theme-link font-semibold">
                     Resend Code
                   </button>
