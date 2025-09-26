@@ -1,173 +1,96 @@
 'use client'
 
-import { useState, useRef, useEffect } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import ThemeToggle from '../../components/ThemeToggle'
+const Icon = ({ d, size = 10 }: { d: string; size?: number }) => ( <svg className={`w-${size} h-${size} text-white`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={d} /></svg>);
+const BoltIcon = ({size = 10}) => <Icon d="M13 10V3L4 14h7v7l9-11h-7z" size={size} />;
 
-export default function OTPVerifyPage() {
-  const [otp, setOtp] = useState(['', '', '', '', '', ''])
-  const [timeLeft, setTimeLeft] = useState(300) // 5 minutes in seconds
-  const [isResending, setIsResending] = useState(false)
-  const inputRefs = useRef<(HTMLInputElement | null)[]>([])
+// --- OTP Page Component ---
+export default function OtpVerifyPage() {
+  const [otp, setOtp] = useState(new Array(6).fill(""));
+  const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
   const router = useRouter()
 
   useEffect(() => {
-    const timer = setInterval(() => {
-      setTimeLeft((prevTime) => {
-        if (prevTime <= 1) {
-          clearInterval(timer)
-          return 0
-        }
-        return prevTime - 1
-      })
-    }, 1000)
+    inputRefs.current[0]?.focus();
+  }, []);
 
-    return () => clearInterval(timer)
-  }, [])
+  const handleChange = (element: HTMLInputElement, index: number) => {
+    if (isNaN(Number(element.value))) return;
 
-  const formatTime = (seconds: number) => {
-    const mins = Math.floor(seconds / 60)
-    const secs = seconds % 60
-    return `${mins}:${secs.toString().padStart(2, '0')}`
-  }
+    setOtp([...otp.map((d, idx) => (idx === index ? element.value : d))]);
 
-  const handleInputChange = (index: number, value: string) => {
-    if (value.length > 1) return
-
-    const newOtp = [...otp]
-    newOtp[index] = value
-    setOtp(newOtp)
-
-    // Auto-focus next input
-    if (value && index < 5) {
-      inputRefs.current[index + 1]?.focus()
+    if (element.nextSibling && element.value) {
+      (element.nextSibling as HTMLInputElement).focus();
     }
-  }
-
-  const handleKeyDown = (index: number, e: React.KeyboardEvent) => {
-    if (e.key === 'Backspace' && !otp[index] && index > 0) {
-      inputRefs.current[index - 1]?.focus()
-    }
-  }
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    const otpString = otp.join('')
-    if (otpString.length !== 6) {
-      alert('Please enter all 6 digits')
-      return
-    }
-    console.log('OTP submitted:', otpString)
-    // Here you would typically verify the OTP
-    alert('OTP verified successfully!')
-    router.push('/auth/login')
-  }
-
-  const handleResendOTP = async () => {
-    setIsResending(true)
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1000))
-    setIsResending(false)
-    setTimeLeft(300) // Reset timer
-    setOtp(['', '', '', '', '', ''])
-    alert('New OTP sent successfully!')
-  }
+    e.preventDefault();
+    console.log("OTP Submitted:", otp.join(""));
+    // Add verification logic here
+    router.push('/auth/login'); // Redirect on success
+  };
 
   return (
-    <div className="min-h-screen flex items-center justify-center theme-bg-primary py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
-        <div className="flex justify-end">
-          <ThemeToggle />
+    <div className="min-h-screen theme-bg-primary font-sans">
+      <header className="sticky-header shadow-lg border-b theme-border">
+        <div className="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center">
+            <Link href="/" className="flex items-center space-x-3 group"><div className="w-12 h-12 rounded-full bg-gradient-to-r from-blue-500 to-cyan-400 flex items-center justify-center shadow-lg transform transition-transform duration-300 group-hover:scale-110"><BoltIcon size={6} /></div><h1 className="text-2xl font-bold theme-text-primary hidden sm:block">TechTorque Auto</h1></Link>
+            <div className="flex items-center space-x-4"><ThemeToggle /></div>
+          </div>
         </div>
-        <div>
-          <div className="text-center">
-            <div className="flex justify-center mb-4">
-              <div className="w-16 h-16 rounded-full bg-indigo-100 dark:bg-indigo-900/30 flex items-center justify-center">
-                <svg className="w-8 h-8 text-indigo-600 dark:text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                </svg>
+      </header>
+      
+      <main className="flex items-center justify-center py-20 px-4 sm:px-6 lg:px-8 automotive-hero">
+        <div className="absolute inset-0 bg-grid-pattern opacity-20 dark:opacity-10"></div>
+        <div className="w-full max-w-lg relative z-10">
+          <div className="automotive-card p-8 md:p-12">
+            <div className="text-center mb-10">
+              <h2 className="text-4xl font-black theme-text-primary">Enter Verification Code</h2>
+              <p className="mt-4 text-lg theme-text-muted">A 6-digit code was sent to your email.</p>
+            </div>
+            <form onSubmit={handleSubmit}>
+              <div className="flex justify-center gap-2 md:gap-4 mb-8">
+                {otp.map((data, index) => (
+                  <input
+                    key={index}
+                    type="text"
+                    name="otp"
+                    maxLength={1}
+                    className="w-12 h-14 md:w-16 md:h-20 text-center text-2xl md:text-3xl font-bold theme-input"
+                    value={data}
+                    onChange={e => handleChange(e.target, index)}
+                    onFocus={e => e.target.select()}
+                    ref={el => {
+                      inputRefs.current[index] = el;
+                    }}
+                    aria-label={`OTP digit ${index + 1}`}
+                    title={`Enter digit ${index + 1} of your verification code`}
+                  />
+                ))}
               </div>
+              <div>
+                <button type="submit" className="theme-button-primary w-full text-lg font-semibold py-4 rounded-xl">
+                  Verify & Proceed
+                </button>
+              </div>
+            </form>
+             <div className="text-center pt-8">
+                <p className="text-base theme-text-muted">
+                  Didn't receive the code?{' '}
+                  <button className="theme-link font-semibold">
+                    Resend Code
+                  </button>
+                </p>
             </div>
-            <h2 className="text-4xl font-bold theme-text-primary">
-              Enter Verification Code
-            </h2>
           </div>
-          <p className="mt-4 text-center text-lg theme-text-muted font-medium">
-            We've sent a 6-digit verification code to your email
-          </p>
         </div>
-
-        <form onSubmit={handleSubmit} className="mt-12 space-y-8">
-          <div className="space-y-6">
-            <div className="flex justify-center space-x-3">
-              {otp.map((digit, index) => (
-                <input
-                  key={index}
-                  ref={(el) => (inputRefs.current[index] = el)}
-                  type="text"
-                  maxLength={1}
-                  className="w-14 h-14 text-center text-xl font-bold theme-border-2 theme-bg-secondary theme-text-primary rounded-xl focus:theme-border-primary focus:outline-none transition-colors"
-                  value={digit}
-                  onChange={(e) => handleInputChange(index, e.target.value)}
-                  onKeyDown={(e) => handleKeyDown(index, e)}
-                />
-              ))}
-            </div>
-          </div>
-
-          <div className="text-center">
-            <p className="text-base theme-text-secondary">
-              Time remaining: {' '}
-              <span className={`font-semibold ${timeLeft < 60 ? 'text-red-600 dark:text-red-400' : 'theme-text-primary'}`}>
-                {formatTime(timeLeft)}
-              </span>
-            </p>
-          </div>
-
-          <div className="space-y-4">
-            <button
-              type="submit"
-              className="theme-button-primary w-full text-lg font-semibold py-4 rounded-xl flex items-center justify-center"
-            >
-              <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-              </svg>
-              Verify Code
-            </button>
-          </div>
-
-          <div className="text-center space-y-3">
-            <p className="text-base theme-text-muted">
-              Didn't receive the code?
-            </p>
-            <button
-              type="button"
-              onClick={handleResendOTP}
-              disabled={timeLeft > 240 || isResending} // Can resend after 1 minute
-              className={`font-semibold text-base ${
-                timeLeft > 240 || isResending
-                  ? 'theme-text-disabled cursor-not-allowed'
-                  : 'theme-link'
-              }`}
-            >
-              {isResending ? 'Sending...' : 'Resend Code'}
-            </button>
-          </div>
-
-          <div className="text-center pt-6">
-            <p className="text-base theme-text-muted">
-              Want to try a different email?{' '}
-              <Link
-                href="/auth/login"
-                className="theme-link font-semibold text-lg"
-              >
-                Back to Sign In
-              </Link>
-            </p>
-          </div>
-        </form>
-      </div>
+      </main>
     </div>
-  )
+  );
 }
+
