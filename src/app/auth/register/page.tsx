@@ -3,6 +3,9 @@
 import React from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import authService from '../../../services/authService';
+import type { RegisterRequest } from '../../../types/api';
 import ThemeToggle from '../../components/ThemeToggle';
 
 // Icon Components
@@ -18,10 +21,29 @@ const UserPlusIcon = () => <svg className="w-5 h-5 mr-2" fill="none" stroke="cur
 export default function RegisterPage() {
   const router = useRouter()
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log('Register attempt');
-    router.push('/auth/login'); // Redirect to login page after registration
+    setError(null);
+    setLoading(true);
+    const form = e.currentTarget;
+    const formData = new FormData(form);
+    const payload: RegisterRequest = {
+      username: (formData.get('name') as string) || '',
+      email: (formData.get('email') as string) || '',
+      password: (formData.get('password') as string) || '',
+    };
+    try {
+      await authService.register(payload);
+      router.push('/auth/login');
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : 'Registration failed';
+      setError(errorMessage);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -108,12 +130,17 @@ export default function RegisterPage() {
                     </div>
                     
                     <div>
-                        <button type="submit" className="theme-button-primary w-full text-lg font-semibold py-4 rounded-xl flex items-center justify-center">
+                        <button type="submit" disabled={loading} className="theme-button-primary w-full text-lg font-semibold py-4 rounded-xl flex items-center justify-center disabled:opacity-60">
                             <UserPlusIcon />
-                            Create Account
+                            {loading ? 'Creating...' : 'Create Account'}
                         </button>
                     </div>
                 </form>
+                {error && (
+                  <div role="alert" className="mt-4 text-sm text-red-600">
+                    {error}
+                  </div>
+                )}
              </div>
          </div>
       </main>
