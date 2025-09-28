@@ -8,37 +8,41 @@ import type {
 
 export const userService = {
   getCurrentProfile() {
-    return api.get('/api/v1/users/me');
+    // Correct Path: /users/me
+    return api.get('/users/me');
   },
   getAllUsers() {
-    return api.get('/api/v1/users');
+    // Correct Path: /users
+    return api.get('/users');
   },
   getUserByUsername(username: string) {
-    return api.get(`/api/v1/users/${encodeURIComponent(username)}`);
+    // Correct Path: /users/{username}
+    return api.get(`/users/${encodeURIComponent(username)}`);
   },
   updateUser(username: string, payload: UpdateUserRequest) {
-    return api.put(`/api/v1/users/${encodeURIComponent(username)}`, payload);
+    return api.put(`/users/${encodeURIComponent(username)}`, payload);
   },
   deleteUser(username: string) {
-    return api.delete(`/api/v1/users/${encodeURIComponent(username)}`);
+    return api.delete(`/users/${encodeURIComponent(username)}`);
   },
   enableUser(username: string) {
-    return api.post(`/api/v1/users/${encodeURIComponent(username)}/enable`);
+    return api.post(`/users/${encodeURIComponent(username)}/enable`);
   },
   disableUser(username: string) {
-    return api.post(`/api/v1/users/${encodeURIComponent(username)}/disable`);
+    return api.post(`/users/${encodeURIComponent(username)}/disable`);
   },
   unlockUser(username: string) {
-    return api.post(`/api/v1/users/${encodeURIComponent(username)}/unlock`);
+    return api.post(`/users/${encodeURIComponent(username)}/unlock`);
   },
   manageUserRole(username: string, payload: RoleAssignmentRequest) {
-    return api.post(`/api/v1/users/${encodeURIComponent(username)}/roles`, payload);
+    return api.post(`/users/${encodeURIComponent(username)}/roles`, payload);
   },
   resetUserPassword(username: string, payload: ResetPasswordRequest) {
-    return api.post(`/api/v1/users/${encodeURIComponent(username)}/reset-password`, payload);
+    return api.post(`/users/${encodeURIComponent(username)}/reset-password`, payload);
   },
   changeCurrentUserPassword(payload: ChangePasswordRequest) {
-    return api.post('/api/v1/users/me/change-password', payload);
+    // Correct Path: /users/me/change-password
+    return api.post('/users/me/change-password', payload);
   },
 };
 
