@@ -1,26 +1,341 @@
 @import "tailwindcss";
 
+/* CSS Variables for theme colors - Automotive Theme */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Light theme colors - Automotive inspired */
+  --bg-primary: #ffffff;
+  --bg-secondary: #f8fafc;
+  --bg-tertiary: #f1f5f9;
+  --bg-accent: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+  --bg-secondary-translucent: rgba(248, 250, 252, 0.85);
+  --text-primary: #0f172a;
+  --text-secondary: #334155;
+  --text-muted: #64748b;
+  --border-color: #e2e8f0;
+  --accent-primary: #0ea5e9;
+  --accent-hover: #0284c7;
+  --accent-secondary: #f59e0b;
+  --accent-secondary-hover: #d97706;
+  --success: #10b981;
+  --success-hover: #059669;
+  --warning: #f59e0b;
+  --warning-hover: #d97706;
+  --danger: #ef4444;
+  --danger-hover: #dc2626;
+  --shadow-color: rgba(15, 23, 42, 0.05);
+  --shadow-accent: rgba(14, 165, 233, 0.2);
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+/* Dark theme colors - Automotive Night Mode */
+html.dark {
+  --bg-primary: #0f172a;
+  --bg-secondary: #1e293b;
+  --bg-tertiary: #111c32;
+  --bg-accent: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  --bg-secondary-translucent: rgba(30, 41, 59, 0.85);
+  --text-primary: #f8fafc;
+  --text-secondary: #cbd5e1;
+  --text-muted: #94a3b8;
+  --border-color: #334155;
+  --accent-primary: #38bdf8;
+  --accent-hover: #0ea5e9;
+  --accent-secondary: #fbbf24;
+  --accent-secondary-hover: #f59e0b;
+  --success: #22d3ee;
+  --success-hover: #06b6d4;
+  --warning: #fbbf24;
+  --warning-hover: #f59e0b;
+  --danger: #f87171;
+  --danger-hover: #ef4444;
+  --shadow-color: rgba(0, 0, 0, 0.6);
+  --shadow-accent: rgba(56, 189, 248, 0.2);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* Base styles */
+* {
+  box-sizing: border-box;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: var(--font-geist-sans), sans-serif;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  line-height: 1.6;
+}
+
+/* Enhanced component styles */
+.theme-bg-primary { background-color: var(--bg-primary); }
+.theme-bg-secondary { background-color: var(--bg-secondary); }
+.theme-bg-tertiary { background-color: var(--bg-tertiary); }
+.theme-text-primary { color: var(--text-primary); }
+.theme-text-secondary { color: var(--text-secondary); }
+.theme-text-muted { color: var(--text-muted); }
+.theme-border { border-color: var(--border-color); }
+
+/* Enhanced form styles */
+.theme-input {
+  background-color: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  border-radius: 8px;
+  padding: 12px 16px;
+  transition: all 0.2s ease;
+  font-size: 16px;
+}
+
+.theme-input:focus {
+  outline: none;
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+}
+
+.theme-input::placeholder {
+  color: var(--text-muted);
+}
+
+/* Enhanced button styles */
+.theme-button-primary {
+  background: linear-gradient(135deg, var(--accent-primary), var(--accent-hover));
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 24px;
+  font-weight: 600;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+  transform: translateY(0);
+  box-shadow: 0 4px 15px var(--shadow-accent);
+}
+
+.theme-button-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px var(--shadow-accent);
+}
+
+.theme-button-secondary {
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 12px 24px;
+  font-weight: 600;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+  transform: translateY(0);
+}
+
+.theme-button-secondary:hover {
+  transform: translateY(-2px);
+  border-color: var(--accent-primary);
+  color: var(--accent-primary);
+  box-shadow: 0 5px 15px var(--shadow-color);
+}
+
+
+/* Enhanced card styles */
+.theme-card {
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  box-shadow: 0 4px 6px -1px var(--shadow-color), 0 2px 4px -1px var(--shadow-color);
+  transition: all 0.3s ease;
+  overflow: hidden;
+}
+
+.theme-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px -3px var(--shadow-color), 0 4px 6px -2px var(--shadow-color);
+}
+
+/* Theme toggle button */
+.theme-toggle {
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  border-radius: 8px;
+  padding: 8px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+}
+
+.theme-toggle:hover {
+  transform: scale(1.05);
+  border-color: var(--accent-primary);
+}
+
+
+/* Enhanced link styles */
+.theme-link {
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.theme-link:hover {
+  color: var(--accent-primary);
+}
+
+.theme-link::after {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 2px;
+  bottom: -4px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: var(--accent-primary);
+  transition: width 0.3s ease;
+}
+
+.theme-link:hover::after {
+  width: 100%;
+}
+
+/* Animations */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fadeInUp {
+  animation: fadeInUp 0.7s ease-out forwards;
+  opacity: 0; /* Initially hidden */
+}
+
+/* Staggered animation delays */
+.stagger-1 { animation-delay: 100ms; }
+.stagger-2 { animation-delay: 200ms; }
+.stagger-3 { animation-delay: 300ms; }
+
+/* Automotive-specific styling elements */
+.automotive-hero {
+  background: var(--bg-primary);
+}
+
+.bg-grid-pattern {
+    background-image: linear-gradient(var(--border-color) 1px, transparent 1px), linear-gradient(to right, var(--border-color) 1px, var(--bg-primary) 1px);
+    background-size: 40px 40px;
+}
+
+html.dark .bg-grid-pattern {
+    background-image: linear-gradient(var(--border-color) 1px, transparent 1px), linear-gradient(to right, var(--border-color) 1px, var(--bg-primary) 1px);
+}
+
+
+.automotive-card {
+  background: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  border-radius: 20px;
+  box-shadow: 0 4px 15px var(--shadow-color);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.automotive-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, 
+    var(--accent-primary), 
+    var(--accent-secondary), 
+    var(--success));
+  transform: scaleX(0);
+  transition: transform 0.5s ease;
+  transform-origin: left;
+}
+
+.automotive-card:hover::before {
+  transform: scaleX(1);
+}
+
+.automotive-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 
+    0 20px 40px var(--shadow-color),
+    0 0 30px var(--shadow-accent);
+  border-color: var(--accent-primary);
+}
+
+/* New Tech Stack Item style */
+.tech-stack-item-v2 {
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border-color);
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: 500;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    transition: all 0.3s ease;
+    cursor: default;
+}
+
+.tech-stack-item-v2:hover {
+    transform: translateY(-3px);
+    background: var(--bg-primary);
+    color: var(--accent-primary);
+    border-color: var(--accent-primary);
+    box-shadow: 0 8px 20px var(--shadow-accent);
+}
+
+/* Professional header styling */
+.sticky-header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  width: 100%;
+  background: var(--bg-secondary-translucent);
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease-in-out;
+}
+
+/* How It Works - Timeline */
+.timeline-item {
+    display: flex;
+    position: relative;
+    margin: 4rem 0;
+}
+
+.timeline-item:nth-child(odd) {
+    flex-direction: row-reverse;
+}
+
+.timeline-content {
+    background-color: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 1.5rem;
+    width: calc(50% - 2.5rem);
+    box-shadow: 0 4px 15px var(--shadow-color);
+}
+
+.timeline-item:nth-child(odd) .timeline-content {
+    text-align: right;
+}
+
+.timeline-icon {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 4rem;
+    height: 4rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 4px solid var(--bg-primary);
+    z-index: 10;
 }

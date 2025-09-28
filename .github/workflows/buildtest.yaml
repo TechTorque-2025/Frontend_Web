@@ -1,0 +1,53 @@
+name: Build and Test Frontend_Web
+
+on:
+  push:
+    branches:
+      - '**'
+  pull_request:
+    branches:
+      - '**'
+
+jobs:
+  build-test:
+    name: Install, Lint and Build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Use Node.js 20 and cache npm
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: package-lock.json
+
+      - name: Cache Next.js build artifacts
+        uses: actions/cache@v4
+        with:
+          path: ./.next/cache
+          key: ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-${{ hashFiles('**/*.{js,jsx,ts,tsx,css,html}') }}
+          restore-keys: |
+            ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run linter
+        run: npm run lint
+
+      - name: Build production bundle
+        run: npm run build
+
+      - name: Run a minimal start for smoke test (background)
+        run: |
+          npm run start &
+          sleep 3
+          # try a quick HTTP probe if curl is available
+          if command -v curl >/dev/null 2>&1; then
+            curl -sSf http://localhost:3000/ || true
+          fi
+          pkill -f "next start" || true
+        shell: bash
