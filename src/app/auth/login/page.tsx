@@ -24,10 +24,13 @@ export default function LoginPage() {
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isAccountLocked, setIsAccountLocked] = useState(false);
+  const [failedAttempts, setFailedAttempts] = useState(0);
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError(null);
+    setIsAccountLocked(false);
     setLoading(true);
     const form = e.currentTarget;
     const formData = new FormData(form);
@@ -37,9 +40,24 @@ export default function LoginPage() {
     };
     try {
       await authService.login(payload);
+      // Reset failed attempts on successful login
+      setFailedAttempts(0);
       router.push('/dashboard');
     } catch (err: unknown) {
-      const errorMessage = err instanceof Error ? err.message : 'Login failed';
+      let errorMessage = 'Login failed';
+      
+      if (err instanceof Error) {
+        errorMessage = err.message;
+        
+        // Check if account is locked
+        if (errorMessage.includes('temporarily locked')) {
+          setIsAccountLocked(true);
+        } else if (errorMessage.includes('Invalid username or password')) {
+          // Increment failed attempts for better UX (this is just visual feedback)
+          setFailedAttempts(prev => Math.min(prev + 1, 3));
+        }
+      }
+      
       setError(errorMessage);
     } finally {
       setLoading(false);
@@ -137,9 +155,51 @@ export default function LoginPage() {
                         </button>
                     </div>
                 </form>
+                
+                {/* Enhanced Error Display */}
                 {error && (
-                  <div role="alert" className="mt-4 text-sm text-red-600">
-                    {error}
+                  <div role="alert" className="mt-4 space-y-3">
+                    <div className={`p-4 rounded-lg border-l-4 ${
+                      isAccountLocked 
+                        ? 'bg-red-50 dark:bg-red-900/20 border-red-500 text-red-800 dark:text-red-300' 
+                        : 'bg-orange-50 dark:bg-orange-900/20 border-orange-500 text-orange-800 dark:text-orange-300'
+                    }`}>
+                      <div className="flex items-start space-x-3">
+                        {isAccountLocked ? (
+                          <svg className="w-5 h-5 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                            <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" />
+                          </svg>
+                        ) : (
+                          <svg className="w-5 h-5 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                            <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                          </svg>
+                        )}
+                        <div className="flex-1">
+                          <p className="font-medium">
+                            {isAccountLocked ? 'Account Temporarily Locked' : 'Login Failed'}
+                          </p>
+                          <p className="mt-1 text-sm">{error}</p>
+                          
+                          {!isAccountLocked && failedAttempts > 0 && failedAttempts < 3 && (
+                            <p className="mt-2 text-xs opacity-75">
+                              {failedAttempts}/3 failed attempts. Account will be locked for 15 minutes after 3 failed attempts.
+                            </p>
+                          )}
+                          
+                          {isAccountLocked && (
+                            <div className="mt-3 p-3 bg-white dark:bg-gray-800 rounded border text-sm">
+                              <p><strong>Security Notice:</strong></p>
+                              <ul className="mt-1 list-disc list-inside space-y-1 text-xs">
+                                <li>Your account has been temporarily locked due to multiple failed login attempts</li>
+                                <li>This is a security measure to protect your account from unauthorized access</li>
+                                <li>Please wait for the specified time before trying again</li>
+                                <li>If you forgot your password, use the &quot;Forgot password?&quot; link above</li>
+                              </ul>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 )}
              </div>
