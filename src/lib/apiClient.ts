@@ -1,55 +1,40 @@
-import axios, { AxiosInstance } from 'axios';
+import axios from 'axios';
 import Cookies from 'js-cookie';
 
-let API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8081';
+// The base URL is now a constant, correctly pointing to the API Gateway.
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8080/api/v1';
 
-const createClient = (baseURL: string): AxiosInstance => {
-  const client = axios.create({
-    baseURL,
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  });
+const apiClient = axios.create({
+  baseURL: API_BASE_URL,
+  headers: { 'Content-Type': 'application/json' },
+});
 
-  // Add a request interceptor to include the auth token
-  client.interceptors.request.use(
-    (config) => {
-      const token = Cookies.get('tt_access_token');
-      if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
-      }
-      return config;
-    },
-    (error) => {
-      return Promise.reject(error);
+// Request interceptor (Your existing code is perfect)
+apiClient.interceptors.request.use(
+  (config) => {
+    const token = Cookies.get('tt_access_token');
+    if (token) {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      config.headers.Authorization = `Bearer ${token}`;
     }
-  );
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
 
-  // Add a response interceptor to handle auth errors
-  client.interceptors.response.use(
-    (response) => response,
-    (error) => {
-      if (error.response?.status === 401) {
-        // Clear token and redirect to login
-        Cookies.remove('tt_access_token');
-        if (typeof window !== 'undefined') {
-          window.location.href = '/auth/login';
-        }
+// Response interceptor (Your existing code is perfect)
+apiClient.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      Cookies.remove('tt_access_token');
+      if (typeof window !== 'undefined') {
+        window.location.href = '/auth/login';
       }
-      return Promise.reject(error);
     }
-  );
+    return Promise.reject(error);
+  }
+);
 
-  return client;
-};
-
-let api = createClient(API_BASE);
-
-export const setApiBaseUrl = (baseUrl: string) => {
-  API_BASE = baseUrl;
-  api = createClient(API_BASE);
-};
-
-export const getApiBaseUrl = () => API_BASE;
-
-export default api;
+export default apiClient;
