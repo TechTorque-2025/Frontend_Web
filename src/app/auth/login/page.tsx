@@ -25,14 +25,14 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError(null);
     setLoading(true);
     const form = e.currentTarget;
     const formData = new FormData(form);
     const payload: LoginRequest = {
-      username: (formData.get('email') as string) || '',
+      username: (formData.get('username') as string) || '',
       password: (formData.get('password') as string) || '',
     };
     try {
@@ -83,23 +83,32 @@ export default function LoginPage() {
                     <p className="mt-4 text-lg theme-text-muted">
                         Sign in to access your dashboard.
                     </p>
+                    <div className="mt-6 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
+                      <p className="text-sm font-semibold theme-text-primary mb-2">Demo Users (Real Backend):</p>
+                      <div className="text-xs theme-text-muted space-y-1">
+                        <p><strong>SuperAdmin:</strong> superadmin / superadmin123</p>
+                        <p><strong>Admin:</strong> admin / admin123</p>
+                        <p><strong>Employee:</strong> employee / emp123</p>
+                        <p><strong>Customer:</strong> customer / cust123</p>
+                      </div>
+                    </div>
                 </div>
 
-                <form className="space-y-6" onSubmit={handleSubmit}>
-                    <div className="theme-form-group">
-                         <label htmlFor="email" className="block text-sm font-semibold theme-text-secondary mb-2">
-                            Email Address
-                        </label>
-                        <input
-                            id="email"
-                            name="email"
-                            type="email"
-                            autoComplete="email"
-                            required
-                            className="theme-input w-full"
-                            placeholder="you@example.com"
-                        />
-                    </div>
+        <form className="space-y-6" onSubmit={handleSubmit}>
+          <div className="theme-form-group">
+             <label htmlFor="username" className="block text-sm font-semibold theme-text-secondary mb-2">
+              Email or Username
+            </label>
+            <input
+              id="username"
+              name="username"
+              type="text"
+              autoComplete="username"
+              required
+              className="theme-input w-full"
+              placeholder="you@example.com or your-username"
+            />
+          </div>
 
                     <div className="theme-form-group">
                          <div className="flex justify-between items-baseline">

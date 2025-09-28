@@ -13,13 +13,18 @@ const TOKEN_COOKIE = 'tt_access_token';
 export const authService = {
   async login(payload: LoginRequest) {
     const res = await api.post('/api/v1/auth/login', payload);
-    // backend returns token in body -> adjust as needed
+    // backend returns token in body
     const token = res.data?.token || res.data?.accessToken || null;
+    console.log('Login response:', res.data);
+    console.log('Extracted token:', token);
     if (token) {
       Cookies.set(TOKEN_COOKIE, token, { expires: 7 });
+      console.log('Token saved to cookie');
     }
     return res.data;
   },
+
+
   async register(payload: RegisterRequest) {
     const res = await api.post('/api/v1/auth/register', payload);
     return res.data;
