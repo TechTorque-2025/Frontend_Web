@@ -1,5 +1,7 @@
 # 💻 Frontend Web Application
 
+[![Build and Test Frontend_Web](https://github.com/TechTorque-2025/Frontend_Web/actions/workflows/buildtest.yaml/badge.svg)](https://github.com/TechTorque-2025/Frontend_Web/actions/workflows/buildtest.yaml)
+
 This repository contains the source code for the TechTorque 2025 customer and employee-facing web application.
 
 ### ✨ Key Features
