@@ -111,7 +111,18 @@ export default function VehiclesPage() {
       {/* Vehicles Grid */}
       {vehicles.length === 0 ? (
         <div className="text-center py-16 automotive-card">
-          <div className="text-gray-400 dark:text-gray-600 text-6xl mb-4">🚗</div>
+          <svg
+            className="mx-auto w-24 h-24 text-gray-400 dark:text-gray-600 mb-4"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            aria-hidden="true"
+          >
+            {/* Car-style icon: body + wheels */}
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 12l1.5-4.5A2 2 0 0 1 6.4 6h11.2a2 2 0 0 1 1.9 1.5L21 12" />
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M5 18a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3zM19 18a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3z" />
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 12h18v2H3v-2z" />
+          </svg>
           <h3 className="text-xl font-semibold theme-text-primary mb-2">No vehicles yet</h3>
           <p className="theme-text-muted mb-6">Get started by adding your first vehicle</p>
           <button
