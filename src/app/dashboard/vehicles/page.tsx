@@ -80,7 +80,7 @@ export default function VehiclesPage() {
 
       {/* Add Vehicle Modal */}
       {showAddForm && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 dark:bg-opacity-70 flex items-center justify-center p-4 z-50 backdrop-blur-sm">
+        <div className="fixed inset-0 theme-bg-primary bg-opacity-70 dark:bg-blue-950 dark:bg-opacity-70 flex items-center justify-center p-4 z-50 backdrop-blur-sm">
           <div className="automotive-card p-8 max-w-2xl w-full max-h-[90vh] overflow-y-auto">
             <AddVehicleForm
               onSuccess={handleAddSuccess}
@@ -92,7 +92,7 @@ export default function VehiclesPage() {
 
       {/* Edit Vehicle Modal */}
       {editingVehicle && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 dark:bg-opacity-70 flex items-center justify-center p-4 z-50 backdrop-blur-sm">
+        <div className="fixed inset-0 theme-bg-primary bg-opacity-70 dark:bg-blue-950 dark:bg-opacity-70 flex items-center justify-center p-4 z-50 backdrop-blur-sm">
           <div className="automotive-card p-8 max-w-md w-full">
             <EditVehicleForm
               vehicleId={editingVehicle.vehicleId}
