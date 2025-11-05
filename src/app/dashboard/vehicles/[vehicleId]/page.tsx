@@ -84,115 +84,127 @@ export default function VehicleDetailsPage() {
 
   return (
     <div className="container mx-auto px-4 py-8 theme-bg-primary min-h-screen">
-      <button
-        onClick={() => router.push('/dashboard/vehicles')}
-        className="mb-6 text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 flex items-center gap-2 font-medium"
-      >
-        ← Back to Vehicles
-      </button>
-
-      <div className="automotive-card p-6 mb-6">
-        <div className="flex justify-between items-start mb-6">
-          <div>
-            <h1 className="text-3xl font-bold theme-text-primary mb-2">
-              {vehicle.year} {vehicle.make} {vehicle.model}
-            </h1>
-            <p className="theme-text-muted">VIN: {vehicle.vin}</p>
-          </div>
-          {vehicle.color && (
-            <span className="px-4 py-2 bg-blue-100 dark:bg-blue-900/40 text-blue-800 dark:text-blue-300 rounded-full border border-blue-200 dark:border-blue-800 font-medium">
-              {vehicle.color}
-            </span>
-          )}
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div>
-            <h3 className="text-sm font-medium theme-text-muted mb-1">License Plate</h3>
-            <p className="text-lg font-semibold theme-text-primary">{vehicle.licensePlate}</p>
-          </div>
-          <div>
-            <h3 className="text-sm font-medium theme-text-muted mb-1">Mileage</h3>
-            <p className="text-lg font-semibold theme-text-primary">{vehicle.mileage.toLocaleString()} miles</p>
-          </div>
-          <div>
-            <h3 className="text-sm font-medium theme-text-muted mb-1">Registered</h3>
-            <p className="text-lg theme-text-secondary">
-              {new Date(vehicle.createdAt).toLocaleDateString()}
-            </p>
-          </div>
-          <div>
-            <h3 className="text-sm font-medium theme-text-muted mb-1">Last Updated</h3>
-            <p className="text-lg theme-text-secondary">
-              {new Date(vehicle.updatedAt).toLocaleDateString()}
-            </p>
-          </div>
-        </div>
+      <div className="flex items-center justify-between mb-6">
+        <button
+          onClick={() => router.push('/dashboard/vehicles')}
+          className="text-sm md:text-base text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 flex items-center gap-2 font-medium"
+        >
+          ← Back to Vehicles
+        </button>
+        
       </div>
 
-      {/* Photo Upload Section */}
-      <div className="automotive-card p-6 mb-6">
-        <h2 className="text-xl font-bold mb-4 theme-text-primary">Vehicle Photos</h2>
-        <div className="border-2 border-dashed automotive-border rounded-xl p-8 text-center theme-bg-secondary hover:border-blue-400 transition-colors">
-          <input
-            type="file"
-            id="photo-upload"
-            multiple
-            accept="image/*"
-            onChange={handlePhotoUpload}
-            className="hidden"
-            disabled={uploadingPhotos}
-          />
-          <label
-            htmlFor="photo-upload"
-            className={`cursor-pointer block ${uploadingPhotos ? 'opacity-50' : ''}`}
-          >
-            <div className="theme-text-muted text-4xl mb-3">📷</div>
-            <p className="theme-text-secondary mb-2 font-medium">
-              {uploadingPhotos ? 'Uploading...' : 'Click to upload vehicle photos'}
-            </p>
-            <p className="text-sm theme-text-muted">
-              PNG, JPG up to 10MB (Max 50MB total)
-            </p>
-          </label>
-        </div>
-      </div>
-
-      {/* Service History Section */}
-      <div className="automotive-card p-6">
-        <h2 className="text-xl font-bold mb-4 theme-text-primary">Service History</h2>
-        {serviceHistory.length === 0 ? (
-          <div className="text-center py-8 theme-text-muted">
-            <p className="font-medium">No service history available</p>
-            <p className="text-sm mt-2">Service records will appear here once completed</p>
-          </div>
-        ) : (
-          <div className="space-y-4">
-            {serviceHistory.map((service) => (
-              <div
-                key={service.serviceId}
-                className="automotive-border rounded-xl p-4 theme-bg-secondary hover:theme-bg-tertiary transition-colors"
-              >
-                <div className="flex justify-between items-start">
-                  <div>
-                    <h3 className="font-semibold text-lg theme-text-primary">{service.type}</h3>
-                    <p className="text-sm theme-text-muted">
-                      {new Date(service.date).toLocaleDateString()}
-                    </p>
-                    {service.description && (
-                      <p className="text-sm theme-text-secondary mt-2">{service.description}</p>
-                    )}
-                  </div>
-                  <div className="text-right">
-                    <p className="text-lg font-bold text-green-600 dark:text-green-400">
-                      ${service.cost.toFixed(2)}
-                    </p>
-                  </div>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {/* Left: Images + gallery */}
+        <div className="lg:col-span-2 space-y-6">
+          <div className="automotive-card p-6">
+            <div className="w-full rounded-lg overflow-hidden shadow-md bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-800">
+              {vehicle.photos && vehicle.photos.length > 0 ? (
+                <img
+                  src={vehicle.photos[0] as unknown as string}
+                  alt={`${vehicle.make} ${vehicle.model}`}
+                  className="w-full h-72 object-cover"
+                />
+              ) : (
+                <div className="w-full h-72 flex items-center justify-center bg-gray-100 dark:bg-gray-800">
+                  <span className="text-gray-500 dark:text-gray-400">No photo available</span>
                 </div>
+              )}
+            </div>
+
+            {/* Thumbnail strip */}
+            {vehicle.photos && vehicle.photos.length > 1 && (
+              <div className="mt-4 flex gap-3">
+                {vehicle.photos.map((p, i) => (
+                  <button key={i} className="w-24 h-16 rounded-md overflow-hidden border border-gray-200 dark:border-gray-700" onClick={() => window.scrollTo({top:0, behavior:'smooth'})}>
+                    <img src={p as unknown as string} alt={`photo-${i}`} className="w-full h-full object-cover" />
+                  </button>
+                ))}
               </div>
-            ))}
+            )}
+
+            {/* Photo upload CTA (small) */}
+            <div className="mt-4">
+              <label htmlFor="photo-upload" className={`inline-flex items-center gap-2 text-sm theme-text-secondary cursor-pointer ${uploadingPhotos ? 'opacity-60' : ''}`}>
+                <input id="photo-upload" type="file" multiple accept="image/*" onChange={handlePhotoUpload} className="hidden" disabled={uploadingPhotos} />
+                <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 3v12m0 0l3-3m-3 3l-3-3"/></svg>
+                <span>{uploadingPhotos ? 'Uploading photos...' : 'Upload photos'}</span>
+              </label>
+            </div>
           </div>
-        )}
+
+          {/* Service history */}
+          <div className="automotive-card p-6">
+            <h2 className="text-xl font-semibold theme-text-primary mb-4">Service History</h2>
+            {serviceHistory.length === 0 ? (
+              <div className="text-center py-12 theme-text-muted">
+                <p className="font-medium">No service history available</p>
+                <p className="text-sm mt-2">Service records will appear here once completed</p>
+              </div>
+            ) : (
+              <ul className="space-y-4">
+                {serviceHistory.map((s) => (
+                  <li key={s.serviceId} className="flex items-start gap-4">
+                    <div className="mt-1">
+                      <div className="w-3 h-3 rounded-full bg-blue-500 mt-1" />
+                    </div>
+                    <div className="flex-1">
+                      <div className="flex items-center justify-between">
+                        <h3 className="font-semibold theme-text-primary">{s.type}</h3>
+                        <div className="text-sm font-semibold text-green-600 dark:text-green-400">${s.cost.toFixed(2)}</div>
+                      </div>
+                      <div className="text-sm theme-text-muted">{new Date(s.date).toLocaleDateString()}</div>
+                      {s.description && <p className="mt-2 text-sm theme-text-secondary">{s.description}</p>}
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        </div>
+
+        {/* Right: Details card */}
+        <aside className="space-y-6">
+          <div className="automotive-card p-6  sticky top-6">
+            <div>
+              <h1 className="text-2xl md:text-3xl font-bold theme-text-primary">{vehicle.year} {vehicle.make} {vehicle.model}</h1>
+              <p className="text-sm theme-text-muted mt-1">VIN: <span className="font-medium theme-text-secondary">{vehicle.vin}</span></p>
+            </div>
+
+            <div className="mt-4 grid grid-cols-2 gap-3">
+              <div>
+                <h4 className="text-xs theme-text-muted">License</h4>
+                <div className="font-semibold theme-text-primary">{vehicle.licensePlate}</div>
+              </div>
+              <div>
+                <h4 className="text-xs theme-text-muted">Mileage</h4>
+                <div className="font-semibold theme-text-primary">{vehicle.mileage.toLocaleString()} mi</div>
+              </div>
+              <div>
+                <h4 className="text-xs theme-text-muted">Color</h4>
+                <div className="font-semibold theme-text-primary">{vehicle.color || '—'}</div>
+              </div>
+              <div>
+                <h4 className="text-xs theme-text-muted">Registered</h4>
+                <div className="font-semibold theme-text-primary">{new Date(vehicle.createdAt).toLocaleDateString()}</div>
+              </div>
+            </div>
+
+            
+          </div>
+
+          {/* meta card */}
+          <div className="automotive-card p-4 text-sm theme-text-muted">
+            <div className="flex items-center justify-between">
+              <div>Created</div>
+              <div className="font-medium theme-text-primary">{new Date(vehicle.createdAt).toLocaleDateString()}</div>
+            </div>
+            <div className="flex items-center justify-between mt-3">
+              <div>Last updated</div>
+              <div className="font-medium theme-text-primary">{new Date(vehicle.updatedAt).toLocaleDateString()}</div>
+            </div>
+          </div>
+        </aside>
       </div>
     </div>
   );
