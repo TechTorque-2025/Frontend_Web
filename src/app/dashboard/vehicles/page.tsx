@@ -19,8 +19,9 @@ export default function VehiclesPage() {
       const data = await vehicleService.getMyVehicles();
       setVehicles(data);
       setError(null);
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to load vehicles');
+    } catch (err: unknown) {
+      const errorMessage = (err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to load vehicles';
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -34,8 +35,9 @@ export default function VehiclesPage() {
     try {
       await vehicleService.deleteVehicle(vehicleId);
       await loadVehicles();
-    } catch (err: any) {
-      alert(err.response?.data?.message || 'Failed to delete vehicle');
+    } catch (err: unknown) {
+      const errorMessage = (err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to delete vehicle';
+      alert(errorMessage);
     }
   };
 

@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { vehicleService } from '@/services/vehicleService';
 import type { Vehicle, ServiceHistory } from '@/types/vehicle';
@@ -15,32 +15,33 @@ export default function VehicleDetailsPage() {
   const [error, setError] = useState<string | null>(null);
   const [uploadingPhotos, setUploadingPhotos] = useState(false);
 
-  useEffect(() => {
-    loadVehicleDetails();
-    loadServiceHistory();
-  }, [vehicleId]);
-
-  const loadVehicleDetails = async () => {
+  const loadVehicleDetails = useCallback(async () => {
     try {
       setLoading(true);
       const data = await vehicleService.getVehicleById(vehicleId);
       setVehicle(data);
       setError(null);
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to load vehicle details');
+    } catch (err: unknown) {
+      const errorMessage = (err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to load vehicle details';
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
-  };
+  }, [vehicleId]);
 
-  const loadServiceHistory = async () => {
+  const loadServiceHistory = useCallback(async () => {
     try {
       const data = await vehicleService.getServiceHistory(vehicleId);
       setServiceHistory(data);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Failed to load service history:', err);
     }
-  };
+  }, [vehicleId]);
+
+  useEffect(() => {
+    loadVehicleDetails();
+    loadServiceHistory();
+  }, [loadVehicleDetails, loadServiceHistory]);
 
   const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
@@ -51,8 +52,9 @@ export default function VehicleDetailsPage() {
       const fileArray = Array.from(files);
       await vehicleService.uploadVehiclePhotos(vehicleId, fileArray);
       alert('Photos uploaded successfully!');
-    } catch (err: any) {
-      alert(err.response?.data?.message || 'Failed to upload photos');
+    } catch (err: unknown) {
+      const errorMessage = (err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to upload photos';
+      alert(errorMessage);
     } finally {
       setUploadingPhotos(false);
     }
@@ -208,63 +210,4 @@ export default function VehicleDetailsPage() {
       </div>
     </div>
   );
-}
-// Vehicle-related TypeScript types
-
-export interface Vehicle {
-  vehicleId: string;
-  customerId: string;
-  make: string;
-  model: string;
-  year: number;
-  vin: string;
-  licensePlate: string;
-  color?: string;
-  mileage: number;
-  createdAt: string;
-  updatedAt: string;
-}
-
-export interface VehicleListItem {
-  vehicleId: string;
-  make: string;
-  model: string;
-  year: number;
-  licensePlate: string;
-  color?: string;
-  mileage: number;
-}
-
-export interface VehicleRequest {
-  make: string;
-  model: string;
-  year: number;
-  vin: string;
-  licensePlate: string;
-  color?: string;
-  mileage?: number;
-}
-
-export interface VehicleUpdateRequest {
-  color?: string;
-  mileage?: number;
-  licensePlate?: string;
-}
-
-export interface VehicleResponse {
-  message: string;
-  vehicleId: string;
-}
-
-export interface PhotoUploadResponse {
-  photoIds: string[];
-  urls: string[];
-}
-
-export interface ServiceHistory {
-  serviceId: string;
-  date: string;
-  type: string;
-  cost: number;
-  description?: string;
 }

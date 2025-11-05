@@ -29,8 +29,9 @@ export default function AddVehicleForm({ onSuccess, onCancel }: AddVehicleFormPr
     try {
       await vehicleService.registerVehicle(formData);
       onSuccess();
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to add vehicle');
+    } catch (err: unknown) {
+      const errorMessage = (err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to add vehicle';
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
