@@ -1,7 +1,6 @@
 // components/AIChatWidget.tsx
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-// Assuming you have a way to get the current user's JWT
-import { useAuth } from '../hooks/useAuth'; // Placeholder for your auth hook
+import Cookies from 'js-cookie';
 
 // --- TypeScript Interface Definitions ---
 interface Message {
@@ -25,9 +24,6 @@ const AIChatWidget: React.FC = () => {
     const [sessionId, setSessionId] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState<boolean>(false);
     
-    // 2. Auth/Token Retrieval (Crucial for secure API call)
-    const { token: userToken } = useAuth(); // Assuming this hook provides the JWT
-    
     const messagesEndRef = useRef<HTMLDivElement>(null);
 
     // Auto-scroll to the latest message
@@ -37,6 +33,9 @@ const AIChatWidget: React.FC = () => {
 
     // 3. The Core Logic (Memoized for performance)
     const sendMessage = useCallback(async (message: string) => {
+        // Get token directly from cookies
+        const userToken = Cookies.get('tt_access_token');
+        
         if (!message.trim() || isLoading || !userToken) return;
 
         // Add user message to history
@@ -75,10 +74,10 @@ const AIChatWidget: React.FC = () => {
             setConversationHistory(prev => [...prev, aiResponse]);
             setSessionId(data.session_id); // CRITICAL: Save the session ID for the next turn
 
-        } catch (error: any) {
+        } catch (error: unknown) {
             console.error("Chat Error:", error);
             const errorMessage: Message = { 
-                text: error.message.includes('401') 
+                text: (error instanceof Error && error.message.includes('401')) 
                     ? "Your session has expired. Please log in again."
                     : "Sorry, I'm having trouble with the services. Try again later.", 
                 sender: 'system' 
@@ -87,7 +86,7 @@ const AIChatWidget: React.FC = () => {
         } finally {
             setIsLoading(false);
         }
-    }, [isLoading, sessionId, userToken]); // Dependencies for useCallback
+    }, [isLoading, sessionId]); // Dependencies for useCallback
 
     // 6. Handler for form submission
     const handleSubmit = (e: React.FormEvent) => {
@@ -138,21 +137,20 @@ const AIChatWidget: React.FC = () => {
                     onChange={(e) => setInputMessage(e.target.value)}
                     placeholder="Ask about appointments, status, or services..."
                     className="flex-1 p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                    disabled={isLoading || !userToken}
+                    disabled={isLoading}
                 />
                 <button
                     type="submit"
                     className={`px-4 py-2 rounded-lg font-semibold transition duration-150 ${
-                        isLoading || !inputMessage.trim() || !userToken
+                        isLoading || !inputMessage.trim()
                             ? 'bg-indigo-300 text-white cursor-not-allowed'
                             : 'bg-indigo-600 text-white hover:bg-indigo-700'
                     }`}
-                    disabled={isLoading || !inputMessage.trim() || !userToken}
+                    disabled={isLoading || !inputMessage.trim()}
                 >
                     Send
                 </button>
             </form>
-            {!userToken && <div className="p-2 text-center text-xs text-red-500">Please log in to use the assistant.</div>}
         </div>
     );
 };
