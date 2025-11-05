@@ -36,8 +36,9 @@ export default function EditVehicleForm({
     try {
       await vehicleService.updateVehicle(vehicleId, formData);
       onSuccess();
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to update vehicle');
+    } catch (err: unknown) {
+      const errorMessage = (err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to update vehicle';
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
