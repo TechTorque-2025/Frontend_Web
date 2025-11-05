@@ -37,6 +37,7 @@ function PaymentGatewayContent() {
 
   // Demo payment data - in real app, this would come from props or state
   const [paymentData] = useState({
+    invoiceId: 'demo-invoice',
     amount: 5000.00,
     itemDescription: 'Auto Service Package',
     customerEmail: 'customer@example.com',
@@ -159,6 +160,7 @@ function PaymentGatewayContent() {
                 </div>
 
                 <PaymentGateway
+                  invoiceId={paymentData.invoiceId}
                   amount={paymentData.amount}
                   itemDescription={paymentData.itemDescription}
                   customerEmail={paymentData.customerEmail}
