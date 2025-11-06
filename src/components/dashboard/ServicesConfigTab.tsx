@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { adminService } from '@/lib/api/admin.service';
-import { ServiceTypeDto, ServiceTypeFormData, SERVICE_CATEGORIES } from '@/types/admin.types';
+import { ServiceTypeDto, ServiceTypeFormData, ServiceTypeFormErrors, SERVICE_CATEGORIES } from '@/types/admin.types';
 import { adminValidation, adminHelpers } from '@/lib/utils/admin-validation';
 
 /**
@@ -27,7 +27,7 @@ export default function ServicesConfigTab() {
     defaultDurationMinutes: 60,
     category: '',
   });
-  const [formErrors, setFormErrors] = useState<Record<string, string>>({});
+  const [formErrors, setFormErrors] = useState<ServiceTypeFormErrors>({});
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
