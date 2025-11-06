@@ -11,8 +11,12 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined)
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [isDark, setIsDark] = useState(false)
+  const [isHydrated, setIsHydrated] = useState(false)
 
   useEffect(() => {
+    // Prevent hydration mismatch by only running after initial render
+    setIsHydrated(true)
+
     const savedTheme = localStorage.getItem('theme')
     if (savedTheme === 'dark') {
       setIsDark(true)
@@ -38,7 +42,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
   return (
     <ThemeContext.Provider value={{ isDark, toggleTheme }}>
-      {children}
+      {isHydrated ? children : children}
     </ThemeContext.Provider>
   )
 }
