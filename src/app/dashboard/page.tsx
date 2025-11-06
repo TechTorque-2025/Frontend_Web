@@ -14,6 +14,7 @@ import VehiclesTab from '@/components/dashboard/VehiclesTab';
 import ProfileTab from '@/components/dashboard/ProfileTab';
 import AppointmentsTab from '@/components/dashboard/AppointmentsTab';
 import ProjectsTab from '@/components/dashboard/ProjectsTab';
+import TimeLogsTab from '@/components/dashboard/TimeLogsTab';
 
 // Dashboard tab types
 type DashboardTab = 'overview' | 'vehicles' | 'appointments' | 'projects' | 'time-logs' | 'users' | 'analytics' | 'reports' | 'services' | 'payments' | 'profile';
@@ -259,17 +260,7 @@ function DashboardContent() {
 
           {activeTab === 'projects' && <ProjectsTab />}
 
-          {activeTab === 'time-logs' && (
-            <div>
-              <h2 className="text-2xl font-bold theme-text-primary mb-4">Time Logs</h2>
-              <p className="theme-text-secondary">Log your work hours on projects.</p>
-              <div className="mt-6">
-                <button className="theme-button-primary">
-                  + Log Time
-                </button>
-              </div>
-            </div>
-          )}
+          {activeTab === 'time-logs' && <TimeLogsTab />}
 
           {activeTab === 'payments' && (
             <div>
