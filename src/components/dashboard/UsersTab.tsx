@@ -5,6 +5,7 @@ import { adminService } from '@/lib/api/admin.service';
 import {
   UserDetailsDto,
   UserUpdateFormData,
+  UserUpdateFormErrors,
   UserStatus,
   USER_STATUS_CONFIG,
 } from '@/types/admin.types';
@@ -32,7 +33,7 @@ export default function UsersTab() {
     email: '',
     phoneNumber: '',
   });
-  const [formErrors, setFormErrors] = useState<Record<string, string>>({});
+  const [formErrors, setFormErrors] = useState<UserUpdateFormErrors>({});
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {

@@ -224,6 +224,7 @@ export interface UserUpdateFormErrors {
   status?: string;
   email?: string;
   phoneNumber?: string;
+  submit?: string;
 }
 
 export interface ReportFormErrors {
