@@ -231,6 +231,7 @@ export interface ReportFormErrors {
   endDate?: string;
   employeeId?: string;
   customerId?: string;
+  submit?: string;
 }
 
 // ============================================
