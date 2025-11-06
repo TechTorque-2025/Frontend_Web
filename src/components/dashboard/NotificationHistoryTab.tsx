@@ -58,8 +58,8 @@ export default function NotificationHistoryTab() {
     try {
       setLoading(true);
       const data = filter === 'unread'
-        ? await notifyService.getUnreadNotifications(user.id)
-        : await notifyService.getUserNotifications(user.id);
+        ? await notifyService.getUnreadNotifications(String(user.id))
+        : await notifyService.getUserNotifications(String(user.id));
       setNotifications(data);
       setError(null);
     } catch (err) {
@@ -74,7 +74,7 @@ export default function NotificationHistoryTab() {
     if (!user?.id) return;
 
     try {
-      const count = await notifyService.getUnreadCount(user.id);
+      const count = await notifyService.getUnreadCount(String(user.id));
       setUnreadCount(count.count || 0);
     } catch (err) {
       console.error('Failed to fetch unread count:', err);
