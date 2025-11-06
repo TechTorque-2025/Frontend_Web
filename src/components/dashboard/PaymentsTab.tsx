@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
+import { UserRole } from '@/types/auth.types';
 import { paymentService, invoiceService } from '@/lib/api/payment.service';
 import {
   PaymentDto,
@@ -25,7 +26,7 @@ import {
 
 export default function PaymentsTab() {
   const { user, hasAnyRole } = useAuth();
-  const isEmployee = hasAnyRole(['EMPLOYEE', 'ADMIN', 'SUPER_ADMIN']);
+  const isEmployee = hasAnyRole([UserRole.EMPLOYEE, UserRole.ADMIN, UserRole.SUPER_ADMIN]);
 
   const [activeView, setActiveView] = useState<'invoices' | 'payments'>('invoices');
   const [invoices, setInvoices] = useState<InvoiceDto[]>([]);
