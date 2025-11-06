@@ -16,6 +16,11 @@ import AppointmentsTab from '@/components/dashboard/AppointmentsTab';
 import ProjectsTab from '@/components/dashboard/ProjectsTab';
 import TimeLogsTab from '@/components/dashboard/TimeLogsTab';
 import PaymentsTab from '@/components/dashboard/PaymentsTab';
+import UsersTab from '@/components/dashboard/UsersTab';
+import AnalyticsTab from '@/components/dashboard/AnalyticsTab';
+import ReportsTab from '@/components/dashboard/ReportsTab';
+import ServicesConfigTab from '@/components/dashboard/ServicesConfigTab';
+import Notifications from '@/components/Notifications';
 
 // Dashboard tab types
 type DashboardTab = 'overview' | 'vehicles' | 'appointments' | 'projects' | 'time-logs' | 'users' | 'analytics' | 'reports' | 'services' | 'payments' | 'profile';
@@ -191,6 +196,7 @@ function DashboardContent() {
                   {user?.roles[0] || 'USER'}
                 </span>
               </div>
+              <Notifications />
               <button
                 onClick={logout}
                 className="theme-button-secondary text-sm"
@@ -265,48 +271,13 @@ function DashboardContent() {
 
           {activeTab === 'payments' && <PaymentsTab />}
 
-          {activeTab === 'services' && (
-            <div>
-              <h2 className="text-2xl font-bold theme-text-primary mb-4">Service Management</h2>
-              <p className="theme-text-secondary">Configure service types and pricing.</p>
-              <div className="mt-6">
-                <button className="theme-button-primary">
-                  + Add Service Type
-                </button>
-              </div>
-            </div>
-          )}
+          {activeTab === 'services' && <ServicesConfigTab />}
 
-          {activeTab === 'users' && (
-            <div>
-              <h2 className="text-2xl font-bold theme-text-primary mb-4">User Management</h2>
-              <p className="theme-text-secondary">Manage users, roles, and permissions.</p>
-              <div className="mt-6">
-                <button className="theme-button-primary">
-                  + Create User
-                </button>
-              </div>
-            </div>
-          )}
+          {activeTab === 'users' && <UsersTab />}
 
-          {activeTab === 'analytics' && (
-            <div>
-              <h2 className="text-2xl font-bold theme-text-primary mb-4">Analytics</h2>
-              <p className="theme-text-secondary">Business analytics and performance insights.</p>
-            </div>
-          )}
+          {activeTab === 'analytics' && <AnalyticsTab />}
 
-          {activeTab === 'reports' && (
-            <div>
-              <h2 className="text-2xl font-bold theme-text-primary mb-4">Reports</h2>
-              <p className="theme-text-secondary">Generate and download business reports.</p>
-              <div className="mt-6">
-                <button className="theme-button-primary">
-                  + Generate Report
-                </button>
-              </div>
-            </div>
-          )}
+          {activeTab === 'reports' && <ReportsTab />}
 
           {activeTab === 'profile' && <ProfileTab />}
         </div>
