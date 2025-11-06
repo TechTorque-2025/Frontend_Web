@@ -22,9 +22,10 @@ import ReportsTab from '@/components/dashboard/ReportsTab';
 import ServicesConfigTab from '@/components/dashboard/ServicesConfigTab';
 import Notifications from '@/components/Notifications';
 import NotificationHistoryTab from '@/components/dashboard/NotificationHistoryTab';
+import ChatbotTab from '@/components/dashboard/ChatbotTab';
 
 // Dashboard tab types
-type DashboardTab = 'overview' | 'vehicles' | 'appointments' | 'projects' | 'time-logs' | 'users' | 'analytics' | 'reports' | 'services' | 'payments' | 'notifications' | 'profile';
+type DashboardTab = 'overview' | 'vehicles' | 'appointments' | 'projects' | 'time-logs' | 'users' | 'analytics' | 'reports' | 'services' | 'payments' | 'notifications' | 'chatbot' | 'profile';
 
 interface TabConfig {
   id: DashboardTab;
@@ -157,6 +158,17 @@ const TAB_CONFIGS: TabConfig[] = [
     ),
     roles: [UserRole.CUSTOMER, UserRole.EMPLOYEE, UserRole.ADMIN, UserRole.SUPER_ADMIN],
     description: 'View notification history and manage notifications'
+  },
+  {
+    id: 'chatbot',
+    label: 'AI Assistant',
+    icon: (
+      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+      </svg>
+    ),
+    roles: [UserRole.CUSTOMER, UserRole.EMPLOYEE, UserRole.ADMIN, UserRole.SUPER_ADMIN],
+    description: 'Chat with AI assistant for appointments and support'
   },
   {
     id: 'profile',
@@ -292,6 +304,8 @@ function DashboardContent() {
           {activeTab === 'reports' && <ReportsTab />}
 
           {activeTab === 'notifications' && <NotificationHistoryTab />}
+
+          {activeTab === 'chatbot' && <ChatbotTab />}
 
           {activeTab === 'profile' && <ProfileTab />}
         </div>
