@@ -173,7 +173,10 @@ export const adminService = {
     entityType?: string;
   }): Promise<AuditLogResponse[]> {
     const res = await api.get('/admin/audit-logs', { params });
-    return res.data.data || res.data;
+    // Backend returns ApiResponse<PaginatedResponse<AuditLogResponse>>
+    // So we need: res.data.data.data (ApiResponse.data -> PaginatedResponse.data -> array)
+    const paginatedData = res.data.data || res.data;
+    return Array.isArray(paginatedData) ? paginatedData : (paginatedData.data || []);
   },
 
   async getAuditLogById(logId: string): Promise<AuditLogResponse> {
