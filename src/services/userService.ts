@@ -44,6 +44,18 @@ export const userService = {
     // Correct Path: /users/me/change-password
     return api.post('/users/me/change-password', payload);
   },
+  updateProfile(fullName: string, phone: string, address: string) {
+    return api.put('/users/profile', { fullName, phone, address });
+  },
+  uploadProfilePhoto(photoUrl: string) {
+    return api.post('/users/profile/photo', { photoUrl });
+  },
+  getUserPreferences() {
+    return api.get('/users/preferences');
+  },
+  updateUserPreferences(preferences: any) {
+    return api.put('/users/preferences', preferences);
+  },
 };
 
 export default userService;
