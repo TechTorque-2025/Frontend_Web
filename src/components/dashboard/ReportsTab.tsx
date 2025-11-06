@@ -6,6 +6,7 @@ import { adminService } from '@/lib/api/admin.service';
 import {
   ReportDto,
   ReportFormData,
+  ReportFormErrors,
   ReportType,
   REPORT_TYPES,
   RevenueReportDto,
@@ -38,7 +39,7 @@ export default function ReportsTab() {
     employeeId: '',
     customerId: '',
   });
-  const [formErrors, setFormErrors] = useState<Record<string, string>>({});
+  const [formErrors, setFormErrors] = useState<ReportFormErrors>({});
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
