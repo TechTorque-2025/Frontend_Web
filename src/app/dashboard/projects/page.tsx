@@ -38,12 +38,14 @@ export default function ProjectsPage() {
     try {
       setRefreshing(true)
       const data = await projectService.listCustomerProjects()
-      setProjects(data)
+      // Ensure data is always an array
+      setProjects(Array.isArray(data) ? data : [])
       setError(null)
     } catch (err: unknown) {
       const message = (err as { response?: { data?: { message?: string } } })?.response?.data?.message ||
         'Failed to load projects'
       setError(message)
+      setProjects([]) // Reset to empty array on error
     } finally {
       setLoading(false)
       setRefreshing(false)
@@ -55,11 +57,15 @@ export default function ProjectsPage() {
   }, [])
 
   const filteredProjects = useMemo(() => {
+    if (!Array.isArray(projects)) return []
     if (statusFilter === 'ALL') return projects
     return projects.filter((project) => project.status === statusFilter)
   }, [projects, statusFilter])
 
   const summary = useMemo(() => {
+    if (!Array.isArray(projects)) {
+      return { total: 0, pending: 0, active: 0, completed: 0 }
+    }
     const pending = projects.filter((p) => ['REQUESTED', 'QUOTE_PENDING', 'QUOTE_SUBMITTED'].includes(p.status)).length
     const active = projects.filter((p) => ['QUOTE_APPROVED', 'IN_PROGRESS'].includes(p.status)).length
     const completed = projects.filter((p) => p.status === 'COMPLETED').length

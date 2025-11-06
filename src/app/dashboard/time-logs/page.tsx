@@ -24,9 +24,14 @@ export default function TimeLogsPage() {
     try {
       setLoading(true);
       const data = await timeLoggingService.getMyTimeLogs();
-      setTimeLogs(data);
+      // Ensure data is an array and filter out invalid entries
+      const validLogs = Array.isArray(data) 
+        ? data.filter(log => log && log.logId) 
+        : [];
+      setTimeLogs(validLogs);
     } catch (err) {
       console.error('Failed to load time logs:', err);
+      setTimeLogs([]); // Set empty array on error
     } finally {
       setLoading(false);
     }
@@ -263,30 +268,38 @@ export default function TimeLogsPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200 dark:divide-gray-800">
-                {timeLogs.map((log) => (
-                  <tr key={log.logId} className="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
-                    <td className="px-6 py-4 whitespace-nowrap theme-text-primary font-medium">
-                      {formatDate(log.workDate)}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap theme-text-secondary font-semibold">
-                      {log.hoursWorked}h
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap theme-text-secondary">
-                      {log.taskType || '—'}
-                    </td>
-                    <td className="px-6 py-4 theme-text-secondary text-sm max-w-md truncate">
-                      {log.description || '—'}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <button
-                        onClick={() => handleDelete(log.logId)}
-                        className="text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 text-sm font-medium"
-                      >
-                        Delete
-                      </button>
+                {timeLogs.length === 0 ? (
+                  <tr>
+                    <td colSpan={5} className="px-6 py-8 text-center text-sm theme-text-muted">
+                      No time logs found
                     </td>
                   </tr>
-                ))}
+                ) : (
+                  timeLogs.map((log, index) => (
+                    <tr key={log.logId || `log-${index}`} className="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
+                      <td className="px-6 py-4 whitespace-nowrap theme-text-primary font-medium">
+                        {formatDate(log.workDate)}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap theme-text-secondary font-semibold">
+                        {log.hoursWorked}h
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap theme-text-secondary">
+                        {log.taskType || '—'}
+                      </td>
+                      <td className="px-6 py-4 theme-text-secondary text-sm max-w-md truncate">
+                        {log.description || '—'}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <button
+                          onClick={() => handleDelete(log.logId)}
+                          className="text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 text-sm font-medium"
+                        >
+                          Delete
+                        </button>
+                      </td>
+                    </tr>
+                  ))
+                )}
               </tbody>
             </table>
           </div>

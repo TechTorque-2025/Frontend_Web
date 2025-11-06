@@ -16,9 +16,11 @@ export default function ConfigPage() {
     try {
       setLoading(true);
       const data = await adminService.getAllConfigs();
-      setConfigs(data);
+      // Ensure data is an array
+      setConfigs(Array.isArray(data) ? data : []);
     } catch (err) {
       console.error('Failed to load configs:', err);
+      setConfigs([]); // Set empty array on error
     } finally {
       setLoading(false);
     }
@@ -67,8 +69,8 @@ export default function ConfigPage() {
               <h2 className="text-lg font-semibold theme-text-primary">{category}</h2>
             </div>
             <div className="p-6 space-y-4">
-              {categoryConfigs.map((config) => (
-                <div key={config.key} className="pb-4 border-b border-gray-200 dark:border-gray-800 last:border-0 last:pb-0">
+              {categoryConfigs.map((config, index) => (
+                <div key={`${category}-${config.key}-${index}`} className="pb-4 border-b border-gray-200 dark:border-gray-800 last:border-0 last:pb-0">
                   <div className="flex items-start justify-between mb-2">
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-1">

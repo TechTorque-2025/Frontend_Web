@@ -16,9 +16,11 @@ export default function AuditLogsPage() {
     try {
       setLoading(true);
       const data = await adminService.getAuditLogs();
-      setLogs(data);
+      // Ensure data is an array
+      setLogs(Array.isArray(data) ? data : []);
     } catch (err) {
       console.error('Failed to load audit logs:', err);
+      setLogs([]); // Set empty array on error
     } finally {
       setLoading(false);
     }
@@ -66,30 +68,38 @@ export default function AuditLogsPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200 dark:divide-gray-800">
-              {logs.map((log) => (
-                <tr key={log.logId} className="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
-                  <td className="px-6 py-4 whitespace-nowrap text-sm theme-text-secondary">
-                    {formatDateTime(log.timestamp)}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm theme-text-primary font-medium">
-                    {log.userId}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span className="px-2 py-1 rounded text-xs font-semibold bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300">
-                      {log.action}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 text-sm theme-text-secondary">
-                    <div>
-                      <p className="font-medium">{log.entityType}</p>
-                      {log.entityId && <p className="text-xs theme-text-muted">{log.entityId}</p>}
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm theme-text-muted">
-                    {log.ipAddress || '—'}
+              {logs.length === 0 ? (
+                <tr>
+                  <td colSpan={5} className="px-6 py-8 text-center text-sm theme-text-muted">
+                    No audit logs found
                   </td>
                 </tr>
-              ))}
+              ) : (
+                logs.map((log) => (
+                  <tr key={log.logId} className="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm theme-text-secondary">
+                      {formatDateTime(log.timestamp)}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm theme-text-primary font-medium">
+                      {log.userId}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span className="px-2 py-1 rounded text-xs font-semibold bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300">
+                        {log.action}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 text-sm theme-text-secondary">
+                      <div>
+                        <p className="font-medium">{log.entityType}</p>
+                        {log.entityId && <p className="text-xs theme-text-muted">{log.entityId}</p>}
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm theme-text-muted">
+                      {log.ipAddress || '—'}
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>
