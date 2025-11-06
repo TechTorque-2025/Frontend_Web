@@ -143,6 +143,8 @@ function DashboardShell({ children }: { children: ReactNode }) {
 }
 
 function buildNavigation(roles: string[]): NavSection[] {
+  const hasRole = (role: string) => roles?.includes(role)
+
   const baseSection: NavSection = {
     title: 'Overview',
     items: [
@@ -155,8 +157,12 @@ function buildNavigation(roles: string[]): NavSection[] {
     ],
   }
 
+  // Add Payments link only for customers
+  if (hasRole('CUSTOMER')) {
+    baseSection.items.push({ href: '/dashboard/payments', label: 'Payment History' })
+  }
+
   const sections: NavSection[] = [baseSection]
-  const hasRole = (role: string) => roles?.includes(role)
 
   if (hasRole('EMPLOYEE') || hasRole('ADMIN') || hasRole('SUPER_ADMIN')) {
     sections.push({

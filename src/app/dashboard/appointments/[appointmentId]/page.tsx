@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { appointmentService } from '@/services/appointmentService'
 import type { AppointmentResponseDto, AppointmentStatus } from '@/types/appointment'
+import { useDashboard } from '@/app/contexts/DashboardContext'
 
 interface StatusOption {
   value: AppointmentStatus
@@ -22,6 +23,7 @@ export default function AppointmentDetailPage() {
   const router = useRouter()
   const params = useParams<{ appointmentId: string }>()
   const appointmentId = params.appointmentId
+  const { roles } = useDashboard()
 
   const [appointment, setAppointment] = useState<AppointmentResponseDto | null>(null)
   const [loading, setLoading] = useState(true)
@@ -203,53 +205,55 @@ export default function AppointmentDetailPage() {
           </div>
         </section>
 
-        <section className="automotive-card p-6">
-          <h2 className="text-xl font-semibold theme-text-primary mb-4">Reschedule appointment</h2>
-          <form onSubmit={handleReschedule} className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <label className="block">
-                <span className="block text-sm font-medium theme-text-primary mb-1">Date</span>
-                <input
-                  type="date"
-                  value={rescheduleDate}
-                  min={new Date().toISOString().slice(0, 10)}
-                  onChange={(event) => setRescheduleDate(event.target.value)}
-                  className="w-full rounded-lg border border-gray-300 dark:border-gray-700 theme-bg-primary theme-text-primary px-3 py-2"
-                  required
-                />
-              </label>
-              <label className="block">
-                <span className="block text-sm font-medium theme-text-primary mb-1">Time</span>
-                <input
-                  type="time"
-                  value={rescheduleTime}
-                  onChange={(event) => setRescheduleTime(event.target.value)}
-                  className="w-full rounded-lg border border-gray-300 dark:border-gray-700 theme-bg-primary theme-text-primary px-3 py-2"
-                  required
-                />
-              </label>
-              <div className="flex items-end">
-                <button
-                  type="submit"
-                  className="theme-button-primary w-full"
-                  disabled={saving}
-                >
-                  {saving ? 'Saving...' : 'Save changes'}
-                </button>
+        {roles?.includes('CUSTOMER') && (
+          <section className="automotive-card p-6">
+            <h2 className="text-xl font-semibold theme-text-primary mb-4">Reschedule appointment</h2>
+            <form onSubmit={handleReschedule} className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <label className="block">
+                  <span className="block text-sm font-medium theme-text-primary mb-1">Date</span>
+                  <input
+                    type="date"
+                    value={rescheduleDate}
+                    min={new Date().toISOString().slice(0, 10)}
+                    onChange={(event) => setRescheduleDate(event.target.value)}
+                    className="w-full rounded-lg border border-gray-300 dark:border-gray-700 theme-bg-primary theme-text-primary px-3 py-2"
+                    required
+                  />
+                </label>
+                <label className="block">
+                  <span className="block text-sm font-medium theme-text-primary mb-1">Time</span>
+                  <input
+                    type="time"
+                    value={rescheduleTime}
+                    onChange={(event) => setRescheduleTime(event.target.value)}
+                    className="w-full rounded-lg border border-gray-300 dark:border-gray-700 theme-bg-primary theme-text-primary px-3 py-2"
+                    required
+                  />
+                </label>
+                <div className="flex items-end">
+                  <button
+                    type="submit"
+                    className="theme-button-primary w-full"
+                    disabled={saving}
+                  >
+                    {saving ? 'Saving...' : 'Save changes'}
+                  </button>
+                </div>
               </div>
-            </div>
-            <label className="block">
-              <span className="block text-sm font-medium theme-text-primary mb-1">Notes</span>
-              <textarea
-                value={notes}
-                onChange={(event) => setNotes(event.target.value)}
-                className="w-full rounded-lg border border-gray-300 dark:border-gray-700 theme-bg-primary theme-text-primary px-3 py-2"
-                rows={4}
-                placeholder="Add any extra information for the team"
-              />
-            </label>
-          </form>
-        </section>
+              <label className="block">
+                <span className="block text-sm font-medium theme-text-primary mb-1">Notes</span>
+                <textarea
+                  value={notes}
+                  onChange={(event) => setNotes(event.target.value)}
+                  className="w-full rounded-lg border border-gray-300 dark:border-gray-700 theme-bg-primary theme-text-primary px-3 py-2"
+                  rows={4}
+                  placeholder="Add any extra information for the team"
+                />
+              </label>
+            </form>
+          </section>
+        )}
 
         <section className="automotive-card p-6">
           <h2 className="text-xl font-semibold theme-text-primary mb-4">Update status</h2>
@@ -279,18 +283,20 @@ export default function AppointmentDetailPage() {
           </div>
         </section>
 
-        <section className="automotive-card p-6 border border-red-200 dark:border-red-800">
-          <h2 className="text-xl font-semibold text-red-600 dark:text-red-400 mb-4">Danger zone</h2>
-          <p className="theme-text-muted mb-4">Cancel the appointment if the customer no longer needs this service.</p>
-          <button
-            type="button"
-            className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg"
-            onClick={handleCancel}
-            disabled={saving}
-          >
-            Cancel appointment
-          </button>
-        </section>
+        {roles?.includes('CUSTOMER') && (
+          <section className="automotive-card p-6 border border-red-200 dark:border-red-800">
+            <h2 className="text-xl font-semibold text-red-600 dark:text-red-400 mb-4">Danger zone</h2>
+            <p className="theme-text-muted mb-4">Cancel the appointment if you no longer need this service.</p>
+            <button
+              type="button"
+              className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg"
+              onClick={handleCancel}
+              disabled={saving}
+            >
+              Cancel appointment
+            </button>
+          </section>
+        )}
       </div>
 
       {loading && (

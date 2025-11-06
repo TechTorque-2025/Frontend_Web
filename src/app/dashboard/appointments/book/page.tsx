@@ -82,7 +82,7 @@ export default function BookAppointmentPage() {
       setCheckingAvailability(true)
       const result = await appointmentService.checkAvailability({
         date: form.date,
-        serviceType: form.serviceTypeId,
+        serviceType: selectedServiceType?.name || '',
         duration,
       })
       setAvailability(result)
@@ -115,7 +115,7 @@ export default function BookAppointmentPage() {
       setSubmitting(true)
       await appointmentService.bookAppointment({
         vehicleId: form.vehicleId,
-        serviceType: form.serviceTypeId,
+        serviceType: selectedServiceType?.name || '',
         requestedDateTime: requestedDateTime.toISOString(),
         specialInstructions: form.notes || undefined,
       })

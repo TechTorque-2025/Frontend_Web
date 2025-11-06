@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { useEffect, useMemo, useState } from 'react'
 import { projectService } from '@/services/projectService'
 import type { ProjectResponseDto } from '@/types/project'
+import { useDashboard } from '@/app/contexts/DashboardContext'
 
 const STATUS_FILTERS = ['ALL', 'REQUESTED', 'QUOTE_PENDING', 'QUOTE_SUBMITTED', 'QUOTE_APPROVED', 'IN_PROGRESS', 'COMPLETED', 'CANCELLED'] as const
 type StatusFilter = typeof STATUS_FILTERS[number]
@@ -28,11 +29,15 @@ const formatDate = (value?: string) => {
 }
 
 export default function ProjectsPage() {
+  const { roles } = useDashboard()
   const [projects, setProjects] = useState<ProjectResponseDto[]>([])
   const [loading, setLoading] = useState(true)
   const [refreshing, setRefreshing] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('ALL')
+
+  // Check if user is admin or super admin
+  const isAdminUser = roles.includes('SUPER_ADMIN') || roles.includes('ADMIN')
 
   const loadProjects = async () => {
     try {
@@ -94,7 +99,9 @@ export default function ProjectsPage() {
           <p className="theme-text-muted">Request and track custom vehicle modification projects.</p>
         </div>
         <div className="flex flex-wrap items-center gap-3">
-          <Link href="/dashboard/projects/request" className="theme-button-primary">+ Request Project</Link>
+          {roles.includes('CUSTOMER') && (
+            <Link href="/dashboard/projects/request" className="theme-button-primary">+ Request Project</Link>
+          )}
           <button
             type="button"
             className="theme-button-secondary"
@@ -165,7 +172,7 @@ export default function ProjectsPage() {
                 ? "You haven't requested any custom projects yet."
                 : `No ${statusFilter.toLowerCase().replace('_', ' ')} projects.`}
             </p>
-            {projects.length === 0 && (
+            {projects.length === 0 && roles.includes('CUSTOMER') && (
               <Link href="/dashboard/projects/request" className="theme-button-primary inline-block">
                 Request Your First Project
               </Link>
