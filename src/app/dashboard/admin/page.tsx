@@ -126,15 +126,15 @@ export default function AdminPage() {
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               <div className="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900/50 p-5">
                 <p className="text-xs uppercase tracking-wide theme-text-muted">Total customers</p>
-                <p className="text-2xl font-semibold theme-text-primary">{stats.totalCustomers}</p>
+                <p className="text-2xl font-semibold theme-text-primary">{stats.totalCustomers ?? 0}</p>
               </div>
               <div className="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900/50 p-5">
                 <p className="text-xs uppercase tracking-wide theme-text-muted">Total employees</p>
-                <p className="text-2xl font-semibold theme-text-primary">{stats.totalEmployees}</p>
+                <p className="text-2xl font-semibold theme-text-primary">{stats.totalEmployees ?? 0}</p>
               </div>
               <div className="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900/50 p-5">
                 <p className="text-xs uppercase tracking-wide theme-text-muted">Total vehicles</p>
-                <p className="text-2xl font-semibold theme-text-primary">{stats.totalVehicles}</p>
+                <p className="text-2xl font-semibold theme-text-primary">{stats.totalVehicles ?? 0}</p>
               </div>
             </div>
           </div>
@@ -144,19 +144,19 @@ export default function AdminPage() {
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
               <div className="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900/50 p-5">
                 <p className="text-xs uppercase tracking-wide theme-text-muted">Active appointments</p>
-                <p className="text-2xl font-semibold theme-text-primary">{stats.activeAppointments}</p>
+                <p className="text-2xl font-semibold theme-text-primary">{stats.activeAppointments ?? 0}</p>
               </div>
               <div className="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900/50 p-5">
                 <p className="text-xs uppercase tracking-wide theme-text-muted">Completed (month)</p>
-                <p className="text-2xl font-semibold text-green-600 dark:text-green-400">{stats.completedServicesThisMonth}</p>
+                <p className="text-2xl font-semibold text-green-600 dark:text-green-400">{stats.completedServicesThisMonth ?? 0}</p>
               </div>
               <div className="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900/50 p-5">
                 <p className="text-xs uppercase tracking-wide theme-text-muted">Active projects</p>
-                <p className="text-2xl font-semibold text-purple-600 dark:text-purple-400">{stats.activeProjects}</p>
+                <p className="text-2xl font-semibold text-purple-600 dark:text-purple-400">{stats.activeProjects ?? 0}</p>
               </div>
               <div className="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900/50 p-5">
                 <p className="text-xs uppercase tracking-wide theme-text-muted">Pending invoices</p>
-                <p className="text-2xl font-semibold text-amber-600 dark:text-amber-400">{stats.pendingInvoices}</p>
+                <p className="text-2xl font-semibold text-amber-600 dark:text-amber-400">{stats.pendingInvoices ?? 0}</p>
               </div>
             </div>
           </div>
@@ -166,11 +166,11 @@ export default function AdminPage() {
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900/50 p-5">
                 <p className="text-xs uppercase tracking-wide theme-text-muted">Revenue this month</p>
-                <p className="text-2xl font-semibold theme-text-primary">LKR {stats.revenueThisMonth.toLocaleString()}</p>
+                <p className="text-2xl font-semibold theme-text-primary">LKR {(stats.revenueThisMonth ?? 0).toLocaleString()}</p>
               </div>
               <div className="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900/50 p-5">
                 <p className="text-xs uppercase tracking-wide theme-text-muted">Pending invoices count</p>
-                <p className="text-2xl font-semibold text-amber-600 dark:text-amber-400">{stats.pendingInvoices}</p>
+                <p className="text-2xl font-semibold text-amber-600 dark:text-amber-400">{stats.pendingInvoices ?? 0}</p>
               </div>
             </div>
           </div>

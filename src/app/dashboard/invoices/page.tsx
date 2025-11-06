@@ -17,7 +17,10 @@ const statusClasses: Record<string, string> = {
   CANCELLED: 'bg-gray-100 text-gray-700 dark:bg-gray-900/30 dark:text-gray-300',
 }
 
-const formatCurrency = (value: number) => `LKR ${value.toLocaleString(undefined, { minimumFractionDigits: 2 })}`
+const formatCurrency = (value?: number | null) => {
+  const numValue = value ?? 0
+  return `LKR ${numValue.toLocaleString(undefined, { minimumFractionDigits: 2 })}`
+}
 
 const formatDateTime = (value?: string) => {
   if (!value) return '—'
@@ -42,12 +45,14 @@ export default function InvoicesPage() {
     try {
       setRefreshing(true)
       const data = await paymentService.listInvoices()
-      setInvoices(data)
+      // Ensure data is an array
+      setInvoices(Array.isArray(data) ? data : [])
       setError(null)
     } catch (err: unknown) {
       const message = (err as { response?: { data?: { message?: string } } })?.response?.data?.message ||
         'Failed to load invoices'
       setError(message)
+      setInvoices([]) // Set empty array on error
     } finally {
       setLoading(false)
       setRefreshing(false)

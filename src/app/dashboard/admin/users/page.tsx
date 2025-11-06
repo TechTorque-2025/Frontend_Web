@@ -123,11 +123,15 @@ export default function AdminUsersPage() {
                   </td>
                   <td className="px-6 py-4">
                     <div className="flex flex-wrap gap-1">
-                      {user.roles.map((role) => (
-                        <span key={role} className="px-2 py-1 rounded text-xs font-semibold bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300">
-                          {role}
-                        </span>
-                      ))}
+                      {Array.isArray(user.roles) && user.roles.length > 0 ? (
+                        user.roles.map((role) => (
+                          <span key={role} className="px-2 py-1 rounded text-xs font-semibold bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300">
+                            {role}
+                          </span>
+                        ))
+                      ) : (
+                        <span className="text-xs theme-text-muted">No roles</span>
+                      )}
                     </div>
                   </td>
                   <td className="px-6 py-4">

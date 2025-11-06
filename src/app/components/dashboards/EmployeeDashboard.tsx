@@ -38,7 +38,11 @@ const EmployeeDashboard: React.FC<EmployeeDashboardProps> = ({ profile }) => {
         ])
 
         setSchedule(scheduleData)
-        setTimeLogs(timeLogData)
+        // Ensure timeLogData is an array and filter out invalid entries
+        const validTimeLogs = Array.isArray(timeLogData) 
+          ? timeLogData.filter(log => log && log.logId)
+          : []
+        setTimeLogs(validTimeLogs)
         setError(null)
       } catch (err: unknown) {
         const message = (err as { response?: { data?: { message?: string } } })?.response?.data?.message ||
@@ -57,13 +61,13 @@ const EmployeeDashboard: React.FC<EmployeeDashboardProps> = ({ profile }) => {
   ), [schedule])
 
   const totalHoursThisWeek = useMemo(() => (
-    timeLogs.reduce((sum, log) => sum + (log.hoursWorked || 0), 0)
+    timeLogs.reduce((sum, log) => sum + (Number(log.hoursWorked) || 0), 0)
   ), [timeLogs])
 
   const workSummaryByDay = useMemo(() => {
     const summary: Record<string, number> = {}
     timeLogs.forEach((log) => {
-      summary[log.workDate] = (summary[log.workDate] || 0) + (log.hoursWorked || 0)
+      summary[log.workDate] = (summary[log.workDate] || 0) + (Number(log.hoursWorked) || 0)
     })
     return summary
   }, [timeLogs])
@@ -196,9 +200,11 @@ const EmployeeDashboard: React.FC<EmployeeDashboardProps> = ({ profile }) => {
             {timeLogs.length === 0 ? (
               <p className="theme-text-muted text-sm">You haven&apos;t recorded any time logs yet.</p>
             ) : (
-              timeLogs.slice(-5).reverse().map((log) => (
-                <div key={log.logId} className="border border-gray-200 dark:border-gray-700 rounded-lg p-3">
-                  <p className="theme-text-primary text-sm font-medium">{new Date(log.workDate).toLocaleDateString()} • {log.hoursWorked.toFixed(1)} hrs</p>
+              timeLogs.slice(-5).reverse().map((log, index) => (
+                <div key={log.logId || `timelog-${index}`} className="border border-gray-200 dark:border-gray-700 rounded-lg p-3">
+                  <p className="theme-text-primary text-sm font-medium">
+                    {new Date(log.workDate).toLocaleDateString()} • {(Number(log.hoursWorked) || 0).toFixed(1)} hrs
+                  </p>
                   {log.description && <p className="theme-text-muted text-xs mt-1">{log.description}</p>}
                 </div>
               ))

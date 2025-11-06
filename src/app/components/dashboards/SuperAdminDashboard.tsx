@@ -22,19 +22,21 @@ const SuperAdminDashboard: React.FC<SuperAdminDashboardProps> = ({ profile }) =>
       try {
         setLoading(true)
         const [analyticsData, usersData, serviceTypeData, auditLogData] = await Promise.all([
-          adminService.getDashboardAnalytics(),
-          adminService.getAllUsers({}),
-          adminService.getAllServiceTypes(),
-          adminService.getAuditLogs({}),
+          adminService.getDashboardAnalytics().catch(() => null),
+          adminService.getAllUsers({}).catch(() => []),
+          adminService.getAllServiceTypes().catch(() => []),
+          adminService.getAuditLogs({}).catch(() => []),
         ])
 
         setAnalytics(analyticsData)
-        setUsers(usersData.slice(0, 6))
-        setServiceTypes(serviceTypeData.slice(0, 5))
-        setAuditLogs(auditLogData.slice(0, 5))
+        setUsers(Array.isArray(usersData) ? usersData.slice(0, 6) : [])
+        setServiceTypes(Array.isArray(serviceTypeData) ? serviceTypeData.slice(0, 5) : [])
+        setAuditLogs(Array.isArray(auditLogData) ? auditLogData.slice(0, 5) : [])
         setError(null)
       } catch (err: unknown) {
+        console.error('Dashboard loading error:', err)
         const message = (err as { response?: { data?: { message?: string } } })?.response?.data?.message ||
+          (err as Error)?.message ||
           'Failed to load super admin dashboard data'
         setError(message)
       } finally {
@@ -95,12 +97,16 @@ const SuperAdminDashboard: React.FC<SuperAdminDashboardProps> = ({ profile }) =>
             {users.length === 0 ? (
               <p className="theme-text-muted">No users available. Invite your first user.</p>
             ) : (
-              users.map((user) => (
-                <div key={user.userId} className="flex justify-between">
-                  <span className="theme-text-muted">{user.username}</span>
-                  <span className="theme-text-primary text-xs uppercase">{user.roles.join(', ')}</span>
-                </div>
-              ))
+              users
+                .filter((user) => user && user.userId) // Filter out invalid users
+                .map((user, index) => (
+                  <div key={user.userId || `user-${index}`} className="flex justify-between">
+                    <span className="theme-text-muted">{user.username || 'Unknown'}</span>
+                    <span className="theme-text-primary text-xs uppercase">
+                      {Array.isArray(user.roles) ? user.roles.join(', ') : 'N/A'}
+                    </span>
+                  </div>
+                ))
             )}
           </div>
           <div className="mt-4 space-y-2">

@@ -18,15 +18,17 @@ export default function ServicesPage() {
     try {
       setLoading(true);
       const data = await projectService.listCustomerServices();
-      setServices(data);
+      // Ensure data is an array
+      setServices(Array.isArray(data) ? data : []);
     } catch (err) {
       console.error('Failed to load services:', err);
+      setServices([]); // Set empty array on error
     } finally {
       setLoading(false);
     }
   };
 
-  const filteredServices = services.filter(service => 
+  const filteredServices = (services || []).filter(service => 
     statusFilter === 'ALL' || service.status === statusFilter
   );
 
