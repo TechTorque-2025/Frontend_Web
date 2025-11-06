@@ -27,6 +27,7 @@ export default function ProfilePage() {
   const [savingProfile, setSavingProfile] = useState(false)
   const [savingPassword, setSavingPassword] = useState(false)
   const [savingPreferences, setSavingPreferences] = useState(false)
+  const [resendingVerification, setResendingVerification] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState<string | null>(null)
 
@@ -412,6 +413,71 @@ export default function ProfilePage() {
               ) : (
                 <p className="theme-text-muted">Your password is secure. Click above to change it.</p>
               )}
+            </div>
+
+            {/* Email Verification Status */}
+            <div className={`automotive-card p-6 border-l-4 ${profile?.emailVerified ? 'border-green-500 bg-green-50 dark:bg-green-900/10' : 'border-orange-500 bg-orange-50 dark:bg-orange-900/10'}`}>
+              <div className="flex justify-between items-start">
+                <div className="flex-1">
+                  <h2 className="text-2xl font-bold theme-text-primary mb-2">Email Verification</h2>
+                  <div className="space-y-3">
+                    <div className="flex items-center gap-2">
+                      {profile?.emailVerified ? (
+                        <>
+                          <svg className="w-6 h-6 text-green-600 dark:text-green-400" fill="currentColor" viewBox="0 0 20 20">
+                            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                          </svg>
+                          <span className="text-lg font-semibold text-green-700 dark:text-green-400">Email Verified ✓</span>
+                        </>
+                      ) : (
+                        <>
+                          <svg className="w-6 h-6 text-orange-600 dark:text-orange-400" fill="currentColor" viewBox="0 0 20 20">
+                            <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                          </svg>
+                          <span className="text-lg font-semibold text-orange-700 dark:text-orange-400">Email Not Verified</span>
+                        </>
+                      )}
+                    </div>
+
+                    {!profile?.emailVerified && profile?.emailVerificationDeadline && (
+                      <div className="mt-3 p-3 bg-white dark:bg-slate-800 rounded border border-orange-200 dark:border-orange-700">
+                        <p className="text-sm theme-text-secondary mb-2">
+                          <strong>Deadline:</strong> Please verify your email by {new Date(profile.emailVerificationDeadline).toLocaleDateString()} to continue using the service.
+                        </p>
+                        <p className="text-xs theme-text-muted">
+                          Time remaining: {Math.ceil((new Date(profile.emailVerificationDeadline).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24))} days
+                        </p>
+                      </div>
+                    )}
+
+                    {profile?.emailVerified && (
+                      <p className="text-sm theme-text-muted">Your email address has been verified. You have full access to all features.</p>
+                    )}
+                  </div>
+                </div>
+
+                {!profile?.emailVerified && (
+                  <button
+                    onClick={async () => {
+                      setResendingVerification(true)
+                      setError(null)
+                      setSuccess(null)
+                      try {
+                        await authService.resendVerificationEmail(profile?.email || '')
+                        setSuccess('Verification email sent! Please check your inbox.')
+                      } catch (err) {
+                        setError(err instanceof Error ? err.message : 'Failed to resend verification email')
+                      } finally {
+                        setResendingVerification(false)
+                      }
+                    }}
+                    disabled={resendingVerification}
+                    className="ml-4 px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white rounded-lg transition-colors disabled:opacity-50 whitespace-nowrap"
+                  >
+                    {resendingVerification ? 'Sending...' : 'Resend Email'}
+                  </button>
+                )}
+              </div>
             </div>
 
             {/* Preferences */}
