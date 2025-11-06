@@ -10,9 +10,11 @@ import { useState } from 'react';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import { useAuth } from '@/contexts/AuthContext';
 import { UserRole } from '@/types/auth.types';
+import VehiclesTab from '@/components/dashboard/VehiclesTab';
+import ProfileTab from '@/components/dashboard/ProfileTab';
 
 // Dashboard tab types
-type DashboardTab = 'overview' | 'vehicles' | 'appointments' | 'projects' | 'time-logs' | 'users' | 'analytics' | 'reports' | 'services' | 'payments';
+type DashboardTab = 'overview' | 'vehicles' | 'appointments' | 'projects' | 'time-logs' | 'users' | 'analytics' | 'reports' | 'services' | 'payments' | 'profile';
 
 interface TabConfig {
   id: DashboardTab;
@@ -135,6 +137,17 @@ const TAB_CONFIGS: TabConfig[] = [
     roles: [UserRole.ADMIN, UserRole.SUPER_ADMIN],
     description: 'Generate business reports'
   },
+  {
+    id: 'profile',
+    label: 'Profile',
+    icon: (
+      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+      </svg>
+    ),
+    roles: [UserRole.CUSTOMER, UserRole.EMPLOYEE, UserRole.ADMIN, UserRole.SUPER_ADMIN],
+    description: 'View and manage your profile'
+  },
 ];
 
 function DashboardContent() {
@@ -238,17 +251,7 @@ function DashboardContent() {
             </div>
           )}
 
-          {activeTab === 'vehicles' && (
-            <div>
-              <h2 className="text-2xl font-bold theme-text-primary mb-4">My Vehicles</h2>
-              <p className="theme-text-secondary">Manage your registered vehicles here.</p>
-              <div className="mt-6">
-                <button className="theme-button-primary">
-                  + Add New Vehicle
-                </button>
-              </div>
-            </div>
-          )}
+          {activeTab === 'vehicles' && <VehiclesTab />}
 
           {activeTab === 'appointments' && (
             <div>
@@ -330,6 +333,8 @@ function DashboardContent() {
               </div>
             </div>
           )}
+
+          {activeTab === 'profile' && <ProfileTab />}
         </div>
       </div>
     </div>
