@@ -216,6 +216,7 @@ export interface ServiceTypeFormErrors {
   price?: string;
   defaultDurationMinutes?: string;
   category?: string;
+  submit?: string;
 }
 
 export interface UserUpdateFormErrors {
