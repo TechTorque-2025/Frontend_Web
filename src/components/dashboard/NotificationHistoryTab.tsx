@@ -6,6 +6,7 @@ import { notifyService } from '@/lib/api/notify.service';
 import {
   NotificationResponse,
   NotificationFormData,
+  NotificationFormErrors,
   NotificationStatus,
   NOTIFICATION_STATUS_CONFIG,
   NOTIFICATION_TYPE_OPTIONS,
@@ -39,7 +40,7 @@ export default function NotificationHistoryTab() {
     recipientEmail: '',
     recipientPhone: '',
   });
-  const [formErrors, setFormErrors] = useState<Record<string, string>>({});
+  const [formErrors, setFormErrors] = useState<NotificationFormErrors>({});
   const [submitting, setSubmitting] = useState(false);
 
   // Filter state
