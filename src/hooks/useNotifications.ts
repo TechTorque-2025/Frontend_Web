@@ -5,9 +5,24 @@
 
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
-import { Notification, notificationHelpers } from '@/types/notification.types';
+import { notificationHelpers } from '@/types/notification.types';
 
 const WS_URL = process.env.NEXT_PUBLIC_WS_URL || 'ws://localhost:8088';
+
+// Local Notification interface for WebSocket notifications
+export interface Notification {
+  id: string;
+  type: string;
+  title: string;
+  message: string;
+  timestamp: string;
+  read: boolean;
+  entityId?: string;
+  userId?: string;
+  data?: Record<string, unknown>;
+  progress?: number;
+  status?: string;
+}
 
 export interface UseNotificationsReturn {
   notifications: Notification[];

@@ -30,7 +30,7 @@ type DashboardTab = 'overview' | 'vehicles' | 'appointments' | 'projects' | 'tim
 interface TabConfig {
   id: DashboardTab;
   label: string;
-  icon: JSX.Element;
+  icon: React.ReactElement;
   roles: UserRole[];
   description: string;
 }

@@ -116,7 +116,7 @@ export default function Notifications() {
                     No notifications yet
                   </p>
                   <p className="theme-text-secondary text-xs text-center mt-1">
-                    We'll notify you when something important happens
+                    We&apos;ll notify you when something important happens
                   </p>
                 </div>
               ) : (

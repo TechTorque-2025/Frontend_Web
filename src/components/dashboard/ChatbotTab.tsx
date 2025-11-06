@@ -10,7 +10,7 @@ import {
   DOCUMENT_TYPE_OPTIONS,
   DOCUMENT_SOURCE_OPTIONS,
 } from '@/types/chatbot.types';
-import { chatbotValidation, chatbotHelpers } from '@/lib/utils/chatbot-validation';
+import { chatbotValidation } from '@/lib/utils/chatbot-validation';
 import { chatbotHelpers as typeHelpers } from '@/types/chatbot.types';
 
 /**
@@ -50,7 +50,7 @@ export default function ChatbotTab() {
       {
         id: typeHelpers.generateMessageId(),
         role: 'assistant',
-        content: 'Hello! I\'m your TechTorque AI assistant. I can help you with:\n\n• Checking available appointment slots\n• Answering questions about our services\n• General inquiries about vehicle maintenance\n\nHow can I help you today?',
+        content: 'Hello! I&apos;m your TechTorque AI assistant. I can help you with:\n\n• Checking available appointment slots\n• Answering questions about our services\n• General inquiries about vehicle maintenance\n\nHow can I help you today?',
         timestamp: new Date().toISOString(),
       },
     ]);
@@ -120,7 +120,7 @@ export default function ChatbotTab() {
       const errorMessage: ChatHistoryMessage = {
         id: typeHelpers.generateMessageId(),
         role: 'assistant',
-        content: 'I apologize, but I\'m having trouble responding right now. Please try again later.',
+        content: 'I apologize, but I&apos;m having trouble responding right now. Please try again later.',
         timestamp: new Date().toISOString(),
       };
       setMessages((prev) => [...prev, errorMessage]);
