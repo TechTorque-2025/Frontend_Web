@@ -15,6 +15,7 @@ import ProfileTab from '@/components/dashboard/ProfileTab';
 import AppointmentsTab from '@/components/dashboard/AppointmentsTab';
 import ProjectsTab from '@/components/dashboard/ProjectsTab';
 import TimeLogsTab from '@/components/dashboard/TimeLogsTab';
+import PaymentsTab from '@/components/dashboard/PaymentsTab';
 
 // Dashboard tab types
 type DashboardTab = 'overview' | 'vehicles' | 'appointments' | 'projects' | 'time-logs' | 'users' | 'analytics' | 'reports' | 'services' | 'payments' | 'profile';
@@ -262,12 +263,7 @@ function DashboardContent() {
 
           {activeTab === 'time-logs' && <TimeLogsTab />}
 
-          {activeTab === 'payments' && (
-            <div>
-              <h2 className="text-2xl font-bold theme-text-primary mb-4">Payments & Invoices</h2>
-              <p className="theme-text-secondary">View your payment history and invoices.</p>
-            </div>
-          )}
+          {activeTab === 'payments' && <PaymentsTab />}
 
           {activeTab === 'services' && (
             <div>
