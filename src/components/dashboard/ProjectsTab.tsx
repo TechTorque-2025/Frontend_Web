@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
+import { UserRole } from '@/types/auth.types';
 import { projectService } from '@/lib/api/project.service';
 import {
   ProjectDto,
@@ -23,7 +24,7 @@ import { VehicleDto } from '@/types/vehicle.types';
 
 export default function ProjectsTab() {
   const { user, hasAnyRole } = useAuth();
-  const isEmployee = hasAnyRole(['EMPLOYEE', 'ADMIN', 'SUPER_ADMIN']);
+  const isEmployee = hasAnyRole([UserRole.EMPLOYEE, UserRole.ADMIN, UserRole.SUPER_ADMIN]);
 
   const [projects, setProjects] = useState<ProjectDto[]>([]);
   const [vehicles, setVehicles] = useState<VehicleDto[]>([]);
