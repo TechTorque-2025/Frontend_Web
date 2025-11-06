@@ -13,6 +13,7 @@ import { UserRole } from '@/types/auth.types';
 import VehiclesTab from '@/components/dashboard/VehiclesTab';
 import ProfileTab from '@/components/dashboard/ProfileTab';
 import AppointmentsTab from '@/components/dashboard/AppointmentsTab';
+import ProjectsTab from '@/components/dashboard/ProjectsTab';
 
 // Dashboard tab types
 type DashboardTab = 'overview' | 'vehicles' | 'appointments' | 'projects' | 'time-logs' | 'users' | 'analytics' | 'reports' | 'services' | 'payments' | 'profile';
@@ -62,14 +63,14 @@ const TAB_CONFIGS: TabConfig[] = [
   },
   {
     id: 'projects',
-    label: 'Projects',
+    label: 'Custom Projects',
     icon: (
       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
       </svg>
     ),
-    roles: [UserRole.EMPLOYEE, UserRole.ADMIN, UserRole.SUPER_ADMIN],
-    description: 'View and manage service projects'
+    roles: [UserRole.CUSTOMER, UserRole.EMPLOYEE, UserRole.ADMIN, UserRole.SUPER_ADMIN],
+    description: 'Request and manage custom vehicle modifications'
   },
   {
     id: 'time-logs',
@@ -256,12 +257,7 @@ function DashboardContent() {
 
           {activeTab === 'appointments' && <AppointmentsTab />}
 
-          {activeTab === 'projects' && (
-            <div>
-              <h2 className="text-2xl font-bold theme-text-primary mb-4">Projects</h2>
-              <p className="theme-text-secondary">View and manage service projects.</p>
-            </div>
-          )}
+          {activeTab === 'projects' && <ProjectsTab />}
 
           {activeTab === 'time-logs' && (
             <div>
