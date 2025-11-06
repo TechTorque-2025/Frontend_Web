@@ -21,9 +21,10 @@ import AnalyticsTab from '@/components/dashboard/AnalyticsTab';
 import ReportsTab from '@/components/dashboard/ReportsTab';
 import ServicesConfigTab from '@/components/dashboard/ServicesConfigTab';
 import Notifications from '@/components/Notifications';
+import NotificationHistoryTab from '@/components/dashboard/NotificationHistoryTab';
 
 // Dashboard tab types
-type DashboardTab = 'overview' | 'vehicles' | 'appointments' | 'projects' | 'time-logs' | 'users' | 'analytics' | 'reports' | 'services' | 'payments' | 'profile';
+type DashboardTab = 'overview' | 'vehicles' | 'appointments' | 'projects' | 'time-logs' | 'users' | 'analytics' | 'reports' | 'services' | 'payments' | 'notifications' | 'profile';
 
 interface TabConfig {
   id: DashboardTab;
@@ -145,6 +146,17 @@ const TAB_CONFIGS: TabConfig[] = [
     ),
     roles: [UserRole.ADMIN, UserRole.SUPER_ADMIN],
     description: 'Generate business reports'
+  },
+  {
+    id: 'notifications',
+    label: 'Notification History',
+    icon: (
+      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+      </svg>
+    ),
+    roles: [UserRole.CUSTOMER, UserRole.EMPLOYEE, UserRole.ADMIN, UserRole.SUPER_ADMIN],
+    description: 'View notification history and manage notifications'
   },
   {
     id: 'profile',
@@ -278,6 +290,8 @@ function DashboardContent() {
           {activeTab === 'analytics' && <AnalyticsTab />}
 
           {activeTab === 'reports' && <ReportsTab />}
+
+          {activeTab === 'notifications' && <NotificationHistoryTab />}
 
           {activeTab === 'profile' && <ProfileTab />}
         </div>
