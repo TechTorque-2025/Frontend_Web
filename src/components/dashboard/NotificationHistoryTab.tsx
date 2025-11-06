@@ -127,7 +127,7 @@ export default function NotificationHistoryTab() {
     if (!user?.id) return;
 
     try {
-      await notifyService.markAllAsRead(user.id);
+      await notifyService.markAllAsRead(String(user.id));
       await fetchNotifications();
       await fetchUnreadCount();
     } catch (err) {
