@@ -7,6 +7,7 @@ import {
   ChatHistoryMessage,
   RAGStatusResponse,
   DocumentFormData,
+  DocumentFormErrors,
   DOCUMENT_TYPE_OPTIONS,
   DOCUMENT_SOURCE_OPTIONS,
 } from '@/types/chatbot.types';
@@ -35,7 +36,7 @@ export default function ChatbotTab() {
     doc_type: 'general',
     source: 'manual',
   });
-  const [formErrors, setFormErrors] = useState<Record<string, string>>({});
+  const [formErrors, setFormErrors] = useState<DocumentFormErrors>({});
   const [submitting, setSubmitting] = useState(false);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -383,7 +384,7 @@ export default function ChatbotTab() {
                 />
                 {formErrors.content && <p className="theme-error">{formErrors.content}</p>}
                 <p className="text-xs theme-text-secondary mt-1">
-                  This content will be added to the AI's knowledge base for future responses.
+                  This content will be added to the AI&apos;s knowledge base for future responses.
                 </p>
               </div>
 

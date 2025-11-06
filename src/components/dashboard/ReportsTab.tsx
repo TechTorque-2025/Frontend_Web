@@ -148,7 +148,7 @@ export default function ReportsTab() {
           className="theme-card hover:shadow-lg transition-shadow text-left"
         >
           <h3 className="font-bold theme-text-primary mb-2">Revenue Report</h3>
-          <p className="theme-text-secondary text-sm">View current month's revenue breakdown</p>
+          <p className="theme-text-secondary text-sm">View current month&apos;s revenue breakdown</p>
         </button>
         <button
           onClick={() => handleViewQuickReport('services')}
@@ -156,7 +156,7 @@ export default function ReportsTab() {
           className="theme-card hover:shadow-lg transition-shadow text-left"
         >
           <h3 className="font-bold theme-text-primary mb-2">Services Report</h3>
-          <p className="theme-text-secondary text-sm">View current month's services statistics</p>
+          <p className="theme-text-secondary text-sm">View current month&apos;s services statistics</p>
         </button>
         <button
           onClick={() => handleViewQuickReport('customers')}
@@ -164,7 +164,7 @@ export default function ReportsTab() {
           className="theme-card hover:shadow-lg transition-shadow text-left"
         >
           <h3 className="font-bold theme-text-primary mb-2">Customers Report</h3>
-          <p className="theme-text-secondary text-sm">View current month's customer analytics</p>
+          <p className="theme-text-secondary text-sm">View current month&apos;s customer analytics</p>
         </button>
       </div>
 
