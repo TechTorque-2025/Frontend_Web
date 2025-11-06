@@ -12,6 +12,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { UserRole } from '@/types/auth.types';
 import VehiclesTab from '@/components/dashboard/VehiclesTab';
 import ProfileTab from '@/components/dashboard/ProfileTab';
+import AppointmentsTab from '@/components/dashboard/AppointmentsTab';
 
 // Dashboard tab types
 type DashboardTab = 'overview' | 'vehicles' | 'appointments' | 'projects' | 'time-logs' | 'users' | 'analytics' | 'reports' | 'services' | 'payments' | 'profile';
@@ -253,17 +254,7 @@ function DashboardContent() {
 
           {activeTab === 'vehicles' && <VehiclesTab />}
 
-          {activeTab === 'appointments' && (
-            <div>
-              <h2 className="text-2xl font-bold theme-text-primary mb-4">Appointments</h2>
-              <p className="theme-text-secondary">Book and manage your service appointments.</p>
-              <div className="mt-6">
-                <button className="theme-button-primary">
-                  + Book Appointment
-                </button>
-              </div>
-            </div>
-          )}
+          {activeTab === 'appointments' && <AppointmentsTab />}
 
           {activeTab === 'projects' && (
             <div>
