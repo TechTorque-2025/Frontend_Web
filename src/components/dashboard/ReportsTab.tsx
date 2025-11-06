@@ -78,7 +78,7 @@ export default function ReportsTab() {
 
     try {
       setSubmitting(true);
-      const response = await adminService.reports.generateReport(formData, user.id);
+      const response = await adminService.reports.generateReport(formData, String(user.id));
       if (response.success) {
         await fetchReports();
         setShowGenerateModal(false);
