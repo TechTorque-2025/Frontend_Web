@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useCallback } from "react";
 import userService from "../services/userService";
 
 /**
@@ -20,7 +20,7 @@ export const useProfilePhotoCache = (userId?: string) => {
   /**
    * Load photo from cache or server
    */
-  const loadPhoto = async (forceRefresh = false) => {
+  const loadPhoto = useCallback(async (forceRefresh = false) => {
     setLoading(true);
     setError(null);
 
@@ -82,12 +82,12 @@ export const useProfilePhotoCache = (userId?: string) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   /**
    * Upload new photo and invalidate cache
    */
-  const uploadPhoto = async (file: File) => {
+  const uploadPhoto = useCallback(async (file: File) => {
     setLoading(true);
     setError(null);
 
@@ -127,12 +127,12 @@ export const useProfilePhotoCache = (userId?: string) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [loadPhoto]);
 
   /**
    * Delete photo and clear cache
    */
-  const deletePhoto = async () => {
+  const deletePhoto = useCallback(async () => {
     setLoading(true);
     setError(null);
 
@@ -153,12 +153,12 @@ export const useProfilePhotoCache = (userId?: string) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   /**
    * Check if cache needs refresh based on server metadata
    */
-  const checkIfCacheNeedsRefresh = async () => {
+  const checkIfCacheNeedsRefresh = useCallback(async () => {
     try {
       const serverMetadataResp = await userService.getProfilePhotoMetadata();
       const serverMetadata = serverMetadataResp?.data as
@@ -182,7 +182,7 @@ export const useProfilePhotoCache = (userId?: string) => {
       // Silently fail - not critical
       console.debug("Cache validation check failed:", err);
     }
-  };
+  }, [loadPhoto, metadata]);
 
   return {
     photo,

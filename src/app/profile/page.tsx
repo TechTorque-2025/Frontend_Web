@@ -34,7 +34,8 @@ export default function ProfilePage() {
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
   const [uploadingPhoto, setUploadingPhoto] = useState(false);
 
-  const { photo: profilePhoto, uploadPhoto } = useProfilePhotoCache();
+  // Also get the loader from the hook so we can fetch the photo on mount (refresh)
+  const { photo: profilePhoto, uploadPhoto, loadPhoto } = useProfilePhotoCache();
 
   const [editFormData, setEditFormData] = useState({
     fullName: "",
@@ -49,8 +50,17 @@ export default function ProfilePage() {
   });
 
   useEffect(() => {
-    loadProfileAndPreferences();
-  }, []);
+    // Load profile and then load the profile photo (so it works after a refresh)
+    (async () => {
+      await loadProfileAndPreferences();
+      try {
+        await loadPhoto();
+      } catch (e) {
+        // Ignore photo load errors here (photo may not exist)
+        console.debug("Profile photo load failed on mount:", e);
+      }
+    })();
+  }, [loadPhoto]);
 
   const loadProfileAndPreferences = async () => {
     try {
