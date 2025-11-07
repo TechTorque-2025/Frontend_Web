@@ -1,11 +1,11 @@
-'use client';
+"use client";
 
-import React, { useState, useRef } from 'react';
-import useProfilePhotoCache from '@/lib/useProfilePhotoCache';
-import userService from '@/services/userService';
+import React, { useState, useRef } from "react";
+import useProfilePhotoCache from "@/lib/useProfilePhotoCache";
+import userService from "@/services/userService";
 
 interface ProfilePhotoUploadProps {
-  onUploadSuccess?: (photoData: any) => void;
+  onUploadSuccess?: (photoData: unknown) => void;
   onDeleteSuccess?: () => void;
   showPreview?: boolean;
   maxSizeMB?: number;
@@ -26,7 +26,7 @@ export default function ProfilePhotoUpload({
   onDeleteSuccess,
   showPreview = true,
   maxSizeMB = 5,
-  className = '',
+  className = "",
 }: ProfilePhotoUploadProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [dragActive, setDragActive] = useState(false);
@@ -34,7 +34,8 @@ export default function ProfilePhotoUpload({
   const [uploadError, setUploadError] = useState<string | null>(null);
   const [uploadSuccess, setUploadSuccess] = useState(false);
 
-  const { photo, loading, error, uploadPhoto, deletePhoto } = useProfilePhotoCache();
+  const { photo, loading, error, uploadPhoto, deletePhoto } =
+    useProfilePhotoCache();
 
   // Handle file selection (both input and drag-drop)
   const handleFileSelect = async (files: FileList | null) => {
@@ -48,7 +49,7 @@ export default function ProfilePhotoUpload({
       // Validate file
       const validation = userService.validateImageFile(file, maxSizeMB);
       if (!validation.valid) {
-        setUploadError(validation.error || 'Invalid file');
+        setUploadError(validation.error || "Invalid file");
         return;
       }
 
@@ -68,7 +69,7 @@ export default function ProfilePhotoUpload({
 
       // Clear file input
       if (fileInputRef.current) {
-        fileInputRef.current.value = '';
+        fileInputRef.current.value = "";
       }
 
       // Callback
@@ -77,7 +78,7 @@ export default function ProfilePhotoUpload({
       // Clear success message after 3 seconds
       setTimeout(() => setUploadSuccess(false), 3000);
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Upload failed';
+      const message = err instanceof Error ? err.message : "Upload failed";
       setUploadError(message);
     }
   };
@@ -86,9 +87,9 @@ export default function ProfilePhotoUpload({
   const handleDrag = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     e.stopPropagation();
-    if (e.type === 'dragenter' || e.type === 'dragover') {
+    if (e.type === "dragenter" || e.type === "dragover") {
       setDragActive(true);
-    } else if (e.type === 'dragleave') {
+    } else if (e.type === "dragleave") {
       setDragActive(false);
     }
   };
@@ -101,13 +102,15 @@ export default function ProfilePhotoUpload({
   };
 
   const handleDelete = async () => {
-    if (window.confirm('Are you sure you want to delete your profile photo?')) {
+    if (window.confirm("Are you sure you want to delete your profile photo?")) {
       try {
         await deletePhoto();
         setPreviewUrl(null);
         onDeleteSuccess?.();
       } catch (err) {
-        setUploadError('Failed to delete photo');
+        const message =
+          err instanceof Error ? err.message : "Failed to delete photo";
+        setUploadError(message);
       }
     }
   };
@@ -123,8 +126,8 @@ export default function ProfilePhotoUpload({
         onClick={() => fileInputRef.current?.click()}
         className={`relative border-2 border-dashed rounded-lg p-8 cursor-pointer transition-colors ${
           dragActive
-            ? 'border-blue-500 bg-blue-50'
-            : 'border-gray-300 hover:border-gray-400 bg-gray-50'
+            ? "border-blue-500 bg-blue-50"
+            : "border-gray-300 hover:border-gray-400 bg-gray-50"
         }`}
       >
         <input
@@ -152,7 +155,7 @@ export default function ProfilePhotoUpload({
           <p className="text-sm font-medium text-gray-700">Preview:</p>
           <div className="relative w-full max-w-xs mx-auto rounded-lg overflow-hidden border border-gray-200">
             <img
-              src={previewUrl || photo || ''}
+              src={previewUrl || photo || ""}
               alt="Profile preview"
               className="w-full h-auto object-cover"
             />

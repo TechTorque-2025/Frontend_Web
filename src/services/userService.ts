@@ -1,32 +1,31 @@
-import api from '../lib/apiClient';
-import type { 
-  UpdateUserRequest, 
-  RoleAssignmentRequest, 
-  ResetPasswordRequest, 
-  ChangePasswordRequest 
-} from '../types/api';
+import api from "../lib/apiClient";
+import type {
+  UpdateUserRequest,
+  RoleAssignmentRequest,
+  ResetPasswordRequest,
+  ChangePasswordRequest,
+} from "../types/api";
 
 // Image size constants (must match backend)
-const MIN_IMAGE_SIZE = 1024;  // 1KB
-const MAX_IMAGE_SIZE = 5_242_880;  // 5MB
+const MIN_IMAGE_SIZE = 1024; // 1KB
 const ALLOWED_MIME_TYPES = [
-  'image/jpeg',
-  'image/jpg',
-  'image/png',
-  'image/gif',
-  'image/webp',
-  'image/bmp',
-  'image/tiff'
+  "image/jpeg",
+  "image/jpg",
+  "image/png",
+  "image/gif",
+  "image/webp",
+  "image/bmp",
+  "image/tiff",
 ];
 
 export const userService = {
   getCurrentProfile() {
     // Correct Path: /users/me
-    return api.get('/users/me');
+    return api.get("/users/me");
   },
   getAllUsers() {
     // Correct Path: /users
-    return api.get('/users');
+    return api.get("/users");
   },
   getUserByUsername(username: string) {
     // Correct Path: /users/{username}
@@ -51,17 +50,20 @@ export const userService = {
     return api.post(`/users/${encodeURIComponent(username)}/roles`, payload);
   },
   resetUserPassword(username: string, payload: ResetPasswordRequest) {
-    return api.post(`/users/${encodeURIComponent(username)}/reset-password`, payload);
+    return api.post(
+      `/users/${encodeURIComponent(username)}/reset-password`,
+      payload
+    );
   },
   changeCurrentUserPassword(payload: ChangePasswordRequest) {
     // Correct Path: /users/me/change-password
-    return api.post('/users/me/change-password', payload);
+    return api.post("/users/me/change-password", payload);
   },
   updateProfile(fullName: string, phone: string, address: string) {
-    return api.put('/users/profile', { fullName, phone, address });
+    return api.put("/users/profile", { fullName, phone, address });
   },
   uploadProfilePhoto(photoUrl: string) {
-    return api.post('/users/profile/photo', { photoUrl });
+    return api.post("/users/profile/photo", { photoUrl });
   },
 
   // New BLOB-based profile photo endpoints with caching support
@@ -71,8 +73,8 @@ export const userService = {
    * - Stores as binary data in database
    * - Automatically invalidates cache
    */
-  uploadProfilePhotoBlob(base64Image: string, mimeType: string = 'image/jpeg') {
-    return api.post('/users/profile-photo', { base64Image, mimeType });
+  uploadProfilePhotoBlob(base64Image: string, mimeType: string = "image/jpeg") {
+    return api.post("/users/profile-photo", { base64Image, mimeType });
   },
 
   /**
@@ -81,7 +83,7 @@ export const userService = {
    * - Cached for performance (only refreshed when updated)
    */
   getProfilePhoto() {
-    return api.get('/users/profile-photo');
+    return api.get("/users/profile-photo");
   },
 
   /**
@@ -90,7 +92,7 @@ export const userService = {
    * - Useful for direct image display
    */
   getProfilePhotoBinary() {
-    return api.get('/users/profile-photo/binary', { responseType: 'blob' });
+    return api.get("/users/profile-photo/binary", { responseType: "blob" });
   },
 
   /**
@@ -99,7 +101,7 @@ export const userService = {
    * - Use for conditional requests (If-Modified-Since)
    */
   getProfilePhotoMetadata() {
-    return api.get('/users/profile-photo/metadata');
+    return api.get("/users/profile-photo/metadata");
   },
 
   /**
@@ -108,7 +110,7 @@ export const userService = {
    * - Clears cache
    */
   deleteProfilePhoto() {
-    return api.delete('/users/profile-photo');
+    return api.delete("/users/profile-photo");
   },
 
   // Image conversion utilities
@@ -129,12 +131,15 @@ export const userService = {
    * Validate image file before upload
    * Checks MIME type, size, and format
    */
-  validateImageFile(file: File, maxSizeMB: number = 5): { valid: boolean; error?: string } {
+  validateImageFile(
+    file: File,
+    maxSizeMB: number = 5
+  ): { valid: boolean; error?: string } {
     // Check MIME type
     if (!file.type || !ALLOWED_MIME_TYPES.includes(file.type)) {
       return {
         valid: false,
-        error: `Invalid file type: ${file.type}. Allowed types: JPEG, PNG, GIF, WebP, BMP, TIFF`
+        error: `Invalid file type: ${file.type}. Allowed types: JPEG, PNG, GIF, WebP, BMP, TIFF`,
       };
     }
 
@@ -142,7 +147,9 @@ export const userService = {
     if (file.size < MIN_IMAGE_SIZE) {
       return {
         valid: false,
-        error: `Image is too small (${this.formatFileSize(file.size)}). Minimum: ${this.formatFileSize(MIN_IMAGE_SIZE)}`
+        error: `Image is too small (${this.formatFileSize(
+          file.size
+        )}). Minimum: ${this.formatFileSize(MIN_IMAGE_SIZE)}`,
       };
     }
 
@@ -151,7 +158,9 @@ export const userService = {
     if (file.size > maxSizeBytes) {
       return {
         valid: false,
-        error: `Image size (${this.formatFileSize(file.size)}) exceeds limit of ${maxSizeMB}MB`
+        error: `Image size (${this.formatFileSize(
+          file.size
+        )}) exceeds limit of ${maxSizeMB}MB`,
       };
     }
 
@@ -162,16 +171,23 @@ export const userService = {
    * Format file size in human-readable format
    */
   formatFileSize(bytes: number): string {
-    if (bytes < 1024) return bytes + ' B';
-    if (bytes < 1_048_576) return (bytes / 1024).toFixed(2) + ' KB';
-    if (bytes < 1_073_741_824) return (bytes / 1_048_576).toFixed(2) + ' MB';
-    return (bytes / 1_073_741_824).toFixed(2) + ' GB';
+    if (bytes < 1024) return bytes + " B";
+    if (bytes < 1_048_576) return (bytes / 1024).toFixed(2) + " KB";
+    if (bytes < 1_073_741_824) return (bytes / 1_048_576).toFixed(2) + " MB";
+    return (bytes / 1_073_741_824).toFixed(2) + " GB";
   },
 
   /**
    * Check if file is a valid image without uploading
    */
-  validateImageFormat(file: File): Promise<{ valid: boolean; width?: number; height?: number; error?: string }> {
+  validateImageFormat(
+    file: File
+  ): Promise<{
+    valid: boolean;
+    width?: number;
+    height?: number;
+    error?: string;
+  }> {
     return new Promise((resolve) => {
       const img = new Image();
       const objectUrl = URL.createObjectURL(file);
@@ -181,7 +197,7 @@ export const userService = {
         resolve({
           valid: true,
           width: img.width,
-          height: img.height
+          height: img.height,
         });
       };
 
@@ -189,7 +205,7 @@ export const userService = {
         URL.revokeObjectURL(objectUrl);
         resolve({
           valid: false,
-          error: 'Invalid image file or corrupted data'
+          error: "Invalid image file or corrupted data",
         });
       };
 
@@ -198,10 +214,10 @@ export const userService = {
   },
 
   getUserPreferences() {
-    return api.get('/users/preferences');
+    return api.get("/users/preferences");
   },
-  updateUserPreferences(preferences: any) {
-    return api.put('/users/preferences', preferences);
+  updateUserPreferences(preferences: Record<string, unknown>) {
+    return api.put("/users/preferences", preferences);
   },
 };
 
