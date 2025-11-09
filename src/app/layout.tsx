@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import Script from "next/script";
 import "./globals.css";
 import { ThemeProvider } from "./contexts/ThemeContext";
 
@@ -29,6 +30,8 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         suppressHydrationWarning
       >
+        {/* Runtime configuration - injected at container startup */}
+        <Script src="/runtime-config.js" strategy="beforeInteractive" />
         <ThemeProvider>
           {children}
         </ThemeProvider>
