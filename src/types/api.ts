@@ -7,9 +7,12 @@ export interface LoginRequest {
 }
 
 export interface RegisterRequest {
-  username: string;
+  username?: string;
+  fullName: string;
   email: string;
   password: string;
+  phone?: string;
+  address?: string;
   roles?: string[];
 }
 
@@ -35,8 +38,14 @@ export interface UserDto {
   id: number;
   username: string;
   email: string;
+  fullName?: string;
+  phone?: string;
+  address?: string;
+  profilePhoto?: string;
   enabled: boolean;
+  emailVerified?: boolean;
   createdAt: string;
+  emailVerificationDeadline?: string;
   roles: string[];
   permissions: string[];
 }

@@ -33,7 +33,20 @@ apiClient.interceptors.response.use(
         window.location.href = '/auth/login';
       }
     }
-    return Promise.reject(error);
+
+    // Extract meaningful error message from response
+    let errorMessage = 'An error occurred';
+    if (error.response?.data) {
+      const data = error.response.data;
+      // Try different possible error message fields
+      errorMessage = data.message || data.error || data.msg || JSON.stringify(data);
+    } else if (error.message) {
+      errorMessage = error.message;
+    }
+
+    // Create a new error with the extracted message
+    const enhancedError = new Error(errorMessage);
+    return Promise.reject(enhancedError);
   }
 );
 

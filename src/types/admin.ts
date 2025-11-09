@@ -1,0 +1,138 @@
+// Admin & Reporting TypeScript Interfaces
+
+// ===== USER MANAGEMENT =====
+export interface UserResponse {
+  userId: string;
+  username: string;
+  email: string;
+  fullName?: string;
+  phone?: string;
+  roles: string[];
+  enabled: boolean;
+  accountLocked: boolean;
+  emailVerified: boolean;
+  createdAt: string;
+  updatedAt: string;
+  lastLoginAt?: string;
+}
+
+export interface UpdateUserRequest {
+  fullName?: string;
+  email?: string;
+  phone?: string;
+  roles?: string[];
+  enabled?: boolean;
+}
+
+// ===== SERVICE TYPE CONFIGURATION =====
+export interface ServiceTypeResponse {
+  id: string;
+  name: string;
+  category: string;
+  description?: string;
+  basePriceLKR: number;
+  estimatedDurationMinutes: number;
+  active: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface UpdateServiceTypeRequest {
+  name: string;
+  category: string;
+  description?: string;
+  basePriceLKR: number;
+  estimatedDurationMinutes: number;
+  active?: boolean;
+}
+
+// ===== SYSTEM CONFIGURATION =====
+export interface SystemConfigurationResponse {
+  key: string;
+  value: string;
+  dataType: 'STRING' | 'NUMBER' | 'BOOLEAN' | 'JSON';
+  description?: string;
+  category?: string;
+  updatedAt: string;
+  updatedBy?: string;
+}
+
+export interface UpdateConfigRequest {
+  key: string;
+  value: string;
+  dataType: 'STRING' | 'NUMBER' | 'BOOLEAN' | 'JSON';
+  description?: string;
+  category?: string;
+}
+
+// ===== ANALYTICS & DASHBOARD =====
+export interface AnalyticsDashboardResponse {
+  totalCustomers: number;
+  totalVehicles: number;
+  totalEmployees: number;
+  activeAppointments: number;
+  completedServicesThisMonth: number;
+  revenueThisMonth: number;
+  pendingInvoices: number;
+  activeProjects: number;
+  recentAppointments: Array<{
+    id: string;
+    customerId: string;
+    customerName?: string;
+    serviceType: string;
+    date: string;
+    status: string;
+  }>;
+  revenueByMonth: Array<{
+    month: string;
+    revenue: number;
+  }>;
+  topServices: Array<{
+    serviceName: string;
+    count: number;
+  }>;
+}
+
+// ===== REPORTS =====
+export interface ReportRequest {
+  reportType: 'REVENUE' | 'SERVICES' | 'CUSTOMERS' | 'EMPLOYEES' | 'INVENTORY';
+  from: string; // YYYY-MM-DD
+  to: string;
+  format?: 'PDF' | 'EXCEL' | 'CSV';
+  filters?: Record<string, unknown>;
+}
+
+export interface ReportResponse {
+  reportId: string;
+  reportType: string;
+  from: string;
+  to: string;
+  format: string;
+  status: 'PENDING' | 'COMPLETED' | 'FAILED';
+  fileUrl?: string;
+  fileName?: string;
+  createdAt: string;
+  createdBy: string;
+  completedAt?: string;
+}
+
+// ===== AUDIT LOGS =====
+export interface AuditLogResponse {
+  logId: string;
+  userId: string;
+  username?: string;
+  action: string;
+  entityType: string;
+  entityId?: string;
+  details?: string;
+  ipAddress?: string;
+  userAgent?: string;
+  timestamp: string;
+}
+
+// ===== GENERIC API RESPONSE =====
+export interface ApiResponse<T = unknown> {
+  success: boolean;
+  message: string;
+  data?: T;
+}
