@@ -44,6 +44,10 @@ COPY --from=builder /app/public ./public
 COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
 
+# Copy entrypoint script
+COPY entrypoint.sh /app/entrypoint.sh
+RUN chmod +x /app/entrypoint.sh
+
 # Change ownership to nextjs user
 RUN chown -R nextjs:nodejs /app
 
@@ -57,5 +61,5 @@ EXPOSE 3000
 ENV HOSTNAME="0.0.0.0"
 ENV PORT=3000
 
-# Start the Next.js server
-CMD ["node", "server.js"]
+# Start via entrypoint script (generates runtime config)
+CMD ["/app/entrypoint.sh"]
