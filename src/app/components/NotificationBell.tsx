@@ -1,20 +1,13 @@
 'use client'
 import Link from 'next/link'
 import { useEffect, useRef, useState } from 'react'
-import notificationService from '@/services/notificationService'
-import type { NotificationResponse } from '@/types/notification'
+import { useNotifications } from '@/app/contexts/NotificationContext'
 
 export default function NotificationBell() {
-  const [unreadCount, setUnreadCount] = useState<number>(0)
-  const [notifications, setNotifications] = useState<NotificationResponse[]>([])
+  const { notifications, unreadCount, loading, markAsRead, markAllAsRead, fetchNotifications, isConnected } = useNotifications()
   const [open, setOpen] = useState(false)
-  const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const panelRef = useRef<HTMLDivElement | null>(null)
-
-  useEffect(() => {
-    refreshUnreadCount()
-  }, [])
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -32,43 +25,18 @@ export default function NotificationBell() {
     return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [open])
 
-  const refreshUnreadCount = async () => {
-    try {
-      const count = await notificationService.getUnreadCount()
-      setUnreadCount(count)
-    } catch (err: unknown) {
-      console.error('Failed to load unread notifications', err)
-    }
-  }
-
-  const loadNotifications = async () => {
-    try {
-      setLoading(true)
-      const data = await notificationService.getNotifications()
-      setNotifications(data)
-      setError(null)
-    } catch (err: unknown) {
-      const message = (err as { response?: { data?: { message?: string } } }).response?.data?.message || 'Failed to load notifications'
-      setError(message)
-    } finally {
-      setLoading(false)
-    }
-  }
-
   const handleToggle = async () => {
     const nextState = !open
     setOpen(nextState)
     if (nextState) {
-      await loadNotifications()
-      await refreshUnreadCount()
+      await fetchNotifications()
     }
   }
 
   const handleMarkAsRead = async (notificationId: string) => {
     try {
-      await notificationService.markAsRead(notificationId, true)
-      await loadNotifications()
-      await refreshUnreadCount()
+      await markAsRead(notificationId)
+      setError(null)
     } catch (err: unknown) {
       const message = (err as { response?: { data?: { message?: string } } }).response?.data?.message || 'Failed to mark notification as read'
       setError(message)
@@ -77,9 +45,8 @@ export default function NotificationBell() {
 
   const handleMarkAllAsRead = async () => {
     try {
-      await notificationService.markAllAsRead()
-      await loadNotifications()
-      await refreshUnreadCount()
+      await markAllAsRead()
+      setError(null)
     } catch (err: unknown) {
       const message = (err as { response?: { data?: { message?: string } } }).response?.data?.message || 'Failed to mark notifications as read'
       setError(message)
@@ -111,6 +78,9 @@ export default function NotificationBell() {
           <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full px-2 py-[1px]">
             {unreadCount}
           </span>
+        )}
+        {isConnected && (
+          <span className="absolute bottom-0 right-0 w-2 h-2 bg-green-500 rounded-full border-2 border-white dark:border-gray-800" title="Real-time connected"></span>
         )}
       </button>
 
