@@ -67,9 +67,10 @@ export default function AppointmentDetailPage() {
 
     try {
       setSaving(true)
-      const requestedDateTime = new Date(`${rescheduleDate}T${rescheduleTime}`)
+      // Format as local datetime without timezone conversion (backend expects LocalDateTime)
+      const requestedDateTime = `${rescheduleDate}T${rescheduleTime}:00`
       const updated = await appointmentService.updateAppointment(appointment.id, {
-        requestedDateTime: requestedDateTime.toISOString(),
+        requestedDateTime: requestedDateTime,
         specialInstructions: notes || undefined,
       })
       setAppointment(updated)

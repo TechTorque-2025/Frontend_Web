@@ -5,6 +5,7 @@ import { usePathname } from 'next/navigation'
 import ThemeToggle from '@/app/components/ThemeToggle'
 import NotificationBell from '@/app/components/NotificationBell'
 import { DashboardProvider, useDashboard } from '@/app/contexts/DashboardContext'
+import { NotificationProvider } from '@/app/contexts/NotificationContext'
 import { authService } from '@/services/authService'
 
 interface NavItem {
@@ -20,8 +21,18 @@ interface NavSection {
 export default function DashboardLayout({ children }: { children: ReactNode }) {
   return (
     <DashboardProvider>
-      <DashboardShell>{children}</DashboardShell>
+      <DashboardShellWithNotifications>{children}</DashboardShellWithNotifications>
     </DashboardProvider>
+  )
+}
+
+function DashboardShellWithNotifications({ children }: { children: ReactNode }) {
+  const { profile } = useDashboard()
+
+  return (
+    <NotificationProvider userId={profile?.id ? String(profile.id) : null}>
+      <DashboardShell>{children}</DashboardShell>
+    </NotificationProvider>
   )
 }
 

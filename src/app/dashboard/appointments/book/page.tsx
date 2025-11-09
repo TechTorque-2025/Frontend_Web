@@ -109,14 +109,15 @@ export default function BookAppointmentPage() {
       return
     }
 
-    const requestedDateTime = new Date(`${form.date}T${form.time}`)
+    // Format as local datetime without timezone conversion (backend expects LocalDateTime)
+    const requestedDateTime = `${form.date}T${form.time}:00`
 
     try {
       setSubmitting(true)
       await appointmentService.bookAppointment({
         vehicleId: form.vehicleId,
         serviceType: selectedServiceType?.name || '',
-        requestedDateTime: requestedDateTime.toISOString(),
+        requestedDateTime: requestedDateTime,
         specialInstructions: form.notes || undefined,
       })
       setSuccessMessage('Appointment booked successfully. Redirecting...')
