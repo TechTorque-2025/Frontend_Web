@@ -24,10 +24,12 @@ export default function LoginPage() {
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [warning, setWarning] = useState<string | null>(null);
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError(null);
+    setWarning(null);
     setLoading(true);
     const form = e.currentTarget;
     const formData = new FormData(form);
@@ -36,8 +38,17 @@ export default function LoginPage() {
       password: (formData.get('password') as string) || '',
     };
     try {
-      await authService.login(payload);
-      router.push('/dashboard');
+      const response = await authService.login(payload);
+
+      // Check if email is not verified and show warning
+      if (response.emailVerified === false) {
+        setWarning('⚠️ Please verify your email within 7 days to continue using the service. Check your inbox for the verification link.');
+        setTimeout(() => {
+          router.push('/dashboard');
+        }, 3000);
+      } else {
+        router.push('/dashboard');
+      }
     } catch (err: unknown) {
       const errorMessage = err instanceof Error ? err.message : 'Login failed';
       setError(errorMessage);
@@ -142,10 +153,14 @@ export default function LoginPage() {
                     {error}
                   </div>
                 )}
+                {warning && (
+                  <div role="alert" className="mt-4 text-sm text-yellow-600">
+                    {warning}
+                  </div>
+                )}
              </div>
          </div>
       </main>
     </div>
   );
 }
-
