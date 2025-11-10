@@ -106,6 +106,19 @@ export const projectService = {
     return res.data;
   },
 
+  // Admin: Approve/Reject Projects
+  async adminApproveProject(projectId: string): Promise<ApiResponse> {
+    const res = await api.post(`/projects/${projectId}/approve`);
+    return res.data;
+  },
+
+  async adminRejectProject(projectId: string, reason?: string): Promise<ApiResponse> {
+    const res = await api.post(`/projects/${projectId}/admin/reject`, null, {
+      params: { reason }
+    });
+    return res.data;
+  },
+
   // Project Photos
   async getProjectPhotos(projectId: string): Promise<string[]> {
     const res = await api.get(`/projects/${projectId}/photos`);
