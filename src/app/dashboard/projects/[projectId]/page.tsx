@@ -9,13 +9,14 @@ import { useDashboard } from '@/app/contexts/DashboardContext';
 export default function ProjectDetailPage() {
   const params = useParams();
   const router = useRouter();
-  const { profile } = useDashboard();
+  const { profile, roles } = useDashboard();
   const projectId = params.projectId as string;
 
   const [project, setProject] = useState<ProjectResponseDto | null>(null);
   const [loading, setLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState(false);
   const [error, setError] = useState('');
+  const [rejectionReason, setRejectionReason] = useState('');
 
   const loadProject = async () => {
     try {
@@ -65,6 +66,43 @@ export default function ProjectDetailPage() {
     }
   };
 
+  const handleAdminApprove = async () => {
+    if (!project || !confirm('Are you sure you want to approve this project? The linked appointment will be confirmed.')) return;
+
+    try {
+      setActionLoading(true);
+      await projectService.adminApproveProject(projectId);
+      await loadProject();
+      alert('Project approved successfully! Customer has been notified.');
+    } catch (err) {
+      console.error('Failed to approve project:', err);
+      alert(err instanceof Error ? err.message : 'Failed to approve project');
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  const handleAdminReject = async () => {
+    if (!project) return;
+
+    const reason = window.prompt('Please provide a reason for rejection (optional):');
+    if (reason === null) return; // User cancelled
+
+    if (!confirm('Are you sure you want to reject this project? The linked appointment will be cancelled.')) return;
+
+    try {
+      setActionLoading(true);
+      await projectService.adminRejectProject(projectId, reason || undefined);
+      await loadProject();
+      alert('Project rejected. Customer has been notified.');
+    } catch (err) {
+      console.error('Failed to reject project:', err);
+      alert(err instanceof Error ? err.message : 'Failed to reject project');
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
       year: 'numeric',
@@ -79,11 +117,14 @@ export default function ProjectDetailPage() {
 
   const statusStyles: Record<ProjectStatus, string> = {
     REQUESTED: 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400',
+    PENDING_ADMIN_REVIEW: 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400',
     QUOTE_PENDING: 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400',
     QUOTE_SUBMITTED: 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400',
     QUOTE_APPROVED: 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400',
+    APPROVED: 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400',
     IN_PROGRESS: 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-400',
     COMPLETED: 'bg-teal-100 text-teal-700 dark:bg-teal-900/30 dark:text-teal-400',
+    REJECTED: 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400',
     CANCELLED: 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400',
   };
 
@@ -117,7 +158,9 @@ export default function ProjectDetailPage() {
   }
 
   const isCustomer = profile?.roles?.includes('CUSTOMER');
+  const isAdmin = roles?.includes('ADMIN') || roles?.includes('SUPER_ADMIN');
   const canApproveQuote = isCustomer && project.status === 'QUOTE_SUBMITTED';
+  const canAdminApprove = isAdmin && (project.status === 'REQUESTED' || project.status === 'PENDING_ADMIN_REVIEW');
 
   return (
     <div className="max-w-5xl mx-auto p-6">
@@ -137,12 +180,51 @@ export default function ProjectDetailPage() {
           <div>
             <h1 className="text-3xl font-bold theme-text-primary mb-2">{project.projectType}</h1>
             <p className="theme-text-muted">Project ID: {project.id}</p>
+            {project.appointmentId && (
+              <p className="theme-text-muted text-sm">Linked to appointment: {project.appointmentId}</p>
+            )}
           </div>
           <span className={`inline-flex items-center px-4 py-2 rounded-full text-sm font-semibold ${statusStyles[project.status]}`}>
             {project.status.replace('_', ' ')}
           </span>
         </div>
       </div>
+
+      {/* Admin Approval Actions */}
+      {canAdminApprove && (
+        <div className="mb-6 p-6 rounded-xl border-2 border-purple-200 dark:border-purple-800 bg-purple-50 dark:bg-purple-900/20">
+          <div className="flex items-start gap-4">
+            <div className="flex-shrink-0 w-12 h-12 rounded-full bg-purple-600 flex items-center justify-center">
+              <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+            <div className="flex-1">
+              <h3 className="text-lg font-semibold theme-text-primary mb-1">Admin Review Required</h3>
+              <p className="theme-text-secondary text-sm mb-4">
+                This custom project is awaiting admin approval. Review the details below and approve or reject the project.
+                {project.appointmentId && ' The linked appointment will be automatically confirmed or cancelled based on your decision.'}
+              </p>
+              <div className="flex gap-3">
+                <button
+                  onClick={handleAdminApprove}
+                  disabled={actionLoading}
+                  className="px-6 py-2.5 bg-green-600 hover:bg-green-700 disabled:bg-green-400 text-white rounded-lg font-semibold transition-colors disabled:cursor-not-allowed"
+                >
+                  {actionLoading ? 'Processing...' : 'Approve Project'}
+                </button>
+                <button
+                  onClick={handleAdminReject}
+                  disabled={actionLoading}
+                  className="px-6 py-2.5 border border-red-600 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  Reject Project
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Quote Actions (for customers) */}
       {canApproveQuote && (
