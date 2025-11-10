@@ -165,8 +165,9 @@ export default function AdminUsersPage() {
           <h1 className="text-3xl font-bold theme-text-primary mb-2">User Management</h1>
           <p className="theme-text-muted">Manage system users and their roles</p>
         </div>
-        {isSuperAdmin && (
-          <div className="flex gap-2">
+        <div className="flex gap-2">
+          {/* Regular ADMIN can create employees */}
+          {isAdmin && (
             <button
               onClick={() => {
                 setCreateUserType('employee');
@@ -176,6 +177,9 @@ export default function AdminUsersPage() {
             >
               + Add Employee
             </button>
+          )}
+          {/* Only SUPER_ADMIN can create other admins */}
+          {isSuperAdmin && (
             <button
               onClick={() => {
                 setCreateUserType('admin');
@@ -185,8 +189,8 @@ export default function AdminUsersPage() {
             >
               + Add Admin
             </button>
-          </div>
-        )}
+          )}
+        </div>
       </div>
 
       {/* Stats */}
