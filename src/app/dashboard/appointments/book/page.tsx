@@ -82,7 +82,7 @@ export default function BookAppointmentPage() {
       setCheckingAvailability(true)
       const result = await appointmentService.checkAvailability({
         date: form.date,
-        serviceType: form.serviceTypeId,
+        serviceType: selectedServiceType?.name || '',
         duration,
       })
       setAvailability(result)
@@ -109,14 +109,15 @@ export default function BookAppointmentPage() {
       return
     }
 
-    const requestedDateTime = new Date(`${form.date}T${form.time}`)
+    // Format as local datetime without timezone conversion (backend expects LocalDateTime)
+    const requestedDateTime = `${form.date}T${form.time}:00`
 
     try {
       setSubmitting(true)
       await appointmentService.bookAppointment({
         vehicleId: form.vehicleId,
-        serviceType: form.serviceTypeId,
-        requestedDateTime: requestedDateTime.toISOString(),
+        serviceType: selectedServiceType?.name || '',
+        requestedDateTime: requestedDateTime,
         specialInstructions: form.notes || undefined,
       })
       setSuccessMessage('Appointment booked successfully. Redirecting...')

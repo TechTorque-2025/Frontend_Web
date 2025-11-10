@@ -83,17 +83,16 @@ export interface InvoiceItemDto {
   quantity: number;
   unitPrice: number;
   totalPrice: number;
+  itemType?: string; // LABOR, PARTS, SERVICE_FEE, etc.
 }
 
 export interface CreateInvoiceDto {
   customerId: string;
-  serviceId?: string;
-  projectId?: string;
+  serviceOrProjectId: string; // Backend expects this field name
   items: InvoiceItemDto[];
-  taxAmount?: number;
-  discountAmount?: number;
   notes?: string;
   dueDate?: string;
+  requiresDeposit?: boolean; // Enable 50-50 part-payment
 }
 
 export interface InvoiceResponseDto {
@@ -111,13 +110,21 @@ export interface InvoiceResponseDto {
   totalAmount: number;
   paidAmount: number;
   balanceAmount: number;
-  status: 'DRAFT' | 'SENT' | 'PAID' | 'OVERDUE' | 'CANCELLED';
+  status: 'DRAFT' | 'SENT' | 'PAID' | 'OVERDUE' | 'CANCELLED' | 'PARTIALLY_PAID';
   notes?: string;
   dueDate?: string;
   issuedAt: string;
   paidAt?: string;
   createdAt: string;
   updatedAt: string;
+  // Part-payment fields
+  requiresDeposit?: boolean;
+  depositAmount?: number;
+  depositPaid?: number;
+  depositPaidAt?: string;
+  finalAmount?: number;
+  finalPaid?: number;
+  finalPaidAt?: string;
 }
 
 export interface SendInvoiceDto {

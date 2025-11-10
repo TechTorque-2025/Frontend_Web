@@ -15,6 +15,8 @@ export const timeLoggingService = {
   },
 
   // Get My Time Logs
+  // Note: Backend automatically returns all logs for ADMIN/SUPER_ADMIN roles
+  // and only user's own logs for EMPLOYEE role
   async getMyTimeLogs(params?: {
     from?: string; // YYYY-MM-DD
     to?: string;   // YYYY-MM-DD

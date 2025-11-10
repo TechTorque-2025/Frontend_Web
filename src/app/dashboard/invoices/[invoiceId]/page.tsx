@@ -3,6 +3,8 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { paymentService } from '@/services/paymentService'
+import { userService } from '@/services/userService'
+import PaymentGateway from '@/app/components/PaymentGateway'
 import type { InvoiceResponseDto } from '@/types/payment'
 
 const formatCurrency = (value: number) => `LKR ${value.toLocaleString(undefined, { minimumFractionDigits: 2 })}`
@@ -41,6 +43,13 @@ export default function InvoiceDetailPage() {
   const [email, setEmail] = useState('')
   const [emailMessage, setEmailMessage] = useState('')
   const [paymentNotes, setPaymentNotes] = useState('')
+  const [userProfile, setUserProfile] = useState<{
+    firstName?: string,
+    lastName?: string,
+    email?: string,
+    phone?: string,
+    customerId?: string
+  } | null>(null)
 
   const loadInvoice = async () => {
     try {
@@ -62,6 +71,18 @@ export default function InvoiceDetailPage() {
     void loadInvoice()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [invoiceId])
+
+  useEffect(() => {
+    const loadUserProfile = async () => {
+      try {
+        const profile = await userService.getCurrentProfile()
+        setUserProfile(profile.data)
+      } catch (err) {
+        console.error('Failed to load user profile:', err)
+      }
+    }
+    void loadUserProfile()
+  }, [])
 
   const totals = useMemo(() => {
     if (!invoice) {
@@ -152,6 +173,23 @@ export default function InvoiceDetailPage() {
     } finally {
       setDownloading(false)
     }
+  }
+
+  const handlePaymentSuccess = async () => {
+    setSuccess('Payment completed successfully! Refreshing invoice...')
+    setError(null)
+    // Reload invoice to get updated payment status
+    await loadInvoice()
+  }
+
+  const handlePaymentError = (errorMessage: string) => {
+    setError(`Payment failed: ${errorMessage}`)
+    setSuccess(null)
+  }
+
+  const handlePaymentCancel = () => {
+    setError('Payment was cancelled. You can try again anytime.')
+    setSuccess(null)
   }
 
   if (loading) {
@@ -314,6 +352,29 @@ export default function InvoiceDetailPage() {
           </aside>
         )}
       </div>
+
+      {invoice.balanceAmount > 0 && invoice.status !== 'PAID' && invoice.status !== 'CANCELLED' && userProfile && (
+        <section className="automotive-card p-6">
+          <h2 className="text-xl font-semibold theme-text-primary mb-4">Pay Online with PayHere</h2>
+          <p className="theme-text-muted mb-6 text-sm">
+            Complete your payment securely using PayHere payment gateway. You can pay using Credit/Debit cards or digital wallets.
+          </p>
+          <PaymentGateway
+            invoiceId={invoice.invoiceId}
+            amount={invoice.balanceAmount}
+            itemDescription={`Invoice #${invoice.invoiceNumber} - ${invoice.items[0]?.description || 'Service Payment'}`}
+            customerEmail={userProfile.email || invoice.customerEmail || email}
+            customerPhone={userProfile.phone || '+94000000000'}
+            customerFirstName={userProfile.firstName || 'Customer'}
+            customerLastName={userProfile.lastName || ''}
+            customerAddress="Colombo"
+            customerCity="Colombo"
+            onSuccess={handlePaymentSuccess}
+            onError={handlePaymentError}
+            onCancel={handlePaymentCancel}
+          />
+        </section>
+      )}
 
       <section className="automotive-card p-6">
         <h2 className="text-xl font-semibold theme-text-primary mb-4">Send invoice</h2>

@@ -49,9 +49,17 @@ export default function InvoicesPage() {
       setInvoices(Array.isArray(data) ? data : [])
       setError(null)
     } catch (err: unknown) {
-      const message = (err as { response?: { data?: { message?: string } } })?.response?.data?.message ||
-        'Failed to load invoices'
-      setError(message)
+      const errorResponse = err as { response?: { status?: number; data?: { message?: string } } }
+      
+      // Check for specific error types
+      if (errorResponse?.response?.status === 500) {
+        setError('Service temporarily unavailable. The invoice service may be down. Please contact support or try again later.')
+      } else if (errorResponse?.response?.status === 403) {
+        setError('Access Denied: You do not have permission to view invoices.')
+      } else {
+        const message = errorResponse?.response?.data?.message || 'Failed to load invoices'
+        setError(message)
+      }
       setInvoices([]) // Set empty array on error
     } finally {
       setLoading(false)

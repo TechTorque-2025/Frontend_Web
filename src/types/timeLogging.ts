@@ -1,30 +1,30 @@
 // Time Logging TypeScript Interfaces
 
 export interface TimeLogRequest {
-  serviceId?: string;
+  serviceId: string; // Required - changed from optional
   projectId?: string;
-  hoursWorked: number;
-  workDate: string; // YYYY-MM-DD
+  hours: number;
+  date: string; // YYYY-MM-DD
   description?: string;
-  taskType?: string;
+  workType?: string;
 }
 
 export interface TimeLogUpdateRequest {
-  hoursWorked?: number;
-  workDate?: string;
+  hours?: number;
+  date?: string;
   description?: string;
-  taskType?: string;
+  workType?: string;
 }
 
 export interface TimeLogResponse {
-  logId: string;
+  id: string; // Changed from logId to match backend
   employeeId: string;
   serviceId?: string;
   projectId?: string;
-  hoursWorked: number;
-  workDate: string;
+  hours: number;
+  date: string;
   description?: string;
-  taskType?: string;
+  workType?: string;
   createdAt: string;
   updatedAt: string;
 }

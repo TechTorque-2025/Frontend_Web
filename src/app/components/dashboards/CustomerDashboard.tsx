@@ -8,6 +8,7 @@ import type { AppointmentResponseDto } from "@/types/appointment";
 import type { UserDto } from "@/types/api";
 import type { InvoiceResponseDto } from "@/types/payment";
 import type { VehicleListItem } from "@/types/vehicle";
+import AIChatWidget from "@/app/components/chatbot/AIChatWidget";
 
 interface CustomerDashboardProps {
   profile: UserDto;
@@ -19,6 +20,7 @@ const CustomerDashboard: React.FC<CustomerDashboardProps> = ({ profile }) => {
   const [invoices, setInvoices] = useState<InvoiceResponseDto[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [chatOpen, setChatOpen] = useState(false);
 
   useEffect(() => {
     const loadDashboard = async () => {
@@ -217,6 +219,40 @@ const CustomerDashboard: React.FC<CustomerDashboardProps> = ({ profile }) => {
             <p className="theme-text-primary font-medium">Profile</p>
           </Link>
         </div>
+      </div>
+
+      {/* Floating AI Chat Widget */}
+      <div className="fixed bottom-6 right-6 z-50">
+        {chatOpen ? (
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-2xl w-96 h-[32rem] flex flex-col border border-gray-200 dark:border-gray-700">
+            <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
+              <h3 className="text-lg font-semibold text-indigo-700 dark:text-indigo-400">TechTorque AI Assistant</h3>
+              <button
+                onClick={() => setChatOpen(false)}
+                className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-colors"
+                aria-label="Close chat"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+            <div className="flex-1 overflow-hidden">
+              <AIChatWidget />
+            </div>
+          </div>
+        ) : (
+          <button
+            onClick={() => setChatOpen(true)}
+            className="bg-indigo-600 hover:bg-indigo-700 text-white rounded-full p-4 shadow-lg transition-all hover:scale-110 flex items-center gap-2"
+            aria-label="Open chat"
+          >
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+            </svg>
+            <span className="font-medium">Chat</span>
+          </button>
+        )}
       </div>
     </div>
   );

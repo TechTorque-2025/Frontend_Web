@@ -60,6 +60,7 @@ export interface ProjectResponseDto {
   id: string;
   customerId: string;
   vehicleId: string;
+  appointmentId?: string;
   projectType: string;
   description: string;
   status: ProjectStatus;
@@ -79,11 +80,14 @@ export interface ProjectResponseDto {
 
 export type ProjectStatus =
   | 'REQUESTED'
+  | 'PENDING_ADMIN_REVIEW'
   | 'QUOTE_PENDING'
   | 'QUOTE_SUBMITTED'
   | 'QUOTE_APPROVED'
+  | 'APPROVED'
   | 'IN_PROGRESS'
   | 'COMPLETED'
+  | 'REJECTED'
   | 'CANCELLED';
 
 export interface QuoteDto {

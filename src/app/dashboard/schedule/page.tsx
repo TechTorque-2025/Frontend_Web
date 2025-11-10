@@ -3,8 +3,10 @@
 import { useState, useEffect } from 'react';
 import { appointmentService } from '@/services/appointmentService';
 import { AppointmentResponseDto } from '@/types/appointment';
+import { useDashboard } from '@/app/contexts/DashboardContext';
 
 export default function SchedulePage() {
+  const { roles, loading: rolesLoading } = useDashboard();
   const [appointments, setAppointments] = useState<AppointmentResponseDto[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
@@ -77,7 +79,12 @@ export default function SchedulePage() {
     setSelectedDate(new Date().toISOString().split('T')[0]);
   };
 
-  if (loading) {
+  // Check if user has permission to access this page
+  const hasRole = (role: string) => roles?.includes(role);
+  const hasAccess = hasRole('EMPLOYEE') || hasRole('ADMIN') || hasRole('SUPER_ADMIN');
+  const isAdmin = hasRole('ADMIN') || hasRole('SUPER_ADMIN');
+
+  if (rolesLoading || loading) {
     return (
       <div className="max-w-6xl mx-auto p-6">
         <div className="animate-pulse space-y-4">
@@ -88,11 +95,37 @@ export default function SchedulePage() {
     );
   }
 
+  // Block access for customers
+  if (!hasAccess) {
+    return (
+      <div className="max-w-4xl mx-auto p-6">
+        <div className="rounded-xl border border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-900/20 p-8 text-center">
+          <svg
+            className="mx-auto w-16 h-16 text-red-600 dark:text-red-400 mb-4"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+          </svg>
+          <h2 className="text-2xl font-bold text-red-900 dark:text-red-100 mb-2">Access Denied</h2>
+          <p className="text-red-700 dark:text-red-300">
+            This page is only accessible to employees, admins, and super admins.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="max-w-6xl mx-auto p-6">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold theme-text-primary mb-2">My Schedule</h1>
-        <p className="theme-text-muted">View your daily appointment schedule</p>
+        <h1 className="text-3xl font-bold theme-text-primary mb-2">
+          {isAdmin ? 'All Schedules' : 'My Schedule'}
+        </h1>
+        <p className="theme-text-muted">
+          {isAdmin ? 'View all appointment schedules' : 'View your daily appointment schedule'}
+        </p>
       </div>
 
       {/* Date Navigation */}
@@ -179,7 +212,9 @@ export default function SchedulePage() {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
             </svg>
             <h3 className="text-lg font-semibold theme-text-primary mb-1">No appointments</h3>
-            <p className="theme-text-muted text-sm">You have no appointments scheduled for this day</p>
+            <p className="theme-text-muted text-sm">
+              {isAdmin ? 'There are no appointments scheduled for this day' : 'You have no appointments scheduled for this day'}
+            </p>
           </div>
         ) : (
           <div className="divide-y divide-gray-200 dark:divide-gray-800">

@@ -6,13 +6,25 @@ import { projectService } from '@/services/projectService';
 import { vehicleService } from '@/services/vehicleService';
 import { VehicleListItem } from '@/types/vehicle';
 import { ProjectRequestDto } from '@/types/project';
+import { useDashboard } from '@/app/contexts/DashboardContext';
 
 export default function RequestProjectPage() {
   const router = useRouter();
+  const { roles, loading: profileLoading, profile } = useDashboard();
   const [vehicles, setVehicles] = useState<VehicleListItem[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [fetchingVehicles, setFetchingVehicles] = useState(true);
+
+  // Check if user is a customer
+  const isCustomer = roles.includes('CUSTOMER');
+
+  // Redirect non-customers to projects list
+  useEffect(() => {
+    if (!profileLoading && !isCustomer) {
+      router.push('/dashboard/projects');
+    }
+  }, [isCustomer, profileLoading, router]);
 
   const [formData, setFormData] = useState({
     vehicleId: '',
@@ -30,9 +42,14 @@ export default function RequestProjectPage() {
     try {
       setFetchingVehicles(true);
       const data = await vehicleService.getMyVehicles();
-      setVehicles(data);
-      if (data.length > 0) {
-        setFormData(prev => ({ ...prev, vehicleId: data[0].vehicleId }));
+
+      // Filter to only show vehicles owned by the logged-in user
+      // This ensures that even users with admin roles only see their own vehicles when requesting projects
+      const userVehicles = data.filter(vehicle => vehicle.customerId === profile?.username);
+
+      setVehicles(userVehicles);
+      if (userVehicles.length > 0) {
+        setFormData(prev => ({ ...prev, vehicleId: userVehicles[0].vehicleId }));
       }
     } catch (err) {
       console.error('Failed to load vehicles:', err);
@@ -72,7 +89,8 @@ export default function RequestProjectPage() {
     }
   };
 
-  if (fetchingVehicles) {
+  // Show loading while checking permissions or fetching vehicles
+  if (profileLoading || fetchingVehicles || !isCustomer) {
     return (
       <div className="max-w-3xl mx-auto p-6">
         <div className="animate-pulse space-y-6">

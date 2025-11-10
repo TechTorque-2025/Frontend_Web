@@ -39,8 +39,8 @@ const EmployeeDashboard: React.FC<EmployeeDashboardProps> = ({ profile }) => {
 
         setSchedule(scheduleData)
         // Ensure timeLogData is an array and filter out invalid entries
-        const validTimeLogs = Array.isArray(timeLogData) 
-          ? timeLogData.filter(log => log && log.logId)
+        const validTimeLogs = Array.isArray(timeLogData)
+          ? timeLogData.filter(log => log && log.id)
           : []
         setTimeLogs(validTimeLogs)
         setError(null)
@@ -61,13 +61,13 @@ const EmployeeDashboard: React.FC<EmployeeDashboardProps> = ({ profile }) => {
   ), [schedule])
 
   const totalHoursThisWeek = useMemo(() => (
-    timeLogs.reduce((sum, log) => sum + (Number(log.hoursWorked) || 0), 0)
+    timeLogs.reduce((sum, log) => sum + (Number(log.hours) || 0), 0)
   ), [timeLogs])
 
   const workSummaryByDay = useMemo(() => {
     const summary: Record<string, number> = {}
     timeLogs.forEach((log) => {
-      summary[log.workDate] = (summary[log.workDate] || 0) + (Number(log.hoursWorked) || 0)
+      summary[log.date] = (summary[log.date] || 0) + (Number(log.hours) || 0)
     })
     return summary
   }, [timeLogs])
@@ -201,9 +201,9 @@ const EmployeeDashboard: React.FC<EmployeeDashboardProps> = ({ profile }) => {
               <p className="theme-text-muted text-sm">You haven&apos;t recorded any time logs yet.</p>
             ) : (
               timeLogs.slice(-5).reverse().map((log, index) => (
-                <div key={log.logId || `timelog-${index}`} className="border border-gray-200 dark:border-gray-700 rounded-lg p-3">
+                <div key={log.id || `timelog-${index}`} className="border border-gray-200 dark:border-gray-700 rounded-lg p-3">
                   <p className="theme-text-primary text-sm font-medium">
-                    {new Date(log.workDate).toLocaleDateString()} • {(Number(log.hoursWorked) || 0).toFixed(1)} hrs
+                    {new Date(log.date).toLocaleDateString()} • {(Number(log.hours) || 0).toFixed(1)} hrs
                   </p>
                   {log.description && <p className="theme-text-muted text-xs mt-1">{log.description}</p>}
                 </div>

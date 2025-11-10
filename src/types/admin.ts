@@ -95,11 +95,14 @@ export interface AnalyticsDashboardResponse {
 
 // ===== REPORTS =====
 export interface ReportRequest {
-  reportType: 'REVENUE' | 'SERVICES' | 'CUSTOMERS' | 'EMPLOYEES' | 'INVENTORY';
-  from: string; // YYYY-MM-DD
-  to: string;
-  format?: 'PDF' | 'EXCEL' | 'CSV';
-  filters?: Record<string, unknown>;
+  type: 'SERVICE_PERFORMANCE' | 'REVENUE' | 'EMPLOYEE_PRODUCTIVITY' | 'CUSTOMER_SATISFACTION' | 'INVENTORY' | 'APPOINTMENT_SUMMARY'; // Changed from reportType
+  fromDate: string; // YYYY-MM-DD - Changed from 'from'
+  toDate: string; // Changed from 'to'
+  format: 'JSON' | 'PDF' | 'EXCEL' | 'CSV'; // Required field
+  departmentId?: string;
+  employeeId?: string;
+  serviceCategory?: string;
+  customerId?: string;
 }
 
 export interface ReportResponse {
