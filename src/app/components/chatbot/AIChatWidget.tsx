@@ -1,8 +1,9 @@
 // components/AIChatWidget.tsx
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-// Assuming you have a way to get the current user's JWT
+// Assuming you have a way to get the current user's JWT ll
 import { useAuth } from '../hooks/useAuth'; // Placeholder for your auth hook
 
+//AIBOt Chat Widget Component
 // --- TypeScript Interface Definitions ---
 interface Message {
     text: string;
