@@ -31,7 +31,7 @@ export default function RegisterPage() {
     const form = e.currentTarget;
     const formData = new FormData(form);
     const payload: RegisterRequest = {
-      username: (formData.get('name') as string) || '',
+      fullName: (formData.get('name') as string) || '',
       email: (formData.get('email') as string) || '',
       password: (formData.get('password') as string) || '',
     };
