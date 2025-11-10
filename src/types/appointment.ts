@@ -16,7 +16,7 @@ export interface AppointmentResponseDto {
   id: string;
   customerId: string;
   vehicleId: string;
-  assignedEmployeeId?: string;
+  assignedEmployeeIds?: string[];
   assignedBayId?: string;
   confirmationNumber: string;
   serviceType: string;
@@ -25,6 +25,8 @@ export interface AppointmentResponseDto {
   specialInstructions?: string;
   createdAt: string;
   updatedAt: string;
+  vehicleArrivedAt?: string;
+  vehicleAcceptedByEmployeeId?: string;
 }
 
 export type AppointmentStatus = 
@@ -125,4 +127,9 @@ export interface ServiceTypeResponseDto {
   active: boolean;
   createdAt: string;
   updatedAt: string;
+}
+
+// Multi-Employee Assignment Type
+export interface AssignEmployeesRequestDto {
+  employeeIds: string[];
 }
