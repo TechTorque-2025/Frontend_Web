@@ -2,7 +2,7 @@
 import { Client, IMessage, StompSubscription } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
 
-export type NotificationCallback = (notification: any) => void;
+export type NotificationCallback = (notification: unknown) => void;
 export type UnreadCountCallback = (count: number) => void;
 
 class WebSocketService {
@@ -28,7 +28,8 @@ class WebSocketService {
     const wsUrl = process.env.NEXT_PUBLIC_NOTIFICATION_WS_URL || 'http://localhost:8088/ws/notifications';
 
     this.client = new Client({
-      webSocketFactory: () => new SockJS(wsUrl) as any,
+  // SockJS returns a WebSocket-like object; assert to WebSocket compatible type to satisfy the STOMP client
+  webSocketFactory: () => new SockJS(wsUrl) as unknown as WebSocket,
       debug: (str) => {
         if (process.env.NODE_ENV === 'development') {
           console.log('[STOMP Debug]:', str);
