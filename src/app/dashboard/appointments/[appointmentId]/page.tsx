@@ -8,6 +8,7 @@ import type { AppointmentResponseDto, AppointmentStatus } from '@/types/appointm
 import type { UserResponse } from '@/types/admin'
 import type { CreateInvoiceDto, InvoiceItemDto } from '@/types/payment'
 import { useDashboard } from '@/app/contexts/DashboardContext'
+import TimeTracker from '@/components/TimeTracker'
 
 interface StatusOption {
   value: AppointmentStatus
@@ -27,7 +28,7 @@ export default function AppointmentDetailPage() {
   const router = useRouter()
   const params = useParams<{ appointmentId: string }>()
   const appointmentId = params.appointmentId
-  const { roles, userId } = useDashboard()
+  const { roles, profile } = useDashboard()
 
   const [appointment, setAppointment] = useState<AppointmentResponseDto | null>(null)
   const [loading, setLoading] = useState(true)
@@ -44,10 +45,6 @@ export default function AppointmentDetailPage() {
   const [employees, setEmployees] = useState<UserResponse[]>([])
   const [selectedEmployeeIds, setSelectedEmployeeIds] = useState<string[]>([])
   const [assigning, setAssigning] = useState(false)
-
-  // Employee action state
-  const [accepting, setAccepting] = useState(false)
-  const [completing, setCompleting] = useState(false)
 
   // Invoice generation state
   const [showInvoiceForm, setShowInvoiceForm] = useState(false)
@@ -191,48 +188,6 @@ export default function AppointmentDetailPage() {
         ? prev.filter((id) => id !== employeeId)
         : [...prev, employeeId]
     )
-  }
-
-  const handleAcceptVehicle = async () => {
-    if (!appointment) return
-    if (!window.confirm('Confirm that the vehicle has arrived and you are ready to start work?')) {
-      return
-    }
-
-    try {
-      setAccepting(true)
-      const updated = await appointmentService.acceptVehicleArrival(appointment.id)
-      setAppointment(updated)
-      setStatus(updated.status)
-      setError(null)
-    } catch (err: unknown) {
-      const message = (err as { response?: { data?: { message?: string } } })?.response?.data?.message ||
-        'Failed to accept vehicle arrival'
-      setError(message)
-    } finally {
-      setAccepting(false)
-    }
-  }
-
-  const handleCompleteWork = async () => {
-    if (!appointment) return
-    if (!window.confirm('Mark this appointment as complete? The customer will be notified.')) {
-      return
-    }
-
-    try {
-      setCompleting(true)
-      const updated = await appointmentService.completeWork(appointment.id)
-      setAppointment(updated)
-      setStatus(updated.status)
-      setError(null)
-    } catch (err: unknown) {
-      const message = (err as { response?: { data?: { message?: string } } })?.response?.data?.message ||
-        'Failed to complete work'
-      setError(message)
-    } finally {
-      setCompleting(false)
-    }
   }
 
   // Invoice generation handlers
@@ -523,54 +478,71 @@ export default function AppointmentDetailPage() {
           </section>
         )}
 
-        {/* Employee Actions */}
-        {roles?.includes('EMPLOYEE') && appointment && userId && appointment.assignedEmployeeIds?.includes(userId) && (
+        {/* Employee Actions - Time Tracking */}
+        {roles?.includes('EMPLOYEE') && appointment && profile?.username && appointment.assignedEmployeeIds?.includes(profile.username) && (
           <section className="automotive-card p-6 border-2 border-blue-200 dark:border-blue-800">
-            <h2 className="text-xl font-semibold theme-text-primary mb-4">Employee Actions</h2>
+            <h2 className="text-xl font-semibold theme-text-primary mb-4">⏱️ Time Tracking</h2>
 
             {appointment.vehicleArrivedAt && (
               <div className="mb-4 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
                 <p className="text-sm theme-text-muted">
-                  Vehicle arrived: {new Date(appointment.vehicleArrivedAt).toLocaleString()}
+                  📍 Vehicle arrived: {new Date(appointment.vehicleArrivedAt).toLocaleString()}
                 </p>
               </div>
             )}
 
-            <div className="flex gap-3">
-              {appointment.status === 'CONFIRMED' && !appointment.vehicleArrivedAt && (
-                <button
-                  type="button"
-                  onClick={handleAcceptVehicle}
-                  disabled={accepting}
-                  className="px-6 py-2.5 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium transition-colors disabled:opacity-50"
-                >
-                  {accepting ? 'Processing...' : '✓ Accept Vehicle Arrival'}
-                </button>
-              )}
-
-              {appointment.status === 'IN_PROGRESS' && (
-                <button
-                  type="button"
-                  onClick={handleCompleteWork}
-                  disabled={completing}
-                  className="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors disabled:opacity-50"
-                >
-                  {completing ? 'Processing...' : '✓ Mark as Complete'}
-                </button>
-              )}
-
-              {appointment.status === 'COMPLETED' && (
-                <div className="p-3 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg">
-                  <p className="text-green-700 dark:text-green-300 font-medium">
-                    ✓ Work completed successfully
-                  </p>
-                </div>
-              )}
-            </div>
-
-            {appointment.status !== 'CONFIRMED' && appointment.status !== 'IN_PROGRESS' && appointment.status !== 'COMPLETED' && (
+            {appointment.status === 'CONFIRMED' ? (
+              <div>
+                <p className="theme-text-muted mb-4 text-sm">
+                  Ready to start work? Click &quot;Clock In&quot; to begin time tracking automatically.
+                </p>
+                <TimeTracker
+                  appointmentId={appointmentId}
+                  onClockIn={async () => {
+                    // Reload appointment to get updated status
+                    const updated = await appointmentService.getAppointmentDetails(appointmentId)
+                    setAppointment(updated)
+                    setStatus(updated.status)
+                  }}
+                  onClockOut={async () => {
+                    // Reload appointment to get updated status
+                    const updated = await appointmentService.getAppointmentDetails(appointmentId)
+                    setAppointment(updated)
+                    setStatus(updated.status)
+                  }}
+                />
+              </div>
+            ) : appointment.status === 'IN_PROGRESS' ? (
+              <div>
+                <p className="theme-text-muted mb-4 text-sm">
+                  🔧 Work in progress. Your time is being tracked automatically.
+                </p>
+                <TimeTracker
+                  appointmentId={appointmentId}
+                  onClockIn={async () => {
+                    const updated = await appointmentService.getAppointmentDetails(appointmentId)
+                    setAppointment(updated)
+                    setStatus(updated.status)
+                  }}
+                  onClockOut={async () => {
+                    const updated = await appointmentService.getAppointmentDetails(appointmentId)
+                    setAppointment(updated)
+                    setStatus(updated.status)
+                  }}
+                />
+              </div>
+            ) : appointment.status === 'COMPLETED' ? (
+              <div className="p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg">
+                <p className="text-green-700 dark:text-green-300 font-medium">
+                  ✓ Work completed successfully
+                </p>
+                <p className="text-sm text-green-600 dark:text-green-400 mt-2">
+                  Time has been logged automatically
+                </p>
+              </div>
+            ) : (
               <p className="theme-text-muted text-sm">
-                No actions available for current status: {appointment.status}
+                No time tracking available for current status: {appointment.status}
               </p>
             )}
           </section>

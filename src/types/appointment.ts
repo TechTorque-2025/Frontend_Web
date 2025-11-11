@@ -133,3 +133,15 @@ export interface ServiceTypeResponseDto {
 export interface AssignEmployeesRequestDto {
   employeeIds: string[];
 }
+
+// Time Tracking Types
+export interface TimeSessionResponse {
+  id: string;
+  appointmentId: string;
+  employeeId: string;
+  clockInTime: string;
+  clockOutTime?: string;
+  active: boolean;
+  elapsedSeconds: number;
+  hoursWorked?: number;
+}
