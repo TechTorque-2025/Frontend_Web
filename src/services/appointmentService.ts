@@ -1,15 +1,17 @@
 "use client";
 import api from '../lib/apiClient';
-import type { 
-  AppointmentRequestDto, 
-  AppointmentResponseDto, 
+import type {
+  AppointmentRequestDto,
+  AppointmentResponseDto,
   AppointmentUpdateDto,
   StatusUpdateDto,
   AvailabilityResponseDto,
   CalendarResponseDto,
   ScheduleResponseDto,
   ServiceTypeResponseDto,
-  ServiceTypeRequestDto
+  ServiceTypeRequestDto,
+  AssignEmployeesRequestDto,
+  TimeSessionResponse
 } from '../types/appointment';
 
 export const appointmentService = {
@@ -47,11 +49,56 @@ export const appointmentService = {
   },
 
   async updateStatus(
-    appointmentId: string, 
+    appointmentId: string,
     data: StatusUpdateDto
   ): Promise<AppointmentResponseDto> {
     const res = await api.patch(`/appointments/${appointmentId}/status`, data);
     return res.data;
+  },
+
+  async assignEmployees(
+    appointmentId: string,
+    data: AssignEmployeesRequestDto
+  ): Promise<AppointmentResponseDto> {
+    const res = await api.post(`/appointments/${appointmentId}/assign-employees`, data);
+    return res.data;
+  },
+
+  async acceptVehicleArrival(appointmentId: string): Promise<AppointmentResponseDto> {
+    const res = await api.post(`/appointments/${appointmentId}/accept-vehicle`);
+    return res.data;
+  },
+
+  async completeWork(appointmentId: string): Promise<AppointmentResponseDto> {
+    const res = await api.post(`/appointments/${appointmentId}/complete`);
+    return res.data;
+  },
+
+  async confirmCompletion(appointmentId: string): Promise<AppointmentResponseDto> {
+    const res = await api.post(`/appointments/${appointmentId}/confirm-completion`);
+    return res.data;
+  },
+
+  async clockIn(appointmentId: string): Promise<TimeSessionResponse> {
+    const res = await api.post(`/appointments/${appointmentId}/clock-in`);
+    return res.data;
+  },
+
+  async clockOut(appointmentId: string): Promise<TimeSessionResponse> {
+    const res = await api.post(`/appointments/${appointmentId}/clock-out`);
+    return res.data;
+  },
+
+  async getActiveTimeSession(appointmentId: string): Promise<TimeSessionResponse | null> {
+    try {
+      const res = await api.get(`/appointments/${appointmentId}/time-session`);
+      return res.data;
+    } catch (error: unknown) {
+      if ((error as { response?: { status?: number } })?.response?.status === 204) {
+        return null; // No active session
+      }
+      throw error;
+    }
   },
 
   // Availability & Scheduling

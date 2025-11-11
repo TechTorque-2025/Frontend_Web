@@ -68,7 +68,7 @@ export const projectService = {
   
   async listCustomerProjects(): Promise<ProjectResponseDto[]> {
     const res = await api.get('/projects');
-    return res.data;
+    return res.data.data || [];
   },
 
   async requestProject(data: ProjectRequestDto): Promise<ApiResponse> {
@@ -78,7 +78,7 @@ export const projectService = {
 
   async getProjectDetails(projectId: string): Promise<ProjectResponseDto> {
     const res = await api.get(`/projects/${projectId}`);
-    return res.data;
+    return res.data.data;
   },
 
   async submitQuote(projectId: string, quote: QuoteDto): Promise<ApiResponse> {
@@ -103,6 +103,19 @@ export const projectService = {
 
   async completeProject(projectId: string): Promise<ApiResponse> {
     const res = await api.post(`/projects/${projectId}/complete`);
+    return res.data;
+  },
+
+  // Admin: Approve/Reject Projects
+  async adminApproveProject(projectId: string): Promise<ApiResponse> {
+    const res = await api.post(`/projects/${projectId}/approve`);
+    return res.data;
+  },
+
+  async adminRejectProject(projectId: string, reason?: string): Promise<ApiResponse> {
+    const res = await api.post(`/projects/${projectId}/admin/reject`, null, {
+      params: { reason }
+    });
     return res.data;
   },
 

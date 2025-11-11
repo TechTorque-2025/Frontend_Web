@@ -54,7 +54,9 @@ export default function EditVehicleForm({
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
-      <h2 className="text-2xl font-bold mb-4 theme-text-primary">Update Vehicle</h2>
+      <h2 className="text-2xl font-bold mb-4 theme-text-primary">
+        Update Vehicle - {initialData.licensePlate}
+      </h2>
 
       {error && (
         <div className="bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 px-4 py-3 rounded-lg">
@@ -95,8 +97,10 @@ export default function EditVehicleForm({
             name="licensePlate"
             value={formData.licensePlate}
             onChange={handleChange}
-            className="w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-blue-500 transition-all theme-bg-primary theme-text-primary automotive-border"
+            className="w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-blue-500 transition-all theme-bg-primary theme-text-primary automotive-border opacity-60 cursor-not-allowed"
             placeholder="e.g., ABC-1234"
+            disabled
+            readOnly
           />
         </div>
       </div>

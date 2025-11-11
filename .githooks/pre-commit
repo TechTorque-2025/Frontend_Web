@@ -1,0 +1,19 @@
+#!/bin/bash
+
+# Git pre-commit hook to run ESLint
+# This hook runs on every commit to ensure code quality
+
+echo "🔍 Running ESLint check..."
+
+# Run lint check
+npm run lint
+
+# Check the exit status
+if [ $? -ne 0 ]; then
+    echo "❌ ESLint failed. Please fix the linting errors before committing."
+    echo "💡 Run 'npm run lint' to see the issues"
+    exit 1
+fi
+
+echo "✅ ESLint passed! Commit is proceeding..."
+exit 0

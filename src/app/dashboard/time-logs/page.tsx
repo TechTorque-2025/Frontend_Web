@@ -3,18 +3,26 @@
 import { useState, useEffect } from 'react';
 import { timeLoggingService } from '@/services/timeLoggingService';
 import { TimeLogResponse, TimeLogRequest } from '@/types/timeLogging';
+import { useDashboard } from '@/app/contexts/DashboardContext';
 
 export default function TimeLogsPage() {
-  const [timeLogs, setTimeLogs] = useState<TimeLogResponse[]>([]);
+  const { roles, loading: rolesLoading, profile } = useDashboard();
+  const [allTimeLogs, setAllTimeLogs] = useState<TimeLogResponse[]>([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
+  const [viewFilter, setViewFilter] = useState<'mine' | 'all'>('all');
   const [formData, setFormData] = useState<TimeLogRequest>({
-    hoursWorked: 0,
-    workDate: new Date().toISOString().split('T')[0],
+    serviceId: '', // Required field
+    hours: 0,
+    date: new Date().toISOString().split('T')[0],
     description: '',
-    taskType: '',
+    workType: '',
   });
   const [submitting, setSubmitting] = useState(false);
+
+  // Check if user is admin
+  const hasRole = (role: string) => roles?.includes(role);
+  const isAdmin = hasRole('ADMIN') || hasRole('SUPER_ADMIN');
 
   useEffect(() => {
     loadTimeLogs();
@@ -24,18 +32,23 @@ export default function TimeLogsPage() {
     try {
       setLoading(true);
       const data = await timeLoggingService.getMyTimeLogs();
-      // Ensure data is an array and filter out invalid entries
-      const validLogs = Array.isArray(data) 
-        ? data.filter(log => log && log.logId) 
+      // Backend automatically returns all logs for admins, only user's logs for employees
+      const validLogs = Array.isArray(data)
+        ? data.filter(log => log && log.id)
         : [];
-      setTimeLogs(validLogs);
+      setAllTimeLogs(validLogs);
     } catch (err) {
       console.error('Failed to load time logs:', err);
-      setTimeLogs([]); // Set empty array on error
+      setAllTimeLogs([]);
     } finally {
       setLoading(false);
     }
   };
+
+  // Filter logs based on view selection
+  const filteredLogs = viewFilter === 'mine'
+    ? allTimeLogs.filter(log => log.employeeId === profile?.username)
+    : allTimeLogs;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -45,10 +58,11 @@ export default function TimeLogsPage() {
       setSubmitting(true);
       await timeLoggingService.createTimeLog(formData);
       setFormData({
-        hoursWorked: 0,
-        workDate: new Date().toISOString().split('T')[0],
+        serviceId: '', // Required field
+        hours: 0,
+        date: new Date().toISOString().split('T')[0],
         description: '',
-        taskType: '',
+        workType: '',
       });
       setShowForm(false);
       await loadTimeLogs();
@@ -80,14 +94,39 @@ export default function TimeLogsPage() {
     });
   };
 
-  const totalHours = timeLogs.reduce((sum, log) => sum + log.hoursWorked, 0);
+  const totalHours = filteredLogs.reduce((sum, log) => sum + log.hours, 0);
 
-  if (loading) {
+  // Check if user has permission to access this page
+  const hasAccess = hasRole('EMPLOYEE') || hasRole('ADMIN') || hasRole('SUPER_ADMIN');
+
+  if (rolesLoading || loading) {
     return (
       <div className="max-w-6xl mx-auto p-6">
         <div className="animate-pulse space-y-4">
           <div className="h-32 bg-gray-200 dark:bg-gray-800 rounded-lg"></div>
           <div className="h-64 bg-gray-200 dark:bg-gray-800 rounded-lg"></div>
+        </div>
+      </div>
+    );
+  }
+
+  // Block access for customers
+  if (!hasAccess) {
+    return (
+      <div className="max-w-4xl mx-auto p-6">
+        <div className="rounded-xl border border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-900/20 p-8 text-center">
+          <svg
+            className="mx-auto w-16 h-16 text-red-600 dark:text-red-400 mb-4"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+          </svg>
+          <h2 className="text-2xl font-bold text-red-900 dark:text-red-100 mb-2">Access Denied</h2>
+          <p className="text-red-700 dark:text-red-300">
+            This page is only accessible to employees, admins, and super admins.
+          </p>
         </div>
       </div>
     );
@@ -109,6 +148,32 @@ export default function TimeLogsPage() {
           </button>
         </div>
 
+        {/* Filter Tabs - Only visible for admins */}
+        {isAdmin && (
+          <div className="flex gap-2 mb-6 border-b border-gray-200 dark:border-gray-800">
+            <button
+              onClick={() => setViewFilter('mine')}
+              className={`px-4 py-2 text-sm font-medium transition-colors border-b-2 ${
+                viewFilter === 'mine'
+                  ? 'border-blue-600 text-blue-600 dark:text-blue-400'
+                  : 'border-transparent theme-text-muted hover:text-blue-600 dark:hover:text-blue-400'
+              }`}
+            >
+              My Time Logs
+            </button>
+            <button
+              onClick={() => setViewFilter('all')}
+              className={`px-4 py-2 text-sm font-medium transition-colors border-b-2 ${
+                viewFilter === 'all'
+                  ? 'border-blue-600 text-blue-600 dark:text-blue-400'
+                  : 'border-transparent theme-text-muted hover:text-blue-600 dark:hover:text-blue-400'
+              }`}
+            >
+              All Time Logs
+            </button>
+          </div>
+        )}
+
         {/* Add Time Log Form */}
         {showForm && (
           <form onSubmit={handleSubmit} className="mb-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900/50 p-6">
@@ -122,8 +187,8 @@ export default function TimeLogsPage() {
                   type="date"
                   id="workDate"
                   required
-                  value={formData.workDate}
-                  onChange={(e) => setFormData({ ...formData, workDate: e.target.value })}
+                  value={formData.date}
+                  onChange={(e) => setFormData({ ...formData, date: e.target.value })}
                   max={new Date().toISOString().split('T')[0]}
                   className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 theme-text-primary focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />
@@ -138,8 +203,8 @@ export default function TimeLogsPage() {
                   required
                   min="0.25"
                   step="0.25"
-                  value={formData.hoursWorked || ''}
-                  onChange={(e) => setFormData({ ...formData, hoursWorked: parseFloat(e.target.value) })}
+                  value={formData.hours || ''}
+                  onChange={(e) => setFormData({ ...formData, hours: parseFloat(e.target.value) })}
                   placeholder="e.g., 8.5"
                   className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 theme-text-primary focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />
@@ -150,8 +215,8 @@ export default function TimeLogsPage() {
                 </label>
                 <select
                   id="taskType"
-                  value={formData.taskType}
-                  onChange={(e) => setFormData({ ...formData, taskType: e.target.value })}
+                  value={formData.workType}
+                  onChange={(e) => setFormData({ ...formData, workType: e.target.value })}
                   className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 theme-text-primary focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 >
                   <option value="">Select type...</option>
@@ -166,14 +231,15 @@ export default function TimeLogsPage() {
               </div>
               <div>
                 <label htmlFor="serviceId" className="block text-sm font-semibold theme-text-primary mb-2">
-                  Service ID (optional)
+                  Service ID <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="text"
                   id="serviceId"
+                  required
                   value={formData.serviceId || ''}
                   onChange={(e) => setFormData({ ...formData, serviceId: e.target.value })}
-                  placeholder="Service ID if applicable"
+                  placeholder="Enter service ID"
                   className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 theme-text-primary focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />
               </div>
@@ -220,17 +286,17 @@ export default function TimeLogsPage() {
         </div>
         <div className="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900/50 p-5">
           <p className="text-xs uppercase tracking-wide theme-text-muted">Total logs</p>
-          <p className="text-2xl font-semibold theme-text-primary">{timeLogs.length}</p>
+          <p className="text-2xl font-semibold theme-text-primary">{filteredLogs.length}</p>
         </div>
         <div className="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900/50 p-5">
           <p className="text-xs uppercase tracking-wide theme-text-muted">This week</p>
           <p className="text-2xl font-semibold theme-text-primary">
-            {timeLogs
+            {filteredLogs
               .filter(l => {
                 const weekAgo = Date.now() - 7 * 24 * 60 * 60 * 1000;
-                return new Date(l.workDate).getTime() > weekAgo;
+                return new Date(l.date).getTime() > weekAgo;
               })
-              .reduce((sum, log) => sum + log.hoursWorked, 0)
+              .reduce((sum, log) => sum + log.hours, 0)
               .toFixed(1)}h
           </p>
         </div>
@@ -241,8 +307,8 @@ export default function TimeLogsPage() {
         <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-800">
           <h2 className="text-lg font-semibold theme-text-primary">Recent Activity</h2>
         </div>
-        
-        {timeLogs.length === 0 ? (
+
+        {filteredLogs.length === 0 ? (
           <div className="p-12 text-center">
             <svg
               className="mx-auto w-16 h-16 text-gray-400 dark:text-gray-600 mb-4"
@@ -263,42 +329,57 @@ export default function TimeLogsPage() {
                   <th className="px-6 py-3 text-left text-xs font-semibold theme-text-muted uppercase tracking-wider">Date</th>
                   <th className="px-6 py-3 text-left text-xs font-semibold theme-text-muted uppercase tracking-wider">Hours</th>
                   <th className="px-6 py-3 text-left text-xs font-semibold theme-text-muted uppercase tracking-wider">Task Type</th>
+                  {viewFilter === 'all' && (
+                    <th className="px-6 py-3 text-left text-xs font-semibold theme-text-muted uppercase tracking-wider">Employee</th>
+                  )}
                   <th className="px-6 py-3 text-left text-xs font-semibold theme-text-muted uppercase tracking-wider">Description</th>
                   <th className="px-6 py-3 text-left text-xs font-semibold theme-text-muted uppercase tracking-wider">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200 dark:divide-gray-800">
-                {timeLogs.length === 0 ? (
+                {filteredLogs.length === 0 ? (
                   <tr>
-                    <td colSpan={5} className="px-6 py-8 text-center text-sm theme-text-muted">
+                    <td colSpan={viewFilter === 'all' ? 6 : 5} className="px-6 py-8 text-center text-sm theme-text-muted">
                       No time logs found
                     </td>
                   </tr>
                 ) : (
-                  timeLogs.map((log, index) => (
-                    <tr key={log.logId || `log-${index}`} className="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
-                      <td className="px-6 py-4 whitespace-nowrap theme-text-primary font-medium">
-                        {formatDate(log.workDate)}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap theme-text-secondary font-semibold">
-                        {log.hoursWorked}h
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap theme-text-secondary">
-                        {log.taskType || '—'}
-                      </td>
-                      <td className="px-6 py-4 theme-text-secondary text-sm max-w-md truncate">
-                        {log.description || '—'}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <button
-                          onClick={() => handleDelete(log.logId)}
-                          className="text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 text-sm font-medium"
-                        >
-                          Delete
-                        </button>
-                      </td>
-                    </tr>
-                  ))
+                  filteredLogs.map((log, index) => {
+                    const isOwnLog = profile?.username === log.employeeId;
+                    return (
+                      <tr key={log.id || `log-${index}`} className="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
+                        <td className="px-6 py-4 whitespace-nowrap theme-text-primary font-medium">
+                          {formatDate(log.date)}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap theme-text-secondary font-semibold">
+                          {log.hours}h
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap theme-text-secondary">
+                          {log.workType || '—'}
+                        </td>
+                        {viewFilter === 'all' && (
+                          <td className="px-6 py-4 whitespace-nowrap theme-text-secondary text-sm">
+                            {log.employeeId}
+                          </td>
+                        )}
+                        <td className="px-6 py-4 theme-text-secondary text-sm max-w-md truncate">
+                          {log.description || '—'}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          {isOwnLog ? (
+                            <button
+                              onClick={() => handleDelete(log.id)}
+                              className="text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 text-sm font-medium"
+                            >
+                              Delete
+                            </button>
+                          ) : (
+                            <span className="text-gray-400 dark:text-gray-600 text-sm">—</span>
+                          )}
+                        </td>
+                      </tr>
+                    );
+                  })
                 )}
               </tbody>
             </table>

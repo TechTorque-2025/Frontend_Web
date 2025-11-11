@@ -16,7 +16,7 @@ export interface AppointmentResponseDto {
   id: string;
   customerId: string;
   vehicleId: string;
-  assignedEmployeeId?: string;
+  assignedEmployeeIds?: string[];
   assignedBayId?: string;
   confirmationNumber: string;
   serviceType: string;
@@ -25,6 +25,8 @@ export interface AppointmentResponseDto {
   specialInstructions?: string;
   createdAt: string;
   updatedAt: string;
+  vehicleArrivedAt?: string;
+  vehicleAcceptedByEmployeeId?: string;
 }
 
 export type AppointmentStatus = 
@@ -32,6 +34,7 @@ export type AppointmentStatus =
   | 'CONFIRMED'
   | 'IN_PROGRESS'
   | 'COMPLETED'
+  | 'CUSTOMER_CONFIRMED'
   | 'CANCELLED'
   | 'NO_SHOW';
 
@@ -125,4 +128,21 @@ export interface ServiceTypeResponseDto {
   active: boolean;
   createdAt: string;
   updatedAt: string;
+}
+
+// Multi-Employee Assignment Type
+export interface AssignEmployeesRequestDto {
+  employeeIds: string[];
+}
+
+// Time Tracking Types
+export interface TimeSessionResponse {
+  id: string;
+  appointmentId: string;
+  employeeId: string;
+  clockInTime: string;
+  clockOutTime?: string;
+  active: boolean;
+  elapsedSeconds: number;
+  hoursWorked?: number;
 }

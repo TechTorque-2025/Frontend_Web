@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useRef } from "react";
+import Image from 'next/image';
 import useProfilePhotoCache from "@/lib/useProfilePhotoCache";
 import userService from "@/services/userService";
 
@@ -154,11 +155,7 @@ export default function ProfilePhotoUpload({
         <div className="space-y-2">
           <p className="text-sm font-medium text-gray-700">Preview:</p>
           <div className="relative w-full max-w-xs mx-auto rounded-lg overflow-hidden border border-gray-200">
-            <img
-              src={previewUrl || photo || ""}
-              alt="Profile preview"
-              className="w-full h-auto object-cover"
-            />
+            <Image src={previewUrl || photo || ""} alt="Profile preview" width={400} height={300} className="w-full h-auto object-cover" />
           </div>
         </div>
       )}

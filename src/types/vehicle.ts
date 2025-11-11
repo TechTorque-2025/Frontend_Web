@@ -17,6 +17,7 @@ export interface Vehicle {
 
 export interface VehicleListItem {
   vehicleId: string;
+  customerId: string;
   make: string;
   model: string;
   year: number;

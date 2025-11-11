@@ -4,9 +4,11 @@ import { appointmentService } from '@/services/appointmentService';
 import type { AppointmentResponseDto } from '@/types/appointment';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { useDashboard } from '@/app/contexts/DashboardContext';
 
 export default function AppointmentsPage() {
   const router = useRouter();
+  const { roles } = useDashboard();
   const [appointments, setAppointments] = useState<AppointmentResponseDto[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<'ALL' | 'PENDING' | 'CONFIRMED' | 'IN_PROGRESS' | 'COMPLETED' | 'CANCELLED'>('ALL');
@@ -66,18 +68,22 @@ export default function AppointmentsPage() {
           <p className="theme-text-muted">View and manage your service appointments</p>
         </div>
         <div className="flex gap-3">
-          <Link 
-            href="/dashboard/appointments/book"
-            className="theme-button-primary px-6 py-3 rounded-xl font-semibold"
-          >
-            + Book Appointment
-          </Link>
-          <Link 
-            href="/dashboard/appointments/availability"
-            className="theme-button-secondary px-6 py-3 rounded-xl font-semibold"
-          >
-            Check Availability
-          </Link>
+          {roles?.includes('CUSTOMER') && (
+            <Link
+              href="/dashboard/appointments/book"
+              className="theme-button-primary px-6 py-3 rounded-xl font-semibold"
+            >
+              + Book Appointment
+            </Link>
+          )}
+          {(roles?.includes('EMPLOYEE') || roles?.includes('ADMIN') || roles?.includes('SUPER_ADMIN')) && (
+            <Link
+              href="/dashboard/appointments/availability"
+              className="theme-button-secondary px-6 py-3 rounded-xl font-semibold"
+            >
+              Check Availability
+            </Link>
+          )}
         </div>
       </div>
 
@@ -111,14 +117,16 @@ export default function AppointmentsPage() {
           </svg>
           <h3 className="text-xl font-semibold theme-text-primary mb-2">No appointments found</h3>
           <p className="theme-text-muted mb-6">
-            {filter === 'ALL' ? 'You haven\'t booked any appointments yet' : `No ${filter.toLowerCase()} appointments`}
+            {filter === 'ALL' ? 'No appointments yet' : `No ${filter.toLowerCase()} appointments`}
           </p>
-          <Link 
-            href="/dashboard/appointments/book"
-            className="theme-button-primary px-8 py-3 rounded-xl font-semibold inline-block"
-          >
-            Book Your First Appointment
-          </Link>
+          {roles?.includes('CUSTOMER') && (
+            <Link
+              href="/dashboard/appointments/book"
+              className="theme-button-primary px-8 py-3 rounded-xl font-semibold inline-block"
+            >
+              Book Your First Appointment
+            </Link>
+          )}
         </div>
       ) : (
         <div className="grid grid-cols-1 gap-4">

@@ -37,13 +37,28 @@ export interface ServiceTypeResponse {
   updatedAt: string;
 }
 
-export interface UpdateServiceTypeRequest {
+export interface CreateServiceTypeRequest {
   name: string;
   category: string;
   description?: string;
-  basePriceLKR: number;
-  estimatedDurationMinutes: number;
+  price: number; // Backend expects 'price' not 'basePriceLKR'
+  durationMinutes: number; // Backend expects 'durationMinutes' not 'estimatedDurationMinutes'
+  requiresApproval?: boolean;
+  dailyCapacity?: number;
+  skillLevel?: string;
+  iconUrl?: string;
+}
+
+export interface UpdateServiceTypeRequest {
+  name?: string;
+  category?: string;
+  description?: string;
+  price?: number; // Backend expects 'price' not 'basePriceLKR'
+  durationMinutes?: number; // Backend expects 'durationMinutes' not 'estimatedDurationMinutes'
   active?: boolean;
+  dailyCapacity?: number;
+  skillLevel?: string;
+  iconUrl?: string;
 }
 
 // ===== SYSTEM CONFIGURATION =====
@@ -95,11 +110,14 @@ export interface AnalyticsDashboardResponse {
 
 // ===== REPORTS =====
 export interface ReportRequest {
-  reportType: 'REVENUE' | 'SERVICES' | 'CUSTOMERS' | 'EMPLOYEES' | 'INVENTORY';
-  from: string; // YYYY-MM-DD
-  to: string;
-  format?: 'PDF' | 'EXCEL' | 'CSV';
-  filters?: Record<string, unknown>;
+  type: 'SERVICE_PERFORMANCE' | 'REVENUE' | 'EMPLOYEE_PRODUCTIVITY' | 'CUSTOMER_SATISFACTION' | 'INVENTORY' | 'APPOINTMENT_SUMMARY'; // Changed from reportType
+  fromDate: string; // YYYY-MM-DD - Changed from 'from'
+  toDate: string; // Changed from 'to'
+  format: 'JSON' | 'PDF' | 'EXCEL' | 'CSV'; // Required field
+  departmentId?: string;
+  employeeId?: string;
+  serviceCategory?: string;
+  customerId?: string;
 }
 
 export interface ReportResponse {
