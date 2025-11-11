@@ -2,7 +2,6 @@
 
 import React from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 import authService from "../../../services/authService";
 import ThemeToggle from "../../components/ThemeToggle";
@@ -70,8 +69,6 @@ const EyeOffIcon = () => (
 
 // --- Register Page Component ---
 export default function RegisterPage() {
-  const router = useRouter();
-
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
@@ -118,10 +115,7 @@ export default function RegisterPage() {
     try {
       await authService.register(payload);
       setSuccess(true);
-      // Redirect to login after 3 seconds
-      setTimeout(() => {
-        router.push("/auth/login");
-      }, 3000);
+      // Don't automatically redirect - let user see the success message
     } catch (err: unknown) {
       const errorMessage =
         err instanceof Error ? err.message : "Registration failed";
@@ -186,13 +180,31 @@ export default function RegisterPage() {
                 <p className="text-base theme-text-secondary mb-2">
                   Welcome to TechTorque Auto, {formData.fullName}!
                 </p>
-                <p className="text-sm theme-text-muted">
-                  A verification email has been sent to {formData.email}. Please
-                  verify your email to log in.
-                </p>
-                <p className="mt-6 text-sm theme-text-muted animate-pulse">
-                  Redirecting to login...
-                </p>
+                <div className="mb-6 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
+                  <p className="text-sm font-semibold theme-text-primary mb-2">
+                    📧 Verify Your Email
+                  </p>
+                  <p className="text-sm theme-text-muted mb-3">
+                    A verification email has been sent to <strong>{formData.email}</strong>.
+                    <br />
+                    <strong>You must verify your email before you can log in.</strong>
+                  </p>
+                  <p className="text-xs theme-text-muted">
+                    Didn&apos;t receive the email?{' '}
+                    <Link
+                      href={`/auth/resend-verification?email=${encodeURIComponent(formData.email)}`}
+                      className="text-blue-600 dark:text-blue-400 hover:underline font-semibold"
+                    >
+                      Resend verification email
+                    </Link>
+                  </p>
+                </div>
+                <Link
+                  href="/auth/login"
+                  className="theme-button-primary inline-block px-8 py-3"
+                >
+                  Go to Login
+                </Link>
               </div>
             ) : (
               <>

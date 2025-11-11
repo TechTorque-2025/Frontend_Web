@@ -4,6 +4,7 @@ import { useMemo, useState, type ReactNode } from 'react'
 import { usePathname } from 'next/navigation'
 import ThemeToggle from '@/app/components/ThemeToggle'
 import NotificationBell from '@/app/components/NotificationBell'
+import RoleSwitcher from '@/app/components/RoleSwitcher'
 import { DashboardProvider, useDashboard } from '@/app/contexts/DashboardContext'
 import { NotificationProvider } from '@/app/contexts/NotificationContext'
 import { authService } from '@/services/authService'
@@ -37,11 +38,11 @@ function DashboardShellWithNotifications({ children }: { children: ReactNode }) 
 }
 
 function DashboardShell({ children }: { children: ReactNode }) {
-  const { profile, loading, roles } = useDashboard()
+  const { profile, loading, roles, activeRole, setActiveRole } = useDashboard()
   const pathname = usePathname()
   const [mobileNavOpen, setMobileNavOpen] = useState(false)
 
-  const navSections = useMemo<NavSection[]>(() => buildNavigation(roles), [roles])
+  const navSections = useMemo<NavSection[]>(() => buildNavigation(activeRole ? [activeRole] : roles), [roles, activeRole])
   const handleLogout = () => {
     authService.logout()
     window.location.href = '/auth/login'
@@ -115,6 +116,7 @@ function DashboardShell({ children }: { children: ReactNode }) {
                   <h1 className="text-lg font-semibold theme-text-primary">Dashboard</h1>
                 </div>
                 <div className="flex items-center gap-3">
+                  <RoleSwitcher roles={roles} currentRole={activeRole} onRoleChange={setActiveRole} />
                   <NotificationBell />
                   <ThemeToggle />
                   <button

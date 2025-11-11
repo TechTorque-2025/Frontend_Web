@@ -6,7 +6,8 @@
     "dev": "next dev --turbopack",
     "build": "next build --turbopack",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "setup-hooks": "chmod +x .githooks/pre-commit .githooks/pre-push && git config core.hooksPath .githooks && echo '✅ Git hooks configured successfully!'"
   },
   "dependencies": {
     "@stomp/stompjs": "^7.2.1",

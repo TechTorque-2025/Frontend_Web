@@ -8,6 +8,7 @@ import type { AppointmentResponseDto, AppointmentStatus } from '@/types/appointm
 import type { UserResponse } from '@/types/admin'
 import type { CreateInvoiceDto, InvoiceItemDto } from '@/types/payment'
 import { useDashboard } from '@/app/contexts/DashboardContext'
+import TimeTracker from '@/components/TimeTracker'
 
 interface StatusOption {
   value: AppointmentStatus
@@ -19,6 +20,7 @@ const STATUS_OPTIONS: StatusOption[] = [
   { value: 'CONFIRMED', label: 'Confirmed' },
   { value: 'IN_PROGRESS', label: 'In Progress' },
   { value: 'COMPLETED', label: 'Completed' },
+  { value: 'CUSTOMER_CONFIRMED', label: 'Confirmed Complete' },
   { value: 'CANCELLED', label: 'Cancelled' },
   { value: 'NO_SHOW', label: 'No Show' },
 ]
@@ -27,7 +29,7 @@ export default function AppointmentDetailPage() {
   const router = useRouter()
   const params = useParams<{ appointmentId: string }>()
   const appointmentId = params.appointmentId
-  const { roles, userId } = useDashboard()
+  const { roles, profile } = useDashboard()
 
   const [appointment, setAppointment] = useState<AppointmentResponseDto | null>(null)
   const [loading, setLoading] = useState(true)
@@ -45,10 +47,6 @@ export default function AppointmentDetailPage() {
   const [selectedEmployeeIds, setSelectedEmployeeIds] = useState<string[]>([])
   const [assigning, setAssigning] = useState(false)
 
-  // Employee action state
-  const [accepting, setAccepting] = useState(false)
-  const [completing, setCompleting] = useState(false)
-
   // Invoice generation state
   const [showInvoiceForm, setShowInvoiceForm] = useState(false)
   const [invoiceItems, setInvoiceItems] = useState<InvoiceItemDto[]>([
@@ -63,15 +61,15 @@ export default function AppointmentDetailPage() {
         setLoading(true)
         const data = await appointmentService.getAppointmentDetails(appointmentId)
         setAppointment(data)
-        setStatus(data.status) // Initialize status dropdown with current appointment status
+        setStatus(data.status)
         setError(null)
 
         const requested = new Date(data.requestedDateTime)
         setRescheduleDate(requested.toISOString().slice(0, 10))
         setRescheduleTime(requested.toISOString().slice(11, 16))
         setNotes(data.specialInstructions ?? '')
-        setStatus(data.status)
-        setSelectedEmployeeIds(data.assignedEmployeeIds || [])
+        // Ensure selectedEmployeeIds is properly set from appointment data
+        setSelectedEmployeeIds(data.assignedEmployeeIds ? [...data.assignedEmployeeIds] : [])
       } catch (err: unknown) {
         const message = (err as { response?: { data?: { message?: string } } })?.response?.data?.message ||
           'Failed to load appointment details'
@@ -161,6 +159,27 @@ export default function AppointmentDetailPage() {
     }
   }
 
+  const handleConfirmCompletion = async () => {
+    if (!appointment) return
+    if (!window.confirm('Are you sure you want to confirm completion of this appointment?')) {
+      return
+    }
+
+    try {
+      setStatusUpdating(true)
+      const updated = await appointmentService.confirmCompletion(appointment.id)
+      setAppointment(updated)
+      setStatus(updated.status)
+      setError(null)
+    } catch (err: unknown) {
+      const message = (err as { response?: { data?: { message?: string } } })?.response?.data?.message ||
+        'Failed to confirm completion'
+      setError(message)
+    } finally {
+      setStatusUpdating(false)
+    }
+  }
+
   const handleAssignEmployees = async () => {
     if (!appointment) return
     if (selectedEmployeeIds.length === 0) {
@@ -191,48 +210,6 @@ export default function AppointmentDetailPage() {
         ? prev.filter((id) => id !== employeeId)
         : [...prev, employeeId]
     )
-  }
-
-  const handleAcceptVehicle = async () => {
-    if (!appointment) return
-    if (!window.confirm('Confirm that the vehicle has arrived and you are ready to start work?')) {
-      return
-    }
-
-    try {
-      setAccepting(true)
-      const updated = await appointmentService.acceptVehicleArrival(appointment.id)
-      setAppointment(updated)
-      setStatus(updated.status)
-      setError(null)
-    } catch (err: unknown) {
-      const message = (err as { response?: { data?: { message?: string } } })?.response?.data?.message ||
-        'Failed to accept vehicle arrival'
-      setError(message)
-    } finally {
-      setAccepting(false)
-    }
-  }
-
-  const handleCompleteWork = async () => {
-    if (!appointment) return
-    if (!window.confirm('Mark this appointment as complete? The customer will be notified.')) {
-      return
-    }
-
-    try {
-      setCompleting(true)
-      const updated = await appointmentService.completeWork(appointment.id)
-      setAppointment(updated)
-      setStatus(updated.status)
-      setError(null)
-    } catch (err: unknown) {
-      const message = (err as { response?: { data?: { message?: string } } })?.response?.data?.message ||
-        'Failed to complete work'
-      setError(message)
-    } finally {
-      setCompleting(false)
-    }
   }
 
   // Invoice generation handlers
@@ -480,10 +457,22 @@ export default function AppointmentDetailPage() {
 
         {(roles?.includes('ADMIN') || roles?.includes('SUPER_ADMIN')) && (
           <section className="automotive-card p-6">
-            <h2 className="text-xl font-semibold theme-text-primary mb-4">Assign Employees</h2>
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-xl font-semibold theme-text-primary">Assign or Change Employees</h2>
+              {appointment.assignedEmployeeIds && appointment.assignedEmployeeIds.length > 0 && (
+                <span className="px-3 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300">
+                  {appointment.assignedEmployeeIds.length} assigned
+                </span>
+              )}
+            </div>
             <p className="theme-text-muted text-sm mb-4">
-              Select one or more employees to assign to this appointment. Employees will receive notifications.
+              Select one or more employees to assign to this appointment. You can change the assigned employees at any time. Employees will receive notifications when assigned.
             </p>
+            <div className="mb-4 p-3 bg-blue-50 dark:bg-blue-900/10 border border-blue-200 dark:border-blue-800 rounded-lg">
+              <p className="text-sm theme-text-secondary">
+                💡 <strong>Tip:</strong> Currently assigned employees are pre-selected below. Uncheck to remove them or add new employees.
+              </p>
+            </div>
             <div className="space-y-2 mb-4 max-h-64 overflow-y-auto border border-gray-200 dark:border-gray-700 rounded-lg p-3">
               {employees.length === 0 ? (
                 <p className="theme-text-muted text-sm">No employees available</p>
@@ -503,6 +492,11 @@ export default function AppointmentDetailPage() {
                       <p className="theme-text-primary font-medium">{employee.fullName || employee.email}</p>
                       <p className="theme-text-muted text-xs">@{employee.username}</p>
                     </div>
+                    {appointment.assignedEmployeeIds?.includes(employee.username) && (
+                      <span className="text-xs bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300 px-2 py-1 rounded">
+                        Currently assigned
+                      </span>
+                    )}
                   </label>
                 ))
               )}
@@ -517,60 +511,77 @@ export default function AppointmentDetailPage() {
                 onClick={handleAssignEmployees}
                 disabled={assigning || selectedEmployeeIds.length === 0}
               >
-                {assigning ? 'Assigning...' : 'Assign Employees'}
+                {assigning ? 'Updating...' : 'Update Assignments'}
               </button>
             </div>
           </section>
         )}
 
-        {/* Employee Actions */}
-        {roles?.includes('EMPLOYEE') && appointment && userId && appointment.assignedEmployeeIds?.includes(userId) && (
+        {/* Employee Actions - Time Tracking */}
+        {roles?.includes('EMPLOYEE') && appointment && profile?.username && appointment.assignedEmployeeIds?.includes(profile.username) && (
           <section className="automotive-card p-6 border-2 border-blue-200 dark:border-blue-800">
-            <h2 className="text-xl font-semibold theme-text-primary mb-4">Employee Actions</h2>
+            <h2 className="text-xl font-semibold theme-text-primary mb-4">⏱️ Time Tracking</h2>
 
             {appointment.vehicleArrivedAt && (
               <div className="mb-4 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
                 <p className="text-sm theme-text-muted">
-                  Vehicle arrived: {new Date(appointment.vehicleArrivedAt).toLocaleString()}
+                  📍 Vehicle arrived: {new Date(appointment.vehicleArrivedAt).toLocaleString()}
                 </p>
               </div>
             )}
 
-            <div className="flex gap-3">
-              {appointment.status === 'CONFIRMED' && !appointment.vehicleArrivedAt && (
-                <button
-                  type="button"
-                  onClick={handleAcceptVehicle}
-                  disabled={accepting}
-                  className="px-6 py-2.5 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium transition-colors disabled:opacity-50"
-                >
-                  {accepting ? 'Processing...' : '✓ Accept Vehicle Arrival'}
-                </button>
-              )}
-
-              {appointment.status === 'IN_PROGRESS' && (
-                <button
-                  type="button"
-                  onClick={handleCompleteWork}
-                  disabled={completing}
-                  className="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors disabled:opacity-50"
-                >
-                  {completing ? 'Processing...' : '✓ Mark as Complete'}
-                </button>
-              )}
-
-              {appointment.status === 'COMPLETED' && (
-                <div className="p-3 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg">
-                  <p className="text-green-700 dark:text-green-300 font-medium">
-                    ✓ Work completed successfully
-                  </p>
-                </div>
-              )}
-            </div>
-
-            {appointment.status !== 'CONFIRMED' && appointment.status !== 'IN_PROGRESS' && appointment.status !== 'COMPLETED' && (
+            {appointment.status === 'CONFIRMED' ? (
+              <div>
+                <p className="theme-text-muted mb-4 text-sm">
+                  Ready to start work? Click &quot;Clock In&quot; to begin time tracking automatically.
+                </p>
+                <TimeTracker
+                  appointmentId={appointmentId}
+                  onClockIn={async () => {
+                    // Reload appointment to get updated status
+                    const updated = await appointmentService.getAppointmentDetails(appointmentId)
+                    setAppointment(updated)
+                    setStatus(updated.status)
+                  }}
+                  onClockOut={async () => {
+                    // Reload appointment to get updated status
+                    const updated = await appointmentService.getAppointmentDetails(appointmentId)
+                    setAppointment(updated)
+                    setStatus(updated.status)
+                  }}
+                />
+              </div>
+            ) : appointment.status === 'IN_PROGRESS' ? (
+              <div>
+                <p className="theme-text-muted mb-4 text-sm">
+                  🔧 Work in progress. Your time is being tracked automatically.
+                </p>
+                <TimeTracker
+                  appointmentId={appointmentId}
+                  onClockIn={async () => {
+                    const updated = await appointmentService.getAppointmentDetails(appointmentId)
+                    setAppointment(updated)
+                    setStatus(updated.status)
+                  }}
+                  onClockOut={async () => {
+                    const updated = await appointmentService.getAppointmentDetails(appointmentId)
+                    setAppointment(updated)
+                    setStatus(updated.status)
+                  }}
+                />
+              </div>
+            ) : appointment.status === 'COMPLETED' ? (
+              <div className="p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg">
+                <p className="text-green-700 dark:text-green-300 font-medium">
+                  ✓ Work completed successfully
+                </p>
+                <p className="text-sm text-green-600 dark:text-green-400 mt-2">
+                  Time has been logged automatically
+                </p>
+              </div>
+            ) : (
               <p className="theme-text-muted text-sm">
-                No actions available for current status: {appointment.status}
+                No time tracking available for current status: {appointment.status}
               </p>
             )}
           </section>
@@ -767,6 +778,32 @@ export default function AppointmentDetailPage() {
           </section>
         )}
 
+        {roles?.includes('CUSTOMER') && appointment?.status === 'COMPLETED' && (
+          <section className="automotive-card p-6 border-2 border-green-200 dark:border-green-800">
+            <h2 className="text-xl font-semibold text-green-600 dark:text-green-400 mb-4">✓ Confirm Completion</h2>
+            <p className="theme-text-muted mb-4">
+              The work on your appointment has been completed. Please review the service and confirm completion to finalize the appointment.
+            </p>
+            <button
+              type="button"
+              className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-medium"
+              onClick={handleConfirmCompletion}
+              disabled={statusUpdating}
+            >
+              {statusUpdating ? 'Confirming...' : '✓ Confirm Completion'}
+            </button>
+          </section>
+        )}
+
+        {roles?.includes('CUSTOMER') && appointment?.status === 'CUSTOMER_CONFIRMED' && (
+          <section className="automotive-card p-6 border-2 border-green-200 dark:border-green-800 bg-green-50 dark:bg-green-900/10">
+            <h2 className="text-xl font-semibold text-green-600 dark:text-green-400 mb-2">✓ Appointment Complete</h2>
+            <p className="text-green-700 dark:text-green-300">
+              Thank you! You have confirmed the completion of this appointment. The service is now finalized.
+            </p>
+          </section>
+        )}
+
         {roles?.includes('CUSTOMER') && (
           <section className="automotive-card p-6 border border-red-200 dark:border-red-800">
             <h2 className="text-xl font-semibold text-red-600 dark:text-red-400 mb-4">Danger zone</h2>
@@ -775,7 +812,7 @@ export default function AppointmentDetailPage() {
               type="button"
               className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg"
               onClick={handleCancel}
-              disabled={saving}
+              disabled={saving || appointment?.status === 'CUSTOMER_CONFIRMED'}
             >
               Cancel appointment
             </button>

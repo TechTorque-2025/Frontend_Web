@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useMemo, useState } from 'react'
+import Link from 'next/link'
 import { paymentService } from '@/services/paymentService'
 import type { PaymentResponseDto } from '@/types/payment'
 
@@ -111,12 +112,12 @@ export default function PaymentHistoryPage() {
             This page is only available for customer accounts. As an employee, you can view invoices and time logs instead.
           </p>
           <div className="flex gap-3 justify-center">
-            <a href="/dashboard/invoices" className="theme-button-primary">
+            <Link href="/dashboard/invoices" className="theme-button-primary">
               View Invoices
-            </a>
-            <a href="/dashboard/time-logs" className="theme-button-secondary">
+            </Link>
+            <Link href="/dashboard/time-logs" className="theme-button-secondary">
               View Time Logs
-            </a>
+            </Link>
           </div>
         </div>
       </div>

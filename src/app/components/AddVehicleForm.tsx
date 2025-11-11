@@ -30,7 +30,17 @@ export default function AddVehicleForm({ onSuccess, onCancel }: AddVehicleFormPr
       await vehicleService.registerVehicle(formData);
       onSuccess();
     } catch (err: unknown) {
-      const errorMessage = (err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to add vehicle';
+      let errorMessage = 'Failed to add vehicle';
+
+      const errorResponse = (err as { response?: { status?: number; data?: { message?: string } } });
+
+      // Handle 409 Conflict - Duplicate VIN
+      if (errorResponse?.response?.status === 409) {
+        errorMessage = 'This VIN is already registered in the system. Please check the VIN and try again.';
+      } else {
+        errorMessage = errorResponse?.response?.data?.message || errorMessage;
+      }
+
       setError(errorMessage);
     } finally {
       setLoading(false);

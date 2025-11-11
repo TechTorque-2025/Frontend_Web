@@ -77,11 +77,13 @@ export default function AdminUsersPage() {
       setShowCreateModal(false);
       await loadUsers();
       alert(`${createUserType === 'employee' ? 'Employee' : 'Admin'} created successfully!`);
-    } catch (err: any) {
+    } catch (err) {
       console.error('Failed to create user:', err);
-      const errorMessage = err?.response?.status === 403
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const error = err as any;
+      const errorMessage = error?.response?.status === 403
         ? 'Permission denied. You do not have the required permissions to create this user type.'
-        : err?.response?.data?.message || 'Failed to create user. Please try again.';
+        : error?.response?.data?.message || 'Failed to create user. Please try again.';
       alert(errorMessage);
     }
   };
@@ -98,6 +100,12 @@ export default function AdminUsersPage() {
 
   const handleSaveRoles = async (userId: string) => {
     try {
+      // Validation: Ensure at least one role is selected
+      if (editingRoles.length === 0) {
+        alert('Please select at least one role for the user.');
+        return;
+      }
+
       await adminService.updateUser(userId, { roles: editingRoles });
       setEditingUserId(null);
       setEditingRoles([]);
@@ -105,16 +113,48 @@ export default function AdminUsersPage() {
       alert('Roles updated successfully!');
     } catch (err) {
       console.error('Failed to update roles:', err);
-      alert('Failed to update roles. Please try again.');
+      const errorMessage = err instanceof Error ? err.message : 'Failed to update roles. Please try again.';
+      alert(errorMessage);
     }
   };
 
   const handleToggleRole = (role: string) => {
     if (editingRoles.includes(role)) {
+      // Prevent removing the last role
+      if (editingRoles.length === 1) {
+        alert('A user must have at least one role.');
+        return;
+      }
       setEditingRoles(editingRoles.filter(r => r !== role));
     } else {
       setEditingRoles([...editingRoles, role]);
     }
+  };
+
+  const handleToggleUserStatus = async (user: UserResponse) => {
+    const action = user.enabled ? 'deactivate' : 'activate';
+    const confirmMessage = user.enabled
+      ? `Are you sure you want to deactivate ${user.fullName || user.username}? They will not be able to log in.`
+      : `Are you sure you want to activate ${user.fullName || user.username}? They will be able to log in again.`;
+
+    if (!confirm(confirmMessage)) {
+      return;
+    }
+
+    try {
+      await adminService.updateUser(user.userId, { enabled: !user.enabled });
+      await loadUsers();
+      alert(`User ${action}d successfully!`);
+    } catch (err) {
+      console.error(`Failed to ${action} user:`, err);
+      const errorMessage = err instanceof Error ? err.message : `Failed to ${action} user. Please try again.`;
+      alert(errorMessage);
+    }
+  };
+
+  // Check if a role can be modified
+  const isRoleProtected = (role: string): boolean => {
+    return role === 'CUSTOMER' || role === 'SUPER_ADMIN';
   };
 
   // Check if user can be edited (not customer)
@@ -194,27 +234,33 @@ export default function AdminUsersPage() {
       </div>
 
       {/* Stats */}
-      <div className="grid gap-4 sm:grid-cols-4 mb-6">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5 mb-6">
         <div className="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900/50 p-5">
-          <p className="text-xs uppercase tracking-wide theme-text-muted">Total users</p>
+          <p className="text-xs uppercase tracking-wide theme-text-muted">Total Users</p>
           <p className="text-2xl font-semibold theme-text-primary">{users.length}</p>
         </div>
         <div className="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900/50 p-5">
-          <p className="text-xs uppercase tracking-wide theme-text-muted">Active</p>
+          <p className="text-xs uppercase tracking-wide theme-text-muted">Activated</p>
           <p className="text-2xl font-semibold text-green-600 dark:text-green-400">
             {users.filter(u => u.enabled).length}
           </p>
         </div>
         <div className="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900/50 p-5">
-          <p className="text-xs uppercase tracking-wide theme-text-muted">Locked</p>
+          <p className="text-xs uppercase tracking-wide theme-text-muted">Deactivated</p>
           <p className="text-2xl font-semibold text-red-600 dark:text-red-400">
-            {users.filter(u => u.accountLocked).length}
+            {users.filter(u => !u.enabled).length}
           </p>
         </div>
         <div className="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900/50 p-5">
-          <p className="text-xs uppercase tracking-wide theme-text-muted">Verified</p>
+          <p className="text-xs uppercase tracking-wide theme-text-muted">Email Verified</p>
           <p className="text-2xl font-semibold text-blue-600 dark:text-blue-400">
             {users.filter(u => u.emailVerified).length}
+          </p>
+        </div>
+        <div className="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900/50 p-5">
+          <p className="text-xs uppercase tracking-wide theme-text-muted">Account Locked</p>
+          <p className="text-2xl font-semibold text-orange-600 dark:text-orange-400">
+            {users.filter(u => u.accountLocked).length}
           </p>
         </div>
       </div>
@@ -263,29 +309,59 @@ export default function AdminUsersPage() {
                     {editingUserId === user.userId ? (
                       <div className="space-y-2">
                         <div className="flex flex-wrap gap-2">
+                          {/* Editable roles */}
                           {['EMPLOYEE', 'ADMIN'].map((role) => (
                             <button
                               key={role}
                               onClick={() => handleToggleRole(role)}
                               className={`px-3 py-1 rounded text-xs font-semibold transition-colors ${
                                 editingRoles.includes(role)
-                                  ? 'bg-blue-600 text-white'
-                                  : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300'
+                                  ? 'bg-blue-600 text-white hover:bg-blue-700'
+                                  : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
                               }`}
+                              title={`Click to ${editingRoles.includes(role) ? 'remove' : 'add'} ${role} role`}
                             >
                               {role}
                             </button>
                           ))}
+                          
+                          {/* Show protected roles (read-only) */}
+                          {user.roles.filter(role => isRoleProtected(role)).map((role) => (
+                            <span
+                              key={role}
+                              className="px-3 py-1 rounded text-xs font-semibold bg-gray-300 dark:bg-gray-600 text-gray-600 dark:text-gray-300 cursor-not-allowed opacity-75"
+                              title={`${role} role cannot be modified`}
+                            >
+                              {role} 🔒
+                            </span>
+                          ))}
                         </div>
+                        <p className="text-xs theme-text-muted mt-2">
+                          💡 <strong>Tip:</strong> Select multiple roles to give users combined access. 
+                          {editingRoles.length > 1 && (
+                            <span className="text-blue-600 dark:text-blue-400"> Currently selected: {editingRoles.length} roles</span>
+                          )}
+                        </p>
                       </div>
                     ) : (
                       <div className="flex flex-wrap gap-1">
                         {Array.isArray(user.roles) && user.roles.length > 0 ? (
-                          user.roles.map((role) => (
-                            <span key={role} className="px-2 py-1 rounded text-xs font-semibold bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300">
-                              {role}
-                            </span>
-                          ))
+                          user.roles.map((role) => {
+                            const isProtected = isRoleProtected(role);
+                            return (
+                              <span
+                                key={role}
+                                className={`px-2 py-1 rounded text-xs font-semibold ${
+                                  isProtected
+                                    ? 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300'
+                                    : 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300'
+                                }`}
+                                title={isProtected ? 'Protected role' : ''}
+                              >
+                                {role} {isProtected && '🔒'}
+                              </span>
+                            );
+                          })
                         ) : (
                           <span className="text-xs theme-text-muted">No roles</span>
                         )}
@@ -294,18 +370,32 @@ export default function AdminUsersPage() {
                   </td>
                   <td className="px-6 py-4">
                     <div className="space-y-1">
+                      {/* Account Status */}
                       {user.enabled ? (
                         <span className="inline-block px-2 py-1 rounded text-xs font-semibold bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300">
-                          Active
+                          ✓ Active
                         </span>
                       ) : (
-                        <span className="inline-block px-2 py-1 rounded text-xs font-semibold bg-gray-100 text-gray-700 dark:bg-gray-900/30 dark:text-gray-300">
-                          Disabled
+                        <span className="inline-block px-2 py-1 rounded text-xs font-semibold bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300">
+                          ✕ Deactivated
                         </span>
                       )}
+                      
+                      {/* Email Verification Status */}
+                      {user.emailVerified ? (
+                        <span className="inline-block px-2 py-1 rounded text-xs font-semibold bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 ml-1">
+                          ✉ Verified
+                        </span>
+                      ) : (
+                        <span className="inline-block px-2 py-1 rounded text-xs font-semibold bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-300 ml-1">
+                          ✉ Unverified
+                        </span>
+                      )}
+                      
+                      {/* Account Locked */}
                       {user.accountLocked && (
                         <span className="inline-block px-2 py-1 rounded text-xs font-semibold bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300 ml-1">
-                          Locked
+                          🔒 Locked
                         </span>
                       )}
                     </div>
@@ -320,27 +410,42 @@ export default function AdminUsersPage() {
                     <td className="px-6 py-4">
                       {canEditUser(user) ? (
                         editingUserId === user.userId ? (
-                          <div className="flex gap-2">
-                            <button
-                              onClick={() => handleSaveRoles(user.userId)}
-                              className="px-3 py-1 bg-green-600 hover:bg-green-700 text-white text-xs font-medium rounded transition-colors"
-                            >
-                              Save
-                            </button>
-                            <button
-                              onClick={handleCancelEditRoles}
-                              className="px-3 py-1 bg-gray-500 hover:bg-gray-600 text-white text-xs font-medium rounded transition-colors"
-                            >
-                              Cancel
-                            </button>
+                          <div className="flex flex-col gap-2">
+                            <div className="flex gap-2">
+                              <button
+                                onClick={() => handleSaveRoles(user.userId)}
+                                className="px-3 py-1 bg-green-600 hover:bg-green-700 text-white text-xs font-medium rounded transition-colors"
+                              >
+                                Save
+                              </button>
+                              <button
+                                onClick={handleCancelEditRoles}
+                                className="px-3 py-1 bg-gray-500 hover:bg-gray-600 text-white text-xs font-medium rounded transition-colors"
+                              >
+                                Cancel
+                              </button>
+                            </div>
                           </div>
                         ) : (
-                          <button
-                            onClick={() => handleStartEditRoles(user)}
-                            className="px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white text-xs font-medium rounded transition-colors"
-                          >
-                            Edit Roles
-                          </button>
+                          <div className="flex flex-col gap-2">
+                            <button
+                              onClick={() => handleStartEditRoles(user)}
+                              className="px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white text-xs font-medium rounded transition-colors"
+                            >
+                              Edit Roles
+                            </button>
+                            <button
+                              onClick={() => handleToggleUserStatus(user)}
+                              className={`px-3 py-1 text-white text-xs font-medium rounded transition-colors ${
+                                user.enabled
+                                  ? 'bg-red-600 hover:bg-red-700'
+                                  : 'bg-green-600 hover:bg-green-700'
+                              }`}
+                              title={user.enabled ? 'Disable user account' : 'Enable user account'}
+                            >
+                              {user.enabled ? '✕ Deactivate' : '✓ Activate'}
+                            </button>
+                          </div>
                         )
                       ) : (
                         <span className="text-xs theme-text-muted italic">Customer (Read-only)</span>

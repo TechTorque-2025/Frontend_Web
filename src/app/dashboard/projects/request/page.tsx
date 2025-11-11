@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { projectService } from '@/services/projectService';
 import { vehicleService } from '@/services/vehicleService';
@@ -34,22 +34,18 @@ export default function RequestProjectPage() {
     budget: '',
   });
 
-  useEffect(() => {
-    loadVehicles();
-  }, []);
-
-  const loadVehicles = async () => {
+  const loadVehicles = useCallback(async () => {
     try {
       setFetchingVehicles(true);
       const data = await vehicleService.getMyVehicles();
 
       // Filter to only show vehicles owned by the logged-in user
       // This ensures that even users with admin roles only see their own vehicles when requesting projects
-      const userVehicles = data.filter(vehicle => vehicle.customerId === profile?.username);
+      const userVehicles = data.filter((vehicle) => vehicle.customerId === profile?.username);
 
       setVehicles(userVehicles);
       if (userVehicles.length > 0) {
-        setFormData(prev => ({ ...prev, vehicleId: userVehicles[0].vehicleId }));
+        setFormData((prev) => ({ ...prev, vehicleId: userVehicles[0].vehicleId }));
       }
     } catch (err) {
       console.error('Failed to load vehicles:', err);
@@ -57,7 +53,11 @@ export default function RequestProjectPage() {
     } finally {
       setFetchingVehicles(false);
     }
-  };
+  }, [profile?.username]);
+
+  useEffect(() => {
+    void loadVehicles();
+  }, [loadVehicles]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

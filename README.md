@@ -42,3 +42,9 @@ This repository contains the source code for the TechTorque 2025 customer and em
 
 3. **Access Application:**
    Open [http://localhost:3000](http://localhost:3000) in your browser.
+
+4. **Setup Git Hooks (Recommended):**
+   ```bash
+   npm run setup-hooks
+   ```
+   This configures automatic linting on commit and build checking on push. See [GIT_HOOKS.md](GIT_HOOKS.md) for details.

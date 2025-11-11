@@ -16,7 +16,6 @@ export default function ProjectDetailPage() {
   const [loading, setLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState(false);
   const [error, setError] = useState('');
-  const [rejectionReason, setRejectionReason] = useState('');
 
   const loadProject = async () => {
     try {
