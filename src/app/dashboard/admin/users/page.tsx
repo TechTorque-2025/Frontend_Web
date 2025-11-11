@@ -131,6 +131,27 @@ export default function AdminUsersPage() {
     }
   };
 
+  const handleToggleUserStatus = async (user: UserResponse) => {
+    const action = user.enabled ? 'deactivate' : 'activate';
+    const confirmMessage = user.enabled
+      ? `Are you sure you want to deactivate ${user.fullName || user.username}? They will not be able to log in.`
+      : `Are you sure you want to activate ${user.fullName || user.username}? They will be able to log in again.`;
+
+    if (!confirm(confirmMessage)) {
+      return;
+    }
+
+    try {
+      await adminService.updateUser(user.userId, { enabled: !user.enabled });
+      await loadUsers();
+      alert(`User ${action}d successfully!`);
+    } catch (err) {
+      console.error(`Failed to ${action} user:`, err);
+      const errorMessage = err instanceof Error ? err.message : `Failed to ${action} user. Please try again.`;
+      alert(errorMessage);
+    }
+  };
+
   // Check if a role can be modified
   const isRoleProtected = (role: string): boolean => {
     return role === 'CUSTOMER' || role === 'SUPER_ADMIN';
@@ -213,27 +234,33 @@ export default function AdminUsersPage() {
       </div>
 
       {/* Stats */}
-      <div className="grid gap-4 sm:grid-cols-4 mb-6">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5 mb-6">
         <div className="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900/50 p-5">
-          <p className="text-xs uppercase tracking-wide theme-text-muted">Total users</p>
+          <p className="text-xs uppercase tracking-wide theme-text-muted">Total Users</p>
           <p className="text-2xl font-semibold theme-text-primary">{users.length}</p>
         </div>
         <div className="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900/50 p-5">
-          <p className="text-xs uppercase tracking-wide theme-text-muted">Active</p>
+          <p className="text-xs uppercase tracking-wide theme-text-muted">Activated</p>
           <p className="text-2xl font-semibold text-green-600 dark:text-green-400">
             {users.filter(u => u.enabled).length}
           </p>
         </div>
         <div className="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900/50 p-5">
-          <p className="text-xs uppercase tracking-wide theme-text-muted">Locked</p>
+          <p className="text-xs uppercase tracking-wide theme-text-muted">Deactivated</p>
           <p className="text-2xl font-semibold text-red-600 dark:text-red-400">
-            {users.filter(u => u.accountLocked).length}
+            {users.filter(u => !u.enabled).length}
           </p>
         </div>
         <div className="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900/50 p-5">
-          <p className="text-xs uppercase tracking-wide theme-text-muted">Verified</p>
+          <p className="text-xs uppercase tracking-wide theme-text-muted">Email Verified</p>
           <p className="text-2xl font-semibold text-blue-600 dark:text-blue-400">
             {users.filter(u => u.emailVerified).length}
+          </p>
+        </div>
+        <div className="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900/50 p-5">
+          <p className="text-xs uppercase tracking-wide theme-text-muted">Account Locked</p>
+          <p className="text-2xl font-semibold text-orange-600 dark:text-orange-400">
+            {users.filter(u => u.accountLocked).length}
           </p>
         </div>
       </div>
@@ -343,18 +370,32 @@ export default function AdminUsersPage() {
                   </td>
                   <td className="px-6 py-4">
                     <div className="space-y-1">
+                      {/* Account Status */}
                       {user.enabled ? (
                         <span className="inline-block px-2 py-1 rounded text-xs font-semibold bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300">
-                          Active
+                          ✓ Active
                         </span>
                       ) : (
-                        <span className="inline-block px-2 py-1 rounded text-xs font-semibold bg-gray-100 text-gray-700 dark:bg-gray-900/30 dark:text-gray-300">
-                          Disabled
+                        <span className="inline-block px-2 py-1 rounded text-xs font-semibold bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300">
+                          ✕ Deactivated
                         </span>
                       )}
+                      
+                      {/* Email Verification Status */}
+                      {user.emailVerified ? (
+                        <span className="inline-block px-2 py-1 rounded text-xs font-semibold bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 ml-1">
+                          ✉ Verified
+                        </span>
+                      ) : (
+                        <span className="inline-block px-2 py-1 rounded text-xs font-semibold bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-300 ml-1">
+                          ✉ Unverified
+                        </span>
+                      )}
+                      
+                      {/* Account Locked */}
                       {user.accountLocked && (
                         <span className="inline-block px-2 py-1 rounded text-xs font-semibold bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300 ml-1">
-                          Locked
+                          🔒 Locked
                         </span>
                       )}
                     </div>
@@ -369,27 +410,42 @@ export default function AdminUsersPage() {
                     <td className="px-6 py-4">
                       {canEditUser(user) ? (
                         editingUserId === user.userId ? (
-                          <div className="flex gap-2">
-                            <button
-                              onClick={() => handleSaveRoles(user.userId)}
-                              className="px-3 py-1 bg-green-600 hover:bg-green-700 text-white text-xs font-medium rounded transition-colors"
-                            >
-                              Save
-                            </button>
-                            <button
-                              onClick={handleCancelEditRoles}
-                              className="px-3 py-1 bg-gray-500 hover:bg-gray-600 text-white text-xs font-medium rounded transition-colors"
-                            >
-                              Cancel
-                            </button>
+                          <div className="flex flex-col gap-2">
+                            <div className="flex gap-2">
+                              <button
+                                onClick={() => handleSaveRoles(user.userId)}
+                                className="px-3 py-1 bg-green-600 hover:bg-green-700 text-white text-xs font-medium rounded transition-colors"
+                              >
+                                Save
+                              </button>
+                              <button
+                                onClick={handleCancelEditRoles}
+                                className="px-3 py-1 bg-gray-500 hover:bg-gray-600 text-white text-xs font-medium rounded transition-colors"
+                              >
+                                Cancel
+                              </button>
+                            </div>
                           </div>
                         ) : (
-                          <button
-                            onClick={() => handleStartEditRoles(user)}
-                            className="px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white text-xs font-medium rounded transition-colors"
-                          >
-                            Edit Roles
-                          </button>
+                          <div className="flex flex-col gap-2">
+                            <button
+                              onClick={() => handleStartEditRoles(user)}
+                              className="px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white text-xs font-medium rounded transition-colors"
+                            >
+                              Edit Roles
+                            </button>
+                            <button
+                              onClick={() => handleToggleUserStatus(user)}
+                              className={`px-3 py-1 text-white text-xs font-medium rounded transition-colors ${
+                                user.enabled
+                                  ? 'bg-red-600 hover:bg-red-700'
+                                  : 'bg-green-600 hover:bg-green-700'
+                              }`}
+                              title={user.enabled ? 'Disable user account' : 'Enable user account'}
+                            >
+                              {user.enabled ? '✕ Deactivate' : '✓ Activate'}
+                            </button>
+                          </div>
                         )
                       ) : (
                         <span className="text-xs theme-text-muted italic">Customer (Read-only)</span>
