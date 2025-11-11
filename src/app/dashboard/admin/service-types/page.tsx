@@ -15,7 +15,7 @@ export default function ServiceTypesPage() {
     name: '',
     category: 'MAINTENANCE',
     description: '',
-    price: 0,
+    price: '',
     durationMinutes: 30,
   });
 
@@ -46,7 +46,7 @@ export default function ServiceTypesPage() {
       name: '',
       category: 'MAINTENANCE',
       description: '',
-      price: 0,
+      price: '',
       durationMinutes: 30,
     });
     setShowModal(true);
@@ -58,7 +58,7 @@ export default function ServiceTypesPage() {
       name: service.name,
       category: service.category,
       description: service.description || '',
-      price: service.basePriceLKR,
+      price: service.basePriceLKR.toString(),
       durationMinutes: service.estimatedDurationMinutes,
     });
     setShowModal(true);
@@ -75,7 +75,7 @@ export default function ServiceTypesPage() {
           name: formData.name,
           category: formData.category,
           description: formData.description,
-          price: formData.price,
+          price: parseFloat(formData.price) || 0,
           durationMinutes: formData.durationMinutes,
           active: editingService.active, // Keep existing active status
         };
@@ -88,7 +88,7 @@ export default function ServiceTypesPage() {
           name: formData.name,
           category: formData.category,
           description: formData.description,
-          price: formData.price,
+          price: parseFloat(formData.price) || 0,
           durationMinutes: formData.durationMinutes,
         };
         await adminService.createServiceType(createData);
@@ -351,7 +351,7 @@ export default function ServiceTypesPage() {
                       min="0"
                       step="0.01"
                       value={formData.price}
-                      onChange={(e) => setFormData({ ...formData, price: parseFloat(e.target.value) || 0 })}
+                      onChange={(e) => setFormData({ ...formData, price: e.target.value })}
                       className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 theme-text-primary"
                       placeholder="5000"
                     />

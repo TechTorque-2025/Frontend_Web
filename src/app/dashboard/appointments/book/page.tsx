@@ -63,39 +63,68 @@ export default function BookAppointmentPage() {
     serviceTypes.find((service) => service.id === form.serviceTypeId) ?? null
   ), [form.serviceTypeId, serviceTypes])
 
+  // Filter out past time slots for today
+  const filteredAvailableSlots = useMemo(() => {
+    if (!availability) return []
+
+    const today = new Date().toISOString().slice(0, 10)
+    const isToday = form.date === today
+
+    if (!isToday) {
+      return availability.availableSlots
+    }
+
+    const now = new Date()
+    return availability.availableSlots.filter((slot) => {
+      const slotStartTime = new Date(slot.startTime)
+      return slotStartTime > now
+    })
+  }, [availability, form.date])
+
   const handleChange = (field: keyof BookingFormState, value: string) => {
     setForm((prev) => ({ ...prev, [field]: value }))
     if (field === 'serviceTypeId') {
       setAvailability(null)
+      setForm((prev) => ({ ...prev, time: '' }))
     }
-  }
-
-  const handleCheckAvailability = async () => {
-    if (!form.serviceTypeId || !form.date) {
-      setError('Select a service type and date before checking availability.')
-      return
-    }
-
-    const duration = selectedServiceType?.estimatedDurationMinutes ?? 60
-
-    try {
-      setCheckingAvailability(true)
-      const result = await appointmentService.checkAvailability({
-        date: form.date,
-        serviceType: selectedServiceType?.name || '',
-        duration,
-      })
-      setAvailability(result)
-      setError(null)
-    } catch (err: unknown) {
-      const message = (err as { response?: { data?: { message?: string } } })?.response?.data?.message ||
-        'Failed to check availability'
-      setError(message)
+    if (field === 'date') {
       setAvailability(null)
-    } finally {
-      setCheckingAvailability(false)
+      setForm((prev) => ({ ...prev, time: '' }))
     }
   }
+
+  // Auto-check availability when date or service changes
+  useEffect(() => {
+    const autoCheckAvailability = async () => {
+      if (!form.serviceTypeId || !form.date) {
+        setAvailability(null)
+        return
+      }
+
+      const duration = selectedServiceType?.estimatedDurationMinutes ?? 60
+
+      try {
+        setCheckingAvailability(true)
+        const result = await appointmentService.checkAvailability({
+          date: form.date,
+          serviceType: selectedServiceType?.name || '',
+          duration,
+        })
+        setAvailability(result)
+        setError(null)
+      } catch (err: unknown) {
+        const message = (err as { response?: { data?: { message?: string } } })?.response?.data?.message ||
+          'Failed to check availability'
+        setError(message)
+        setAvailability(null)
+      } finally {
+        setCheckingAvailability(false)
+      }
+    }
+
+    const timer = setTimeout(autoCheckAvailability, 300) // Debounce by 300ms
+    return () => clearTimeout(timer)
+  }, [form.serviceTypeId, form.date, selectedServiceType])
 
   const handleSlotSelect = (time: string) => {
     setForm((prev) => ({ ...prev, time }))
@@ -105,7 +134,7 @@ export default function BookAppointmentPage() {
     event.preventDefault()
 
     if (!form.vehicleId || !form.serviceTypeId || !form.date || !form.time) {
-      setError('Please complete all required fields before booking.')
+      setError('Please complete all required fields and select an available time slot.')
       return
     }
 
@@ -147,7 +176,7 @@ export default function BookAppointmentPage() {
       <div className="mb-8">
         <h1 className="text-3xl font-bold theme-text-primary mb-2">Book Appointment</h1>
         <p className="theme-text-muted">
-          Choose your vehicle, select a service, and reserve a time slot that works for you.
+          Choose your vehicle, select a service and date to see available time slots.
         </p>
       </div>
 
@@ -200,41 +229,17 @@ export default function BookAppointmentPage() {
           </label>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <label className="block">
-            <span className="block text-sm font-medium theme-text-primary mb-2">Date</span>
-            <input
-              type="date"
-              value={form.date}
-              onChange={(event) => handleChange('date', event.target.value)}
-              className="w-full rounded-lg border border-gray-300 dark:border-gray-700 theme-bg-primary theme-text-primary px-3 py-2"
-              min={new Date().toISOString().slice(0, 10)}
-              required
-            />
-          </label>
-
-          <label className="block">
-            <span className="block text-sm font-medium theme-text-primary mb-2">Preferred Time</span>
-            <input
-              type="time"
-              value={form.time}
-              onChange={(event) => handleChange('time', event.target.value)}
-              className="w-full rounded-lg border border-gray-300 dark:border-gray-700 theme-bg-primary theme-text-primary px-3 py-2"
-              required
-            />
-          </label>
-
-          <div className="flex items-end">
-            <button
-              type="button"
-              onClick={handleCheckAvailability}
-              className="theme-button-secondary w-full"
-              disabled={checkingAvailability}
-            >
-              {checkingAvailability ? 'Checking...' : 'Check Availability'}
-            </button>
-          </div>
-        </div>
+        <label className="block">
+          <span className="block text-sm font-medium theme-text-primary mb-2">Date</span>
+          <input
+            type="date"
+            value={form.date}
+            onChange={(event) => handleChange('date', event.target.value)}
+            className="w-full rounded-lg border border-gray-300 dark:border-gray-700 theme-bg-primary theme-text-primary px-3 py-2"
+            min={new Date().toISOString().slice(0, 10)}
+            required
+          />
+        </label>
 
         {selectedServiceType && (
           <div className="p-4 rounded-lg bg-blue-50 dark:bg-blue-900/20 text-sm theme-text-secondary">
@@ -244,17 +249,32 @@ export default function BookAppointmentPage() {
           </div>
         )}
 
-        {availability && (
+        {checkingAvailability && (
+          <div className="p-4 rounded-lg bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800">
+            <p className="theme-text-secondary text-sm">
+              <span className="inline-block animate-spin mr-2">⏳</span>
+              Checking availability for {form.date}...
+            </p>
+          </div>
+        )}
+
+        {availability && !checkingAvailability && (
           <div>
             <div className="flex items-center justify-between mb-3">
               <h3 className="text-lg font-semibold theme-text-primary">Available time slots</h3>
-              <span className="text-sm theme-text-muted">{availability.availableSlots.length} slots available</span>
+              <span className="text-sm theme-text-muted">{filteredAvailableSlots.length} slots available</span>
             </div>
-            {availability.availableSlots.length === 0 ? (
-              <p className="theme-text-muted text-sm">No slots available for the selected date. Try another date.</p>
+            {filteredAvailableSlots.length === 0 ? (
+              <div className="p-4 rounded-lg bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800">
+                <p className="theme-text-secondary text-sm">
+                  {form.date === new Date().toISOString().slice(0, 10)
+                    ? '⏰ All available slots for today have passed. Please select a future date.'
+                    : 'No slots available for the selected date. Try another date.'}
+                </p>
+              </div>
             ) : (
               <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                {availability.availableSlots.map((slot) => (
+                {filteredAvailableSlots.map((slot) => (
                   <button
                     key={`${slot.startTime}-${slot.endTime}`}
                     type="button"
@@ -273,6 +293,12 @@ export default function BookAppointmentPage() {
               </div>
             )}
           </div>
+        )}
+
+        {form.date && form.serviceTypeId && !availability && !checkingAvailability && (
+          <p className="text-sm theme-text-muted italic">
+            No availability data loaded. Please check your date and service selections.
+          </p>
         )}
 
         <label className="block">
@@ -297,7 +323,7 @@ export default function BookAppointmentPage() {
           <button
             type="submit"
             className="theme-button-primary"
-            disabled={submitting}
+            disabled={submitting || !form.time || checkingAvailability}
           >
             {submitting ? 'Booking...' : 'Confirm Appointment'}
           </button>

@@ -60,15 +60,15 @@ export default function AppointmentDetailPage() {
         setLoading(true)
         const data = await appointmentService.getAppointmentDetails(appointmentId)
         setAppointment(data)
-        setStatus(data.status) // Initialize status dropdown with current appointment status
+        setStatus(data.status)
         setError(null)
 
         const requested = new Date(data.requestedDateTime)
         setRescheduleDate(requested.toISOString().slice(0, 10))
         setRescheduleTime(requested.toISOString().slice(11, 16))
         setNotes(data.specialInstructions ?? '')
-        setStatus(data.status)
-        setSelectedEmployeeIds(data.assignedEmployeeIds || [])
+        // Ensure selectedEmployeeIds is properly set from appointment data
+        setSelectedEmployeeIds(data.assignedEmployeeIds ? [...data.assignedEmployeeIds] : [])
       } catch (err: unknown) {
         const message = (err as { response?: { data?: { message?: string } } })?.response?.data?.message ||
           'Failed to load appointment details'
@@ -435,10 +435,22 @@ export default function AppointmentDetailPage() {
 
         {(roles?.includes('ADMIN') || roles?.includes('SUPER_ADMIN')) && (
           <section className="automotive-card p-6">
-            <h2 className="text-xl font-semibold theme-text-primary mb-4">Assign Employees</h2>
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-xl font-semibold theme-text-primary">Assign or Change Employees</h2>
+              {appointment.assignedEmployeeIds && appointment.assignedEmployeeIds.length > 0 && (
+                <span className="px-3 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300">
+                  {appointment.assignedEmployeeIds.length} assigned
+                </span>
+              )}
+            </div>
             <p className="theme-text-muted text-sm mb-4">
-              Select one or more employees to assign to this appointment. Employees will receive notifications.
+              Select one or more employees to assign to this appointment. You can change the assigned employees at any time. Employees will receive notifications when assigned.
             </p>
+            <div className="mb-4 p-3 bg-blue-50 dark:bg-blue-900/10 border border-blue-200 dark:border-blue-800 rounded-lg">
+              <p className="text-sm theme-text-secondary">
+                💡 <strong>Tip:</strong> Currently assigned employees are pre-selected below. Uncheck to remove them or add new employees.
+              </p>
+            </div>
             <div className="space-y-2 mb-4 max-h-64 overflow-y-auto border border-gray-200 dark:border-gray-700 rounded-lg p-3">
               {employees.length === 0 ? (
                 <p className="theme-text-muted text-sm">No employees available</p>
@@ -458,6 +470,11 @@ export default function AppointmentDetailPage() {
                       <p className="theme-text-primary font-medium">{employee.fullName || employee.email}</p>
                       <p className="theme-text-muted text-xs">@{employee.username}</p>
                     </div>
+                    {appointment.assignedEmployeeIds?.includes(employee.username) && (
+                      <span className="text-xs bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300 px-2 py-1 rounded">
+                        Currently assigned
+                      </span>
+                    )}
                   </label>
                 ))
               )}
@@ -472,7 +489,7 @@ export default function AppointmentDetailPage() {
                 onClick={handleAssignEmployees}
                 disabled={assigning || selectedEmployeeIds.length === 0}
               >
-                {assigning ? 'Assigning...' : 'Assign Employees'}
+                {assigning ? 'Updating...' : 'Update Assignments'}
               </button>
             </div>
           </section>
