@@ -6,7 +6,7 @@ import { config } from '@/config/runtime';
 const API_BASE_URL = config.NEXT_PUBLIC_API_BASE_URL;
 
 const apiClient = axios.create({
-  baseURL: API_BASE_URL,
+  baseURL: `${API_BASE_URL}/api/v1`,
   headers: { 'Content-Type': 'application/json' },
 });
 
