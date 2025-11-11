@@ -1,5 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
+import Image from 'next/image';
 import userService from "../../services/userService";
 import authService from "../../services/authService";
 import { useProfilePhotoCache } from "../../lib/useProfilePhotoCache";
@@ -338,11 +339,7 @@ export default function ProfilePage() {
                   {photoPreview ? (
                     <>
                       <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-blue-500 flex items-center justify-center bg-gray-100 dark:bg-gray-800">
-                        <img
-                          src={photoPreview}
-                          alt="Photo preview"
-                          className="w-full h-full object-cover"
-                        />
+                        <Image src={photoPreview} alt="Photo preview" width={128} height={128} className="w-full h-full object-cover" />
                       </div>
                       <p className="text-sm text-blue-600 dark:text-blue-400">
                         Preview (not yet uploaded)
@@ -351,11 +348,7 @@ export default function ProfilePage() {
                   ) : profilePhoto ? (
                     <>
                       <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-green-500 flex items-center justify-center bg-gray-100 dark:bg-gray-800">
-                        <img
-                          src={profilePhoto}
-                          alt="Current profile photo"
-                          className="w-full h-full object-cover"
-                        />
+                        <Image src={profilePhoto} alt="Current profile photo" width={128} height={128} className="w-full h-full object-cover" />
                       </div>
                       <p className="text-sm text-green-600 dark:text-green-400">
                         Current photo

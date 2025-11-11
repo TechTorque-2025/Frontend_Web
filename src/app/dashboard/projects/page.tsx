@@ -37,7 +37,6 @@ export default function ProjectsPage() {
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('ALL')
 
   // Check if user is admin or super admin
-  const isAdminUser = roles.includes('SUPER_ADMIN') || roles.includes('ADMIN')
 
   const loadProjects = async () => {
     try {

@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect, useCallback } from 'react';
+import Image from 'next/image'
 import { useRouter, useParams } from 'next/navigation';
 import { vehicleService } from '@/services/vehicleService';
 import type { Vehicle, ServiceHistory } from '@/types/vehicle';
@@ -102,9 +103,11 @@ export default function VehicleDetailsPage() {
           <div className="automotive-card p-6">
             <div className="w-full rounded-lg overflow-hidden shadow-md bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-800">
               {vehicle.photos && vehicle.photos.length > 0 ? (
-                <img
+                <Image
                   src={vehicle.photos[0] as unknown as string}
                   alt={`${vehicle.make} ${vehicle.model}`}
+                  width={1200}
+                  height={480}
                   className="w-full h-72 object-cover"
                 />
               ) : (
@@ -119,7 +122,7 @@ export default function VehicleDetailsPage() {
               <div className="mt-4 flex gap-3">
                 {vehicle.photos.map((p, i) => (
                   <button key={i} className="w-24 h-16 rounded-md overflow-hidden border border-gray-200 dark:border-gray-700" onClick={() => window.scrollTo({top:0, behavior:'smooth'})}>
-                    <img src={p as unknown as string} alt={`photo-${i}`} className="w-full h-full object-cover" />
+                    <Image src={p as unknown as string} alt={`photo-${i}`} width={96} height={64} className="w-full h-full object-cover" />
                   </button>
                 ))}
               </div>

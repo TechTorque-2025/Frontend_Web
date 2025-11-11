@@ -1,8 +1,9 @@
 "use client";
 import { Client, IMessage, StompSubscription } from '@stomp/stompjs';
+import type { NotificationResponse } from '@/types/notification';
 import SockJS from 'sockjs-client';
 
-export type NotificationCallback = (notification: unknown) => void;
+export type NotificationCallback = (notification: NotificationResponse) => void;
 export type UnreadCountCallback = (count: number) => void;
 
 class WebSocketService {
