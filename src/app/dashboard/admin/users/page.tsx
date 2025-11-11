@@ -77,11 +77,13 @@ export default function AdminUsersPage() {
       setShowCreateModal(false);
       await loadUsers();
       alert(`${createUserType === 'employee' ? 'Employee' : 'Admin'} created successfully!`);
-    } catch (err: any) {
+    } catch (err) {
       console.error('Failed to create user:', err);
-      const errorMessage = err?.response?.status === 403
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const error = err as any;
+      const errorMessage = error?.response?.status === 403
         ? 'Permission denied. You do not have the required permissions to create this user type.'
-        : err?.response?.data?.message || 'Failed to create user. Please try again.';
+        : error?.response?.data?.message || 'Failed to create user. Please try again.';
       alert(errorMessage);
     }
   };
@@ -98,6 +100,12 @@ export default function AdminUsersPage() {
 
   const handleSaveRoles = async (userId: string) => {
     try {
+      // Validation: Ensure at least one role is selected
+      if (editingRoles.length === 0) {
+        alert('Please select at least one role for the user.');
+        return;
+      }
+
       await adminService.updateUser(userId, { roles: editingRoles });
       setEditingUserId(null);
       setEditingRoles([]);
@@ -105,16 +113,27 @@ export default function AdminUsersPage() {
       alert('Roles updated successfully!');
     } catch (err) {
       console.error('Failed to update roles:', err);
-      alert('Failed to update roles. Please try again.');
+      const errorMessage = err instanceof Error ? err.message : 'Failed to update roles. Please try again.';
+      alert(errorMessage);
     }
   };
 
   const handleToggleRole = (role: string) => {
     if (editingRoles.includes(role)) {
+      // Prevent removing the last role
+      if (editingRoles.length === 1) {
+        alert('A user must have at least one role.');
+        return;
+      }
       setEditingRoles(editingRoles.filter(r => r !== role));
     } else {
       setEditingRoles([...editingRoles, role]);
     }
+  };
+
+  // Check if a role can be modified
+  const isRoleProtected = (role: string): boolean => {
+    return role === 'CUSTOMER' || role === 'SUPER_ADMIN';
   };
 
   // Check if user can be edited (not customer)
@@ -263,29 +282,59 @@ export default function AdminUsersPage() {
                     {editingUserId === user.userId ? (
                       <div className="space-y-2">
                         <div className="flex flex-wrap gap-2">
+                          {/* Editable roles */}
                           {['EMPLOYEE', 'ADMIN'].map((role) => (
                             <button
                               key={role}
                               onClick={() => handleToggleRole(role)}
                               className={`px-3 py-1 rounded text-xs font-semibold transition-colors ${
                                 editingRoles.includes(role)
-                                  ? 'bg-blue-600 text-white'
-                                  : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300'
+                                  ? 'bg-blue-600 text-white hover:bg-blue-700'
+                                  : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
                               }`}
+                              title={`Click to ${editingRoles.includes(role) ? 'remove' : 'add'} ${role} role`}
                             >
                               {role}
                             </button>
                           ))}
+                          
+                          {/* Show protected roles (read-only) */}
+                          {user.roles.filter(role => isRoleProtected(role)).map((role) => (
+                            <span
+                              key={role}
+                              className="px-3 py-1 rounded text-xs font-semibold bg-gray-300 dark:bg-gray-600 text-gray-600 dark:text-gray-300 cursor-not-allowed opacity-75"
+                              title={`${role} role cannot be modified`}
+                            >
+                              {role} 🔒
+                            </span>
+                          ))}
                         </div>
+                        <p className="text-xs theme-text-muted mt-2">
+                          💡 <strong>Tip:</strong> Select multiple roles to give users combined access. 
+                          {editingRoles.length > 1 && (
+                            <span className="text-blue-600 dark:text-blue-400"> Currently selected: {editingRoles.length} roles</span>
+                          )}
+                        </p>
                       </div>
                     ) : (
                       <div className="flex flex-wrap gap-1">
                         {Array.isArray(user.roles) && user.roles.length > 0 ? (
-                          user.roles.map((role) => (
-                            <span key={role} className="px-2 py-1 rounded text-xs font-semibold bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300">
-                              {role}
-                            </span>
-                          ))
+                          user.roles.map((role) => {
+                            const isProtected = isRoleProtected(role);
+                            return (
+                              <span
+                                key={role}
+                                className={`px-2 py-1 rounded text-xs font-semibold ${
+                                  isProtected
+                                    ? 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300'
+                                    : 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300'
+                                }`}
+                                title={isProtected ? 'Protected role' : ''}
+                              >
+                                {role} {isProtected && '🔒'}
+                              </span>
+                            );
+                          })
                         ) : (
                           <span className="text-xs theme-text-muted">No roles</span>
                         )}
