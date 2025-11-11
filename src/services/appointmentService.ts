@@ -79,6 +79,10 @@ export const appointmentService = {
     return res.data;
   },
 
+  async clockIn(appointmentId: string): Promise<TimeSessionResponse> {
+    const res = await api.post(`/appointments/${appointmentId}/clock-in`);
+    return res.data;
+  },
 
   async clockOut(appointmentId: string): Promise<TimeSessionResponse> {
     const res = await api.post(`/appointments/${appointmentId}/clock-out`);

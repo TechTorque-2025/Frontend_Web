@@ -34,6 +34,7 @@ export type AppointmentStatus =
   | 'CONFIRMED'
   | 'IN_PROGRESS'
   | 'COMPLETED'
+  | 'CUSTOMER_CONFIRMED'
   | 'CANCELLED'
   | 'NO_SHOW';
 
