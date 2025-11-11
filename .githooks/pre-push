@@ -1,0 +1,19 @@
+#!/bin/bash
+
+# Git pre-push hook to run build check
+# This hook runs before pushing to ensure the project builds successfully
+
+echo "🏗️  Running build check before push..."
+
+# Run build check
+npm run build
+
+# Check the exit status
+if [ $? -ne 0 ]; then
+    echo "❌ Build failed. Please fix the build errors before pushing."
+    echo "💡 Run 'npm run build' to see the issues"
+    exit 1
+fi
+
+echo "✅ Build passed! Push is proceeding..."
+exit 0
