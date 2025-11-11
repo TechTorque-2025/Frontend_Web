@@ -74,6 +74,11 @@ export const appointmentService = {
     return res.data;
   },
 
+  async confirmCompletion(appointmentId: string): Promise<AppointmentResponseDto> {
+    const res = await api.post(`/appointments/${appointmentId}/confirm-completion`);
+    return res.data;
+  },
+
   // Time Tracking
   async clockIn(appointmentId: string): Promise<TimeSessionResponse> {
     const res = await api.post(`/appointments/${appointmentId}/clock-in`);

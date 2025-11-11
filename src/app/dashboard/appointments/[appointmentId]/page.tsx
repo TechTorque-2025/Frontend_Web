@@ -20,6 +20,7 @@ const STATUS_OPTIONS: StatusOption[] = [
   { value: 'CONFIRMED', label: 'Confirmed' },
   { value: 'IN_PROGRESS', label: 'In Progress' },
   { value: 'COMPLETED', label: 'Completed' },
+  { value: 'CUSTOMER_CONFIRMED', label: 'Confirmed Complete' },
   { value: 'CANCELLED', label: 'Cancelled' },
   { value: 'NO_SHOW', label: 'No Show' },
 ]
@@ -152,6 +153,27 @@ export default function AppointmentDetailPage() {
     } catch (err: unknown) {
       const message = (err as { response?: { data?: { message?: string } } })?.response?.data?.message ||
         'Failed to update appointment status'
+      setError(message)
+    } finally {
+      setStatusUpdating(false)
+    }
+  }
+
+  const handleConfirmCompletion = async () => {
+    if (!appointment) return
+    if (!window.confirm('Are you sure you want to confirm completion of this appointment?')) {
+      return
+    }
+
+    try {
+      setStatusUpdating(true)
+      const updated = await appointmentService.confirmCompletion(appointment.id)
+      setAppointment(updated)
+      setStatus(updated.status)
+      setError(null)
+    } catch (err: unknown) {
+      const message = (err as { response?: { data?: { message?: string } } })?.response?.data?.message ||
+        'Failed to confirm completion'
       setError(message)
     } finally {
       setStatusUpdating(false)
@@ -756,6 +778,32 @@ export default function AppointmentDetailPage() {
           </section>
         )}
 
+        {roles?.includes('CUSTOMER') && appointment?.status === 'COMPLETED' && (
+          <section className="automotive-card p-6 border-2 border-green-200 dark:border-green-800">
+            <h2 className="text-xl font-semibold text-green-600 dark:text-green-400 mb-4">✓ Confirm Completion</h2>
+            <p className="theme-text-muted mb-4">
+              The work on your appointment has been completed. Please review the service and confirm completion to finalize the appointment.
+            </p>
+            <button
+              type="button"
+              className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-medium"
+              onClick={handleConfirmCompletion}
+              disabled={statusUpdating}
+            >
+              {statusUpdating ? 'Confirming...' : '✓ Confirm Completion'}
+            </button>
+          </section>
+        )}
+
+        {roles?.includes('CUSTOMER') && appointment?.status === 'CUSTOMER_CONFIRMED' && (
+          <section className="automotive-card p-6 border-2 border-green-200 dark:border-green-800 bg-green-50 dark:bg-green-900/10">
+            <h2 className="text-xl font-semibold text-green-600 dark:text-green-400 mb-2">✓ Appointment Complete</h2>
+            <p className="text-green-700 dark:text-green-300">
+              Thank you! You have confirmed the completion of this appointment. The service is now finalized.
+            </p>
+          </section>
+        )}
+
         {roles?.includes('CUSTOMER') && (
           <section className="automotive-card p-6 border border-red-200 dark:border-red-800">
             <h2 className="text-xl font-semibold text-red-600 dark:text-red-400 mb-4">Danger zone</h2>
@@ -764,7 +812,7 @@ export default function AppointmentDetailPage() {
               type="button"
               className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg"
               onClick={handleCancel}
-              disabled={saving}
+              disabled={saving || appointment?.status === 'CUSTOMER_CONFIRMED'}
             >
               Cancel appointment
             </button>
