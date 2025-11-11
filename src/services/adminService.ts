@@ -4,6 +4,7 @@ import type {
   UserResponse,
   UpdateUserRequest,
   ServiceTypeResponse,
+  CreateServiceTypeRequest,
   UpdateServiceTypeRequest,
   SystemConfigurationResponse,
   UpdateConfigRequest,
@@ -47,7 +48,10 @@ export const adminService = {
   // ===== SERVICE TYPE CONFIGURATION =====
   
   async getAllServiceTypes(): Promise<ServiceTypeResponse[]> {
-    const res = await api.get('/admin/service-types');
+    // Pass activeOnly=false to get ALL service types (active and inactive)
+    const res = await api.get('/admin/service-types', {
+      params: { activeOnly: false }
+    });
     return res.data.data || res.data;
   },
 
@@ -56,7 +60,7 @@ export const adminService = {
     return res.data.data || res.data;
   },
 
-  async createServiceType(data: UpdateServiceTypeRequest): Promise<ServiceTypeResponse> {
+  async createServiceType(data: CreateServiceTypeRequest): Promise<ServiceTypeResponse> {
     const res = await api.post('/admin/service-types', data);
     return res.data.data || res.data;
   },

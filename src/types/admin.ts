@@ -37,13 +37,28 @@ export interface ServiceTypeResponse {
   updatedAt: string;
 }
 
-export interface UpdateServiceTypeRequest {
+export interface CreateServiceTypeRequest {
   name: string;
   category: string;
   description?: string;
-  basePriceLKR: number;
-  estimatedDurationMinutes: number;
+  price: number; // Backend expects 'price' not 'basePriceLKR'
+  durationMinutes: number; // Backend expects 'durationMinutes' not 'estimatedDurationMinutes'
+  requiresApproval?: boolean;
+  dailyCapacity?: number;
+  skillLevel?: string;
+  iconUrl?: string;
+}
+
+export interface UpdateServiceTypeRequest {
+  name?: string;
+  category?: string;
+  description?: string;
+  price?: number; // Backend expects 'price' not 'basePriceLKR'
+  durationMinutes?: number; // Backend expects 'durationMinutes' not 'estimatedDurationMinutes'
   active?: boolean;
+  dailyCapacity?: number;
+  skillLevel?: string;
+  iconUrl?: string;
 }
 
 // ===== SYSTEM CONFIGURATION =====
