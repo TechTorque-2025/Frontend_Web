@@ -40,7 +40,7 @@ export default function BookAppointmentPage() {
       try {
         setLoading(true)
         const [services, vehicleData] = await Promise.all([
-          appointmentService.getAllServiceTypes(false),
+          appointmentService.getAllServiceTypes(false), // Get only active service types
           vehicleService.getMyVehicles(),
         ])
 
