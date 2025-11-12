@@ -1,6 +1,7 @@
 // components/AIChatWidget.tsx
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import Cookies from 'js-cookie';
+import { config } from '@/config/runtime';
 
 // --- TypeScript Interface Definitions ---
 interface Message {
@@ -13,7 +14,8 @@ interface ChatResponse {
     session_id: string;
 }
 
-const API_ENDPOINT = '/api/v1/ai/chat'; // This will be routed by your API Gateway
+// Use the runtime config to get the API Gateway URL
+const API_ENDPOINT = `${config.NEXT_PUBLIC_API_BASE_URL}/api/v1/ai/chat`;
 
 const AIChatWidget: React.FC = () => {
     // 1. State Management
