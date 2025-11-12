@@ -233,13 +233,13 @@ export default function PaymentHistoryPage() {
                       </div>
                     </td>
                     <td className="py-3 pr-4 text-right font-semibold">{formatCurrency(payment.amount)}</td>
-                    <td className="py-3 pr-4 uppercase">{payment.paymentMethod.replace('_', ' ')}</td>
+                    <td className="py-3 pr-4 uppercase">{payment.paymentMethod?.replace('_', ' ') ?? '—'}</td>
                     <td className="py-3 pr-4">
-                      <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold ${statusBadge[payment.paymentStatus] ?? 'bg-gray-100 text-gray-700 dark:bg-gray-900/30 dark:text-gray-300'}`}>
-                        {payment.paymentStatus}
+                      <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold ${statusBadge[payment.paymentStatus ?? ''] ?? 'bg-gray-100 text-gray-700 dark:bg-gray-900/30 dark:text-gray-300'}`}>
+                        {payment.paymentStatus ?? 'UNKNOWN'}
                       </span>
                     </td>
-                    <td className="py-3 pr-4">{formatDate(payment.processedAt ?? payment.createdAt)}</td>
+                    <td className="py-3 pr-4">{payment.processedAt ? formatDate(payment.processedAt) : (payment.createdAt ? formatDate(payment.createdAt) : '—')}</td>
                     <td className="py-3 pr-4 text-xs theme-text-secondary max-w-xs">{payment.notes ?? '—'}</td>
                   </tr>
                 ))}
