@@ -155,7 +155,7 @@ const CustomerDashboard: React.FC<CustomerDashboardProps> = ({ profile }) => {
               overdueInvoices.slice(0, 3).map((invoice) => (
                 <div key={invoice.invoiceId} className="border border-gray-200 dark:border-gray-700 rounded-lg p-3">
                   <p className="theme-text-primary font-medium text-sm">Invoice {invoice.invoiceNumber}</p>
-                  <p className="theme-text-muted text-xs mb-1">Amount due: LKR {invoice.totalAmount.toLocaleString()}</p>
+                  <p className="theme-text-muted text-xs mb-1">Amount due: LKR {(invoice.totalAmount ?? 0).toLocaleString()}</p>
                   <Link
                     href={`/dashboard/invoices/${invoice.invoiceId}`}
                     className="text-xs text-blue-600 dark:text-blue-400 hover:underline"

@@ -28,7 +28,7 @@ export default function VehicleCard({ vehicle, onDelete, onEdit }: VehicleCardPr
       <div className="space-y-2 mb-4 py-3 automotive-border-t">
         <div className="flex justify-between text-sm">
           <span className="theme-text-muted">Mileage:</span>
-          <span className="font-semibold theme-text-primary">{vehicle.mileage.toLocaleString()} miles</span>
+          <span className="font-semibold theme-text-primary">{(vehicle.mileage ?? 0).toLocaleString()} miles</span>
         </div>
       </div>
 
