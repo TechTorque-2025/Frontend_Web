@@ -206,9 +206,24 @@ body {
   }
 }
 
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
 .animate-fadeInUp {
   animation: fadeInUp 0.7s ease-out forwards;
   opacity: 0; /* Initially hidden */
+}
+
+.animate-slide-in-right {
+  animation: slideInRight 0.4s ease-out forwards;
 }
 
 /* Staggered animation delays */

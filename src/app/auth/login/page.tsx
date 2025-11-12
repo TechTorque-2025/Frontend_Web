@@ -24,23 +24,44 @@ export default function LoginPage() {
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [warning, setWarning] = useState<string | null>(null);
+  const [unverifiedEmail, setUnverifiedEmail] = useState<string | null>(null);
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError(null);
+    setWarning(null);
+    setUnverifiedEmail(null);
     setLoading(true);
     const form = e.currentTarget;
     const formData = new FormData(form);
+    const email = (formData.get('username') as string) || '';
     const payload: LoginRequest = {
-      username: (formData.get('username') as string) || '',
+      username: email,
       password: (formData.get('password') as string) || '',
     };
     try {
-      await authService.login(payload);
-      router.push('/dashboard');
+      const response = await authService.login(payload);
+
+      // Check if email is not verified and show warning
+      if (response.emailVerified === false) {
+        setWarning('⚠️ Please verify your email within 7 days to continue using the service. Check your inbox for the verification link.');
+        setTimeout(() => {
+          router.push('/dashboard');
+        }, 3000);
+      } else {
+        router.push('/dashboard');
+      }
     } catch (err: unknown) {
       const errorMessage = err instanceof Error ? err.message : 'Login failed';
-      setError(errorMessage);
+      
+      // Check if error is about email verification
+      if (errorMessage.includes('verify your email') || errorMessage.includes('email address')) {
+        setUnverifiedEmail(email);
+        setError(errorMessage);
+      } else {
+        setError(errorMessage);
+      }
     } finally {
       setLoading(false);
     }
@@ -138,8 +159,21 @@ export default function LoginPage() {
                     </div>
                 </form>
                 {error && (
-                  <div role="alert" className="mt-4 text-sm text-red-600">
-                    {error}
+                  <div role="alert" className="mt-4 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
+                    <p className="text-sm text-red-600 dark:text-red-400 mb-2">{error}</p>
+                    {unverifiedEmail && (
+                      <Link 
+                        href={`/auth/resend-verification?email=${encodeURIComponent(unverifiedEmail)}`}
+                        className="text-sm text-blue-600 dark:text-blue-400 hover:underline font-semibold"
+                      >
+                        Resend Verification Email →
+                      </Link>
+                    )}
+                  </div>
+                )}
+                {warning && (
+                  <div role="alert" className="mt-4 p-4 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg">
+                    <p className="text-sm text-yellow-600 dark:text-yellow-400">{warning}</p>
                   </div>
                 )}
              </div>
@@ -148,4 +182,3 @@ export default function LoginPage() {
     </div>
   );
 }
-

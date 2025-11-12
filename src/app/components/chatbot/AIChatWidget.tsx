@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { Sparkles, Bolt } from 'lucide-react'; 
+import { Sparkles, Bolt } from 'lucide-react';
+import Cookies from 'js-cookie';
 
 // --- Theme Simulation & Constants ---
 // NOTE: These theme classes are defined here for self-containment.
@@ -26,25 +27,15 @@ interface ChatResponse {
     tool_executed?: string | null; // Added tool_executed matching Python model
 }
 
-// Mocking the user authentication hook
-interface AuthHook {
-    token: string | null;
-    isLoggedIn: boolean;
-}
-
 // NOTE: Using localhost:8091 to test against the locally running FastAPI service
 const API_ENDPOINT = 'http://localhost:8091/api/v1/ai/chat';
 
-// --- MOCK AUTH HOOK ---
-// Provides a mock token; replace this with your actual useAuth hook
-const useAuth = (): AuthHook => ({
-    token: "mock-jwt-token-for-user-12345", 
-    isLoggedIn: true
-});
+// --- MOCK AUTH HOOK (REMOVED) ---
+// We now use js-cookie directly.
 
 const AIChatWidget: React.FC = () => {
     // 1. State Management
-    const { token: userToken } = useAuth();
+    const [userToken, setUserToken] = useState<string | null>(null); // For UI control
     
     const [conversationHistory, setConversationHistory] = useState<Message[]>([
         { text: "Hello! I'm TechTorque Assistant. How can I help you with your services or appointments?", sender: 'ai' }
@@ -52,8 +43,14 @@ const AIChatWidget: React.FC = () => {
     const [inputMessage, setInputMessage] = useState<string>('');
     const [sessionId, setSessionId] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState<boolean>(false);
-
+    
     const messagesEndRef = useRef<HTMLDivElement>(null);
+    
+    // Check for cookie on mount to set initial UI state
+    useEffect(() => {
+        const token = Cookies.get('tt_access_token');
+        setUserToken(token || null);
+    }, []);
 
     // Auto-scroll to the latest message
     useEffect(() => {
@@ -62,8 +59,10 @@ const AIChatWidget: React.FC = () => {
 
     // 2. The Core Logic
     const sendMessage = useCallback(async (message: string) => {
-        // Ensure token exists before proceeding with any action
-        if (!message.trim() || isLoading || !userToken) return; 
+        // Get token directly from cookies to ensure it's the latest
+        const currentToken = Cookies.get('tt_access_token');
+        
+        if (!message.trim() || isLoading || !currentToken) return;
 
         // Add user message to history
         const userMessage: Message = { text: message, sender: 'user' };
@@ -76,14 +75,14 @@ const AIChatWidget: React.FC = () => {
             const payload = {
                 query: message,
                 session_id: sessionId, 
-                token: userToken, // Sent in body for Agent_Bot context
+                token: currentToken, // Sent in body for Agent_Bot context
             };
 
             const response = await fetch(API_ENDPOINT, {
                 method: 'POST',
                 headers: { 
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${userToken}`, // Sent in header for Gateway validation
+                    'Authorization': `Bearer ${currentToken}`, // Sent in header for Gateway validation
                 },
                 body: JSON.stringify(payload),
             });
@@ -107,17 +106,19 @@ const AIChatWidget: React.FC = () => {
             setConversationHistory(prev => [...prev, aiResponse]);
             setSessionId(data.session_id); // CRITICAL: Save the session ID
 
-        } catch (error: any) {
+        } catch (error: unknown) {
             console.error("Chat Error:", error);
             const errorMessage: Message = { 
-                text: "Sorry, I'm having trouble connecting to the services. Please try again later.", 
+                text: (error instanceof Error && (error.message.includes('401') || error.message.includes('Unauthorized'))) 
+                    ? "Your session has expired. Please log in again."
+                    : "Sorry, I'm having trouble with the services. Try again later.", 
                 sender: 'system' 
             };
             setConversationHistory(prev => [...prev, errorMessage]);
         } finally {
             setIsLoading(false);
         }
-    }, [isLoading, sessionId, userToken]); 
+    }, [isLoading, sessionId]); // Dependencies for useCallback
 
     // 5. Handler for form submission
     const handleSubmit = (e: React.FormEvent) => {
