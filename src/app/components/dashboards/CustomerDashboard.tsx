@@ -224,7 +224,7 @@ const CustomerDashboard: React.FC<CustomerDashboardProps> = ({ profile }) => {
       {/* Floating AI Chat Widget */}
       <div className="fixed bottom-6 right-6 z-50">
         {chatOpen ? (
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-2xl w-96 h-[32rem] flex flex-col border border-gray-200 dark:border-gray-700">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-2xl w-[480px] h-[600px] flex flex-col border border-gray-200 dark:border-gray-700">
             <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
               <h3 className="text-lg font-semibold text-indigo-700 dark:text-indigo-400">TechTorque AI Assistant</h3>
               <button
