@@ -183,7 +183,7 @@ export default function VehicleDetailsPage() {
               </div>
               <div>
                 <h4 className="text-xs theme-text-muted">Mileage</h4>
-                <div className="font-semibold theme-text-primary">{vehicle.mileage.toLocaleString()} mi</div>
+                <div className="font-semibold theme-text-primary">{(vehicle.mileage ?? 0).toLocaleString()} mi</div>
               </div>
               <div>
                 <h4 className="text-xs theme-text-muted">Color</h4>
