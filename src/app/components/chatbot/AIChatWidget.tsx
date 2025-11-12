@@ -18,7 +18,7 @@ const API_ENDPOINT = '/api/v1/ai/chat'; // This will be routed by your API Gatew
 const AIChatWidget: React.FC = () => {
     // 1. State Management
     const [conversationHistory, setConversationHistory] = useState<Message[]>([
-        { text: "Hello! I'm TechTorque Assistant. How can I help you with your services or appointments?", sender: 'ai' }
+        { text: "👋 Hello! I'm TechTorque Assistant, your friendly car service companion! 🚗\n\nI can help you with:\n✅ Booking appointments\n✅ Checking service status\n✅ Vehicle information\n✅ Pricing & estimates\n\nWhat can I do for you today? 😊", sender: 'ai' }
     ]);
     const [inputMessage, setInputMessage] = useState<string>('');
     const [sessionId, setSessionId] = useState<string | null>(null);
@@ -76,11 +76,11 @@ const AIChatWidget: React.FC = () => {
 
         } catch (error: unknown) {
             console.error("Chat Error:", error);
-            const errorMessage: Message = { 
-                text: (error instanceof Error && error.message.includes('401')) 
-                    ? "Your session has expired. Please log in again."
-                    : "Sorry, I'm having trouble with the services. Try again later.", 
-                sender: 'system' 
+            const errorMessage: Message = {
+                text: (error instanceof Error && error.message.includes('401'))
+                    ? "🔒 Your session has expired. Please log in again to continue chatting!"
+                    : "⚠️ Oops! I'm having trouble connecting to my services right now. Please try again in a moment! 🔄",
+                sender: 'system'
             };
             setConversationHistory(prev => [...prev, errorMessage]);
         } finally {
@@ -96,55 +96,59 @@ const AIChatWidget: React.FC = () => {
 
     // --- RENDER FUNCTION (JSX) ---
     return (
-        <div className="flex flex-col h-full bg-white rounded-lg shadow-xl">
-            {/* Header */}
-            <div className="p-4 border-b bg-gray-50">
-                <h3 className="text-lg font-semibold text-indigo-700">TechTorque AI Assistant</h3>
-            </div>
-
-            {/* Message Display Area */}
-            <div className="flex-1 overflow-y-auto p-4 space-y-3">
+        <div className="flex flex-col h-full bg-white dark:bg-gray-800 rounded-lg">
+            {/* Message Display Area - Increased padding and spacing */}
+            <div className="flex-1 overflow-y-auto p-5 space-y-4">
                 {conversationHistory.map((msg, index) => (
-                    <div 
-                        key={index} 
+                    <div
+                        key={index}
                         className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}
                     >
-                        <div className={`max-w-xs px-4 py-2 rounded-xl text-sm ${
-                            msg.sender === 'user' 
-                                ? 'bg-indigo-500 text-white rounded-br-none' 
-                                : 'bg-gray-200 text-gray-800 rounded-tl-none'
+                        <div className={`max-w-[85%] px-5 py-3 rounded-2xl text-base leading-relaxed ${
+                            msg.sender === 'user'
+                                ? 'bg-indigo-600 text-white rounded-br-none shadow-md'
+                                : msg.sender === 'system'
+                                ? 'bg-red-100 text-red-800 border border-red-300 rounded-tl-none'
+                                : 'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-tl-none shadow-sm'
                         }`}>
-                            {msg.text}
+                            <span className="whitespace-pre-wrap break-words">{msg.text}</span>
                         </div>
                     </div>
                 ))}
                 {/* Typing Indicator */}
                 {isLoading && (
                     <div className="flex justify-start">
-                        <div className="max-w-xs px-4 py-2 rounded-xl text-sm bg-gray-200 text-gray-800 rounded-tl-none animate-pulse">
-                            Thinking...
+                        <div className="max-w-[85%] px-5 py-3 rounded-2xl text-base bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-tl-none shadow-sm animate-pulse">
+                            <span className="flex items-center gap-1">
+                                <span>Thinking</span>
+                                <span className="inline-flex gap-1">
+                                    <span className="animate-bounce">.</span>
+                                    <span className="animate-bounce delay-100">.</span>
+                                    <span className="animate-bounce delay-200">.</span>
+                                </span>
+                            </span>
                         </div>
                     </div>
                 )}
                 <div ref={messagesEndRef} /> {/* Auto-scroll reference */}
             </div>
 
-            {/* Input Form */}
-            <form onSubmit={handleSubmit} className="p-4 border-t flex space-x-2">
+            {/* Input Form - Larger and more visible */}
+            <form onSubmit={handleSubmit} className="p-4 border-t border-gray-200 dark:border-gray-700 flex space-x-3 bg-gray-50 dark:bg-gray-900">
                 <input
                     type="text"
                     value={inputMessage}
                     onChange={(e) => setInputMessage(e.target.value)}
                     placeholder="Ask about appointments, status, or services..."
-                    className="flex-1 p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    className="flex-1 px-4 py-3 text-base border border-gray-300 dark:border-gray-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:bg-gray-800 dark:text-white"
                     disabled={isLoading}
                 />
                 <button
                     type="submit"
-                    className={`px-4 py-2 rounded-lg font-semibold transition duration-150 ${
+                    className={`px-6 py-3 rounded-xl font-semibold text-base transition duration-150 ${
                         isLoading || !inputMessage.trim()
                             ? 'bg-indigo-300 text-white cursor-not-allowed'
-                            : 'bg-indigo-600 text-white hover:bg-indigo-700'
+                            : 'bg-indigo-600 text-white hover:bg-indigo-700 shadow-md hover:shadow-lg'
                     }`}
                     disabled={isLoading || !inputMessage.trim()}
                 >
