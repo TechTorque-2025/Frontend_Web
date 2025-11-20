@@ -4,9 +4,12 @@ import { useState } from 'react';
 import { adminService } from '@/services/adminService';
 import { ReportRequest } from '@/types/admin';
 import { useDashboard } from '@/app/contexts/DashboardContext';
+import { useToast } from '@/hooks/useToast';
+import { ToastContainer } from '@/components/Toast';
 
 export default function ReportsPage() {
   const { roles, loading: rolesLoading } = useDashboard();
+  const { toasts, success, error: showError, closeToast } = useToast();
   const [generating, setGenerating] = useState(false);
   const [reportType, setReportType] = useState<'SERVICE_PERFORMANCE' | 'REVENUE' | 'EMPLOYEE_PRODUCTIVITY' | 'CUSTOMER_SATISFACTION' | 'INVENTORY' | 'APPOINTMENT_SUMMARY'>('REVENUE');
   const [format, setFormat] = useState<'JSON' | 'PDF' | 'EXCEL' | 'CSV'>('PDF');
@@ -26,10 +29,10 @@ export default function ReportsPage() {
       const report = await adminService.generateReport(request);
       // In a real implementation, you would display or download the report
       console.log('Report generated:', report);
-      alert('Report generated successfully!');
+      success('Report generated successfully!');
     } catch (err) {
       console.error('Failed to generate report:', err);
-      alert('Failed to generate report');
+      showError('Failed to generate report');
     } finally {
       setGenerating(false);
     }
@@ -143,6 +146,7 @@ export default function ReportsPage() {
           </button>
         </div>
       </div>
+      <ToastContainer toasts={toasts} onClose={closeToast} />
     </div>
   );
 }

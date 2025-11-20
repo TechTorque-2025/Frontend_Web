@@ -5,12 +5,15 @@ import { useParams, useRouter } from 'next/navigation';
 import { projectService } from '@/services/projectService';
 import { ProjectResponseDto, ProjectStatus } from '@/types/project';
 import { useDashboard } from '@/app/contexts/DashboardContext';
+import { useToast } from '@/hooks/useToast';
+import { ToastContainer } from '@/components/Toast';
 
 export default function ProjectDetailPage() {
   const params = useParams();
   const router = useRouter();
   const { profile, roles } = useDashboard();
   const projectId = params.projectId as string;
+  const { toasts, success, error: showError, closeToast } = useToast();
 
   const [project, setProject] = useState<ProjectResponseDto | null>(null);
   const [loading, setLoading] = useState(true);
@@ -42,10 +45,11 @@ export default function ProjectDetailPage() {
       setActionLoading(true);
       await projectService.approveQuote(projectId);
       await loadProject();
+      success('Quote approved successfully!');
     } catch (err) {
       console.error('Failed to approve quote:', err);
-      alert(err instanceof Error ? err.message : 'Failed to approve quote');
-    } finally {
+      showError(err instanceof Error ? err.message : 'Failed to approve quote');
+    } finally{
       setActionLoading(false);
     }
   };
@@ -59,7 +63,7 @@ export default function ProjectDetailPage() {
       await loadProject();
     } catch (err) {
       console.error('Failed to reject quote:', err);
-      alert(err instanceof Error ? err.message : 'Failed to reject quote');
+      showError(err instanceof Error ? err.message : 'Failed to reject quote');
     } finally {
       setActionLoading(false);
     }
@@ -72,10 +76,10 @@ export default function ProjectDetailPage() {
       setActionLoading(true);
       await projectService.adminApproveProject(projectId);
       await loadProject();
-      alert('Project approved successfully! Customer has been notified.');
+      success('Project approved successfully! Customer has been notified.');
     } catch (err) {
       console.error('Failed to approve project:', err);
-      alert(err instanceof Error ? err.message : 'Failed to approve project');
+      showError(err instanceof Error ? err.message : 'Failed to approve project');
     } finally {
       setActionLoading(false);
     }
@@ -93,10 +97,10 @@ export default function ProjectDetailPage() {
       setActionLoading(true);
       await projectService.adminRejectProject(projectId, reason || undefined);
       await loadProject();
-      alert('Project rejected. Customer has been notified.');
+      success('Project rejected. Customer has been notified.');
     } catch (err) {
       console.error('Failed to reject project:', err);
-      alert(err instanceof Error ? err.message : 'Failed to reject project');
+      showError(err instanceof Error ? err.message : 'Failed to reject project');
     } finally {
       setActionLoading(false);
     }
@@ -375,6 +379,7 @@ export default function ProjectDetailPage() {
           </div>
         </div>
       </div>
+      <ToastContainer toasts={toasts} onClose={closeToast} />
     </div>
   );
 }

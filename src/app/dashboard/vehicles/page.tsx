@@ -5,8 +5,11 @@ import VehicleCard from '@/app/components/VehicleCard';
 import AddVehicleForm from '@/app/components/AddVehicleForm';
 import EditVehicleForm from '@/app/components/EditVehicleForm';
 import type { VehicleListItem } from '@/types/vehicle';
+import { useToast } from '@/hooks/useToast';
+import { ToastContainer } from '@/components/Toast';
 
 export default function VehiclesPage() {
+  const { toasts, error: showError, closeToast } = useToast();
   const [vehicles, setVehicles] = useState<VehicleListItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -37,7 +40,7 @@ export default function VehiclesPage() {
       await loadVehicles();
     } catch (err: unknown) {
       const errorMessage = (err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to delete vehicle';
-      alert(errorMessage);
+      showError(errorMessage);
     }
   };
 
@@ -61,6 +64,7 @@ export default function VehiclesPage() {
 
   return (
     <div className="container mx-auto px-4 py-8 theme-bg-primary min-h-screen">
+      <ToastContainer toasts={toasts} onClose={closeToast} />
       <div className="flex justify-between items-center mb-8">
         <div>
           <h1 className="text-3xl font-bold theme-text-primary mb-2">My Vehicles</h1>

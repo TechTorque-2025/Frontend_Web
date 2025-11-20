@@ -4,9 +4,12 @@ import { useState, useEffect } from 'react';
 import { timeLoggingService } from '@/services/timeLoggingService';
 import { TimeLogResponse, TimeLogRequest } from '@/types/timeLogging';
 import { useDashboard } from '@/app/contexts/DashboardContext';
+import { useToast } from '@/hooks/useToast';
+import { ToastContainer } from '@/components/Toast';
 
 export default function TimeLogsPage() {
   const { roles, loading: rolesLoading, profile } = useDashboard();
+  const { toasts, success, error: showError, closeToast } = useToast();
   const [allTimeLogs, setAllTimeLogs] = useState<TimeLogResponse[]>([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
@@ -68,7 +71,7 @@ export default function TimeLogsPage() {
       await loadTimeLogs();
     } catch (err) {
       console.error('Failed to log time:', err);
-      alert(err instanceof Error ? err.message : 'Failed to log time');
+      showError(err instanceof Error ? err.message : 'Failed to log time');
     } finally {
       setSubmitting(false);
     }
@@ -82,7 +85,7 @@ export default function TimeLogsPage() {
       await loadTimeLogs();
     } catch (err) {
       console.error('Failed to delete time log:', err);
-      alert(err instanceof Error ? err.message : 'Failed to delete time log');
+      showError(err instanceof Error ? err.message : 'Failed to delete time log');
     }
   };
 
@@ -386,6 +389,7 @@ export default function TimeLogsPage() {
           </div>
         )}
       </div>
+      <ToastContainer toasts={toasts} onClose={closeToast} />
     </div>
   );
 }

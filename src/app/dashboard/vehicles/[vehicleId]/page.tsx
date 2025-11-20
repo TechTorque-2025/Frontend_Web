@@ -4,11 +4,14 @@ import Image from 'next/image'
 import { useRouter, useParams } from 'next/navigation';
 import { vehicleService } from '@/services/vehicleService';
 import type { Vehicle, ServiceHistory } from '@/types/vehicle';
+import { useToast } from '@/hooks/useToast';
+import { ToastContainer } from '@/components/Toast';
 
 export default function VehicleDetailsPage() {
   const router = useRouter();
   const params = useParams();
   const vehicleId = params.vehicleId as string;
+  const { toasts, success, error: showError, closeToast } = useToast();
 
   const [vehicle, setVehicle] = useState<Vehicle | null>(null);
   const [serviceHistory, setServiceHistory] = useState<ServiceHistory[]>([]);
@@ -52,10 +55,10 @@ export default function VehicleDetailsPage() {
     try {
       const fileArray = Array.from(files);
       await vehicleService.uploadVehiclePhotos(vehicleId, fileArray);
-      alert('Photos uploaded successfully!');
+      success('Photos uploaded successfully!');
     } catch (err: unknown) {
       const errorMessage = (err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to upload photos';
-      alert(errorMessage);
+      showError(errorMessage);
     } finally {
       setUploadingPhotos(false);
     }
@@ -87,6 +90,7 @@ export default function VehicleDetailsPage() {
 
   return (
     <div className="container mx-auto px-4 py-8 theme-bg-primary min-h-screen">
+      <ToastContainer toasts={toasts} onClose={closeToast} />
       <div className="flex items-center justify-between mb-6">
         <button
           onClick={() => router.push('/dashboard/vehicles')}
