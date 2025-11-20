@@ -99,7 +99,7 @@ export default function SchedulePage() {
   if (!hasAccess) {
     return (
       <div className="max-w-4xl mx-auto p-6">
-        <div className="rounded-xl border border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-900/20 p-8 text-center">
+        <div className="rounded-xl theme-alert-danger p-8 text-center">
           <svg
             className="mx-auto w-16 h-16 text-red-600 dark:text-red-400 mb-4"
             fill="none"
@@ -129,7 +129,7 @@ export default function SchedulePage() {
       </div>
 
       {/* Date Navigation */}
-      <div className="mb-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900/50 p-6">
+      <div className="dashboard-content-card mb-6">
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <button
@@ -146,7 +146,7 @@ export default function SchedulePage() {
                 type="date"
                 value={selectedDate}
                 onChange={(e) => setSelectedDate(e.target.value)}
-                className="px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 theme-text-primary focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="form-input"
               />
               <p className="text-sm theme-text-muted mt-1">{formatDate(selectedDate)}</p>
             </div>
@@ -171,40 +171,40 @@ export default function SchedulePage() {
 
       {/* Stats */}
       <div className="grid gap-4 sm:grid-cols-4 mb-6">
-        <div className="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900/50 p-5">
-          <p className="text-xs uppercase tracking-wide theme-text-muted">Total</p>
-          <p className="text-2xl font-semibold theme-text-primary">{appointments.length}</p>
+        <div className="stat-card">
+          <p className="stat-card-label">Total</p>
+          <p className="stat-card-value">{appointments.length}</p>
         </div>
-        <div className="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900/50 p-5">
-          <p className="text-xs uppercase tracking-wide theme-text-muted">Confirmed</p>
-          <p className="text-2xl font-semibold text-blue-600 dark:text-blue-400">
+        <div className="stat-card">
+          <p className="stat-card-label">Confirmed</p>
+          <p className="stat-card-value text-blue-600 dark:text-blue-400">
             {appointments.filter(a => a.status === 'CONFIRMED').length}
           </p>
         </div>
-        <div className="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900/50 p-5">
-          <p className="text-xs uppercase tracking-wide theme-text-muted">In Progress</p>
-          <p className="text-2xl font-semibold text-purple-600 dark:text-purple-400">
+        <div className="stat-card">
+          <p className="stat-card-label">In Progress</p>
+          <p className="stat-card-value text-purple-600 dark:text-purple-400">
             {appointments.filter(a => a.status === 'IN_PROGRESS').length}
           </p>
         </div>
-        <div className="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900/50 p-5">
-          <p className="text-xs uppercase tracking-wide theme-text-muted">Completed</p>
-          <p className="text-2xl font-semibold text-green-600 dark:text-green-400">
+        <div className="stat-card">
+          <p className="stat-card-label">Completed</p>
+          <p className="stat-card-value text-green-600 dark:text-green-400">
             {appointments.filter(a => a.status === 'COMPLETED').length}
           </p>
         </div>
       </div>
 
       {/* Appointments Timeline */}
-      <div className="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900/50 overflow-hidden">
-        <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-800">
+      <div className="dashboard-content-card overflow-hidden">
+        <div className="px-6 py-4 border-b theme-border">
           <h2 className="text-lg font-semibold theme-text-primary">Schedule</h2>
         </div>
         
         {appointments.length === 0 ? (
-          <div className="p-12 text-center">
+          <div className="empty-state">
             <svg
-              className="mx-auto w-16 h-16 text-gray-400 dark:text-gray-600 mb-4"
+              className="mx-auto w-16 h-16 theme-text-muted mb-4"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -219,7 +219,7 @@ export default function SchedulePage() {
         ) : (
           <div className="divide-y divide-gray-200 dark:divide-gray-800">
             {appointments.map((appointment) => (
-              <div key={appointment.id} className="p-6 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
+              <div key={appointment.id} className="p-6 hover:theme-bg-hover transition-colors">
                 <div className="flex items-start gap-4">
                   {/* Time */}
                   <div className="flex-shrink-0 w-24 text-right">
