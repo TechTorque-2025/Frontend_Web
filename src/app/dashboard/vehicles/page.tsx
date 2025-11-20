@@ -75,7 +75,7 @@ export default function VehiclesPage() {
       </div>
 
       {error && (
-        <div className="bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 px-4 py-3 rounded-lg mb-6">
+        <div className="theme-alert-danger mb-6">
           {error}
         </div>
       )}
@@ -114,7 +114,7 @@ export default function VehiclesPage() {
       {vehicles.length === 0 ? (
         <div className="text-center py-16 automotive-card">
           <svg
-            className="mx-auto w-24 h-24 text-gray-400 dark:text-gray-600 mb-4"
+            className="mx-auto w-24 h-24 theme-text-muted mb-4"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"

@@ -100,7 +100,7 @@ export default function TimeTracker({ appointmentId, onClockIn, onClockOut }: Ti
     return (
       <div>
         {error && (
-          <div className="mb-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 px-4 py-3 rounded-lg text-sm">
+          <div className="mb-4 theme-alert-danger text-sm">
             {error}
           </div>
         )}
@@ -121,7 +121,7 @@ export default function TimeTracker({ appointmentId, onClockIn, onClockOut }: Ti
   return (
     <div className="space-y-4">
       {error && (
-        <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 px-4 py-3 rounded-lg text-sm">
+        <div className="theme-alert-danger text-sm">
           {error}
         </div>
       )}
