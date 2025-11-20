@@ -160,7 +160,7 @@ export default function LoginPage() {
                 </form>
                 {error && (
                   <div role="alert" className="mt-4 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
-                    <p className="text-sm text-red-600 dark:text-red-400 mb-2">{error}</p>
+                    <p className="text-sm theme-text-danger mb-2">{error}</p>
                     {unverifiedEmail && (
                       <Link 
                         href={`/auth/resend-verification?email=${encodeURIComponent(unverifiedEmail)}`}
