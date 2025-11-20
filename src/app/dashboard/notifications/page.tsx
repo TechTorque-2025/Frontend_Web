@@ -89,7 +89,7 @@ export default function NotificationsPage() {
 
   if (loading) {
     return (
-      <div className="max-w-4xl mx-auto p-6">
+      <div className="max-w-6xl mx-auto p-6">
         <div className="animate-pulse space-y-4">
           {[...Array(5)].map((_, i) => (
             <div key={i} className="h-24 bg-gray-200 dark:bg-gray-800 rounded-lg"></div>
@@ -100,7 +100,7 @@ export default function NotificationsPage() {
   }
 
   return (
-    <div className="max-w-4xl mx-auto p-6">
+    <div className="max-w-6xl mx-auto p-6">
       <div className="mb-8">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
           <div>
@@ -120,20 +120,20 @@ export default function NotificationsPage() {
         </div>
 
         {/* Filters */}
-        <div className="flex gap-2">
+        <div className="filter-tabs-container">
           {(['ALL', 'UNREAD', 'READ'] as const).map((f) => (
             <button
               key={f}
               onClick={() => setFilter(f)}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+              className={`filter-tab ${
                 filter === f
-                  ? 'bg-blue-600 text-white'
-                  : 'theme-bg-secondary theme-text-secondary hover:bg-blue-50 dark:hover:bg-blue-900/30'
+                  ? 'filter-tab-active'
+                  : 'filter-tab-inactive'
               }`}
             >
               {f.charAt(0) + f.slice(1).toLowerCase()}
               {f === 'UNREAD' && unreadCount > 0 && (
-                <span className="ml-1.5 px-1.5 py-0.5 bg-white bg-opacity-20 rounded text-xs">{unreadCount}</span>
+                <span className="ml-1.5 px-1.5 py-0.5 bg-white dark:bg-gray-800 bg-opacity-30 dark:bg-opacity-30 rounded text-xs">{unreadCount}</span>
               )}
             </button>
           ))}
@@ -145,7 +145,7 @@ export default function NotificationsPage() {
         {filteredNotifications.length === 0 ? (
           <div className="rounded-xl border-2 border-dashed border-gray-300 dark:border-gray-700 p-12 text-center">
             <svg
-              className="mx-auto w-16 h-16 text-gray-400 dark:text-gray-600 mb-4"
+              className="mx-auto w-16 h-16 theme-text-muted mb-4"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -161,10 +161,10 @@ export default function NotificationsPage() {
           filteredNotifications.map((notification) => (
             <div
               key={notification.notificationId}
-              className={`rounded-xl border transition-all ${
+              className={`rounded-xl border transition-all hover:shadow-lg ${
                 notification.read
-                  ? 'border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900/50'
-                  : 'border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-blue-900/20'
+                  ? 'border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900/50 hover:border-gray-300 dark:hover:border-gray-700'
+                  : 'border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-blue-900/20 hover:border-blue-300 dark:hover:border-blue-700'
               }`}
             >
               <div className="p-5 flex items-start gap-4">

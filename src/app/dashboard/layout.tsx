@@ -56,10 +56,10 @@ function DashboardShell({ children }: { children: ReactNode }) {
           <li key={item.href}>
             <Link
               href={item.href}
-              className={`block rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
+              className={`block rounded-lg px-3 py-2 text-sm font-medium transition-all duration-200 ${
                 active
-                  ? 'theme-button-primary'
-                  : 'theme-text-muted hover:theme-text-primary hover:bg-blue-100/50 dark:hover:bg-blue-900/20'
+                  ? 'bg-gradient-to-r from-[#0EA3E7]/90 to-[#0386C9]/90 text-white shadow-lg shadow-blue-500/30'
+                  : 'theme-text-secondary hover:bg-gradient-to-r hover:from-[#0EA3E7]/10 hover:to-[#0386C9]/10 hover:text-[#0EA3E7] hover:shadow-md'
               }`}
               onClick={() => setMobileNavOpen(false)}
             >
@@ -75,7 +75,7 @@ function DashboardShell({ children }: { children: ReactNode }) {
     <div className="min-h-screen theme-bg-primary">
       <div className="flex min-h-screen">
         {/* Desktop sidebar */}
-        <aside className="hidden lg:flex lg:flex-col lg:w-64 lg:border-r border-gray-200 dark:border-gray-800 p-6 space-y-6">
+        <aside className="hidden lg:flex lg:flex-col lg:w-64 lg:border-r theme-border p-6 space-y-6">
           <Link href="/" className="flex items-center">
             <div className="automotive-accent w-9 h-9 rounded-full mr-3 flex items-center justify-center">
               <span className="text-white font-bold text-sm">TT</span>
@@ -99,7 +99,7 @@ function DashboardShell({ children }: { children: ReactNode }) {
 
         {/* Content area */}
         <div className="flex-1 flex flex-col min-h-screen">
-          <header className="sticky top-0 z-30 backdrop-blur supports-[backdrop-filter]:bg-white/80 supports-[backdrop-filter]:dark:bg-slate-900/80 border-b border-gray-200 dark:border-gray-800">
+          <header className="sticky top-0 z-30 backdrop-blur theme-bg-secondary border-b theme-border">
             <div className="px-4 sm:px-6 lg:px-8">
               <div className="flex items-center justify-between h-16">
                 <div className="flex items-center gap-3">
@@ -131,7 +131,7 @@ function DashboardShell({ children }: { children: ReactNode }) {
 
             {/* Mobile nav drawer */}
             {mobileNavOpen && (
-              <div className="lg:hidden border-t border-gray-200 dark:border-gray-800 px-4 pb-4">
+              <div className="lg:hidden border-t theme-border px-4 pb-4">
                 {navSections.map((section) => (
                   <div key={section.title} className="py-3">
                     <p className="text-xs uppercase tracking-wide theme-text-muted mb-2">{section.title}</p>
