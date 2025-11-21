@@ -2,6 +2,8 @@
 import { useEffect, useState } from 'react'
 import { appointmentService } from '@/services/appointmentService'
 import type { TimeSessionResponse } from '@/types/appointment'
+import { useToast } from '@/hooks/useToast'
+import { ToastContainer } from './Toast'
 
 interface TimeTrackerProps {
   appointmentId: string
@@ -10,6 +12,7 @@ interface TimeTrackerProps {
 }
 
 export default function TimeTracker({ appointmentId, onClockIn, onClockOut }: TimeTrackerProps) {
+  const { toasts, success, closeToast } = useToast()
   const [timeSession, setTimeSession] = useState<TimeSessionResponse | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -78,7 +81,7 @@ export default function TimeTracker({ appointmentId, onClockIn, onClockOut }: Ti
       setError(null)
       const session = await appointmentService.clockOut(appointmentId)
       setTimeSession(session)
-      alert(`Work completed! ${session.hoursWorked?.toFixed(2)} hours logged.`)
+      success(`Work completed! ${session.hoursWorked?.toFixed(2)} hours logged.`)
       onClockOut?.()
     } catch (err: unknown) {
       const message = (err as { response?: { data?: { message?: string } } })?.response?.data?.message ||
@@ -99,6 +102,7 @@ export default function TimeTracker({ appointmentId, onClockIn, onClockOut }: Ti
   if (!timeSession || !timeSession.active) {
     return (
       <div>
+        <ToastContainer toasts={toasts} onClose={closeToast} />
         {error && (
           <div className="mb-4 theme-alert-danger text-sm">
             {error}

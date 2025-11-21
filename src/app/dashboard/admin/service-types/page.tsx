@@ -4,9 +4,12 @@ import { useState, useEffect } from 'react';
 import { adminService } from '@/services/adminService';
 import { ServiceTypeResponse, CreateServiceTypeRequest, UpdateServiceTypeRequest } from '@/types/admin';
 import { useDashboard } from '@/app/contexts/DashboardContext';
+import { useToast } from '@/hooks/useToast';
+import { ToastContainer } from '@/components/Toast';
 
 export default function ServiceTypesPage() {
   const { roles, loading: rolesLoading } = useDashboard();
+  const { toasts, success, error: showError, closeToast } = useToast();
   const [serviceTypes, setServiceTypes] = useState<ServiceTypeResponse[]>([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
@@ -80,7 +83,7 @@ export default function ServiceTypesPage() {
           active: editingService.active, // Keep existing active status
         };
         await adminService.updateServiceType(editingService.id, updateData);
-        alert('Service type updated successfully!');
+        success('Service type updated successfully!');
       } else {
         // Create new service - use CreateServiceTypeRequest format
         console.log('Creating service:', formData);
@@ -92,7 +95,7 @@ export default function ServiceTypesPage() {
           durationMinutes: formData.durationMinutes,
         };
         await adminService.createServiceType(createData);
-        alert('Service type created successfully!');
+        success('Service type created successfully!');
       }
       
       // Close modal first
@@ -106,7 +109,7 @@ export default function ServiceTypesPage() {
     } catch (err) {
       console.error('Failed to save service type:', err);
       const errorMessage = err instanceof Error ? err.message : 'Failed to save service type. Please try again.';
-      alert(errorMessage);
+      showError(errorMessage);
     }
   };
 
@@ -117,12 +120,12 @@ export default function ServiceTypesPage() {
 
     try {
       await adminService.removeServiceType(service.id);
-      alert('Service type deleted successfully!');
+      success('Service type deleted successfully!');
       await loadServiceTypes();
     } catch (err) {
       console.error('Failed to delete service type:', err);
       const errorMessage = err instanceof Error ? err.message : 'Failed to delete service type. Please try again.';
-      alert(errorMessage);
+      showError(errorMessage);
     }
   };
 
@@ -144,7 +147,7 @@ export default function ServiceTypesPage() {
       await loadServiceTypes();
     } catch (err) {
       console.error('Failed to toggle service status:', err);
-      alert('Failed to update service status. Please try again.');
+      showError('Failed to update service status. Please try again.');
     }
   };
 
@@ -395,6 +398,7 @@ export default function ServiceTypesPage() {
           </div>
         </div>
       )}
+      <ToastContainer toasts={toasts} onClose={closeToast} />
     </div>
   );
 }

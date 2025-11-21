@@ -9,6 +9,8 @@ import type { UserResponse } from '@/types/admin'
 import type { CreateInvoiceDto, InvoiceItemDto } from '@/types/payment'
 import { useDashboard } from '@/app/contexts/DashboardContext'
 import TimeTracker from '@/components/TimeTracker'
+import { useToast } from '@/hooks/useToast'
+import { ToastContainer } from '@/components/Toast'
 
 interface StatusOption {
   value: AppointmentStatus
@@ -28,6 +30,7 @@ const STATUS_OPTIONS: StatusOption[] = [
 export default function AppointmentDetailPage() {
   const router = useRouter()
   const params = useParams<{ appointmentId: string }>()
+  const { toasts, success, error: showError, closeToast } = useToast()
   const appointmentId = params.appointmentId
   const { roles, profile } = useDashboard()
 
@@ -283,7 +286,7 @@ export default function AppointmentDetailPage() {
 
       const createdInvoice = await paymentService.createInvoice(invoiceData)
 
-      alert('Invoice generated successfully!')
+      success('Invoice generated successfully!')
       setShowInvoiceForm(false)
       setError(null)
 
@@ -823,6 +826,7 @@ export default function AppointmentDetailPage() {
       {loading && (
         <div className="mt-6 automotive-card p-4 text-sm theme-text-muted">Refreshing appointment data...</div>
       )}
+      <ToastContainer toasts={toasts} onClose={closeToast} />
     </div>
   )
  }

@@ -6,9 +6,12 @@ import { authService } from '@/services/authService';
 import { UserResponse } from '@/types/admin';
 import { CreateEmployeeRequest, CreateAdminRequest } from '@/types/api';
 import { useDashboard } from '@/app/contexts/DashboardContext';
+import { useToast } from '@/hooks/useToast';
+import { ToastContainer } from '@/components/Toast';
 
 export default function AdminUsersPage() {
   const { roles: currentUserRoles } = useDashboard();
+  const { toasts, success, error: showError, closeToast } = useToast();
   const [users, setUsers] = useState<UserResponse[]>([]);
   const [loading, setLoading] = useState(true);
   const [roleFilter, setRoleFilter] = useState<string>('ALL');
@@ -76,7 +79,7 @@ export default function AdminUsersPage() {
 
       setShowCreateModal(false);
       await loadUsers();
-      alert(`${createUserType === 'employee' ? 'Employee' : 'Admin'} created successfully!`);
+      success(`${createUserType === 'employee' ? 'Employee' : 'Admin'} created successfully!`);
     } catch (err) {
       console.error('Failed to create user:', err);
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -84,7 +87,7 @@ export default function AdminUsersPage() {
       const errorMessage = error?.response?.status === 403
         ? 'Permission denied. You do not have the required permissions to create this user type.'
         : error?.response?.data?.message || 'Failed to create user. Please try again.';
-      alert(errorMessage);
+      showError(errorMessage);
     }
   };
 
@@ -102,7 +105,7 @@ export default function AdminUsersPage() {
     try {
       // Validation: Ensure at least one role is selected
       if (editingRoles.length === 0) {
-        alert('Please select at least one role for the user.');
+        showError('Please select at least one role for the user.');
         return;
       }
 
@@ -110,11 +113,11 @@ export default function AdminUsersPage() {
       setEditingUserId(null);
       setEditingRoles([]);
       await loadUsers();
-      alert('Roles updated successfully!');
+      success('Roles updated successfully!');
     } catch (err) {
       console.error('Failed to update roles:', err);
       const errorMessage = err instanceof Error ? err.message : 'Failed to update roles. Please try again.';
-      alert(errorMessage);
+      showError(errorMessage);
     }
   };
 
@@ -122,7 +125,7 @@ export default function AdminUsersPage() {
     if (editingRoles.includes(role)) {
       // Prevent removing the last role
       if (editingRoles.length === 1) {
-        alert('A user must have at least one role.');
+        showError('A user must have at least one role.');
         return;
       }
       setEditingRoles(editingRoles.filter(r => r !== role));
@@ -144,11 +147,11 @@ export default function AdminUsersPage() {
     try {
       await adminService.updateUser(user.userId, { enabled: !user.enabled });
       await loadUsers();
-      alert(`User ${action}d successfully!`);
+      success(`User ${action}d successfully!`);
     } catch (err) {
       console.error(`Failed to ${action} user:`, err);
       const errorMessage = err instanceof Error ? err.message : `Failed to ${action} user. Please try again.`;
-      alert(errorMessage);
+      showError(errorMessage);
     }
   };
 
@@ -543,6 +546,7 @@ export default function AdminUsersPage() {
           </div>
         </div>
       )}
+      <ToastContainer toasts={toasts} onClose={closeToast} />
     </div>
   );
 }
