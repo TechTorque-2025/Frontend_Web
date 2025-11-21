@@ -54,9 +54,13 @@ apiClient.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      Cookies.remove('tt_access_token');
-      if (typeof window !== 'undefined') {
-        window.location.href = '/auth/login';
+      // Don't redirect if we're already on the login page or if it's a login request
+      const isLoginRequest = error.config?.url?.includes('/auth/login');
+      if (!isLoginRequest) {
+        Cookies.remove('tt_access_token');
+        if (typeof window !== 'undefined') {
+          window.location.href = '/auth/login';
+        }
       }
     }
 

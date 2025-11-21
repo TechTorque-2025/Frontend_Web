@@ -12,17 +12,25 @@ const TOKEN_COOKIE = 'tt_access_token';
 
 export const authService = {
   async login(payload: LoginRequest) {
-    // api baseURL already includes '/api/v1'
-    const res = await api.post('/auth/login', payload);
-    // backend returns token in body
-    const token = res.data?.token || res.data?.accessToken || null;
-    console.log('Login response:', res.data);
-    console.log('Extracted token:', token);
-    if (token) {
-      Cookies.set(TOKEN_COOKIE, token, { expires: 7 });
-      console.log('Token saved to cookie');
+    try {
+      // api baseURL already includes '/api/v1'
+      const res = await api.post('/auth/login', payload);
+      // backend returns token in body
+      const token = res.data?.token || res.data?.accessToken || null;
+      console.log('Login response:', res.data);
+      console.log('Extracted token:', token);
+      if (token) {
+        Cookies.set(TOKEN_COOKIE, token, { expires: 7 });
+        console.log('Token saved to cookie');
+      }
+      return res.data;
+    } catch (error: any) {
+      console.error('Login error:', error);
+      if (error.response && error.response.data && error.response.data.message) {
+        throw new Error(error.response.data.message);
+      }
+      throw error;
     }
-    return res.data;
   },
 
 
