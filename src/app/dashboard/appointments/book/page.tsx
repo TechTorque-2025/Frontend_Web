@@ -107,7 +107,7 @@ export default function BookAppointmentPage() {
         setCheckingAvailability(true)
         const result = await appointmentService.checkAvailability({
           date: form.date,
-          serviceType: selectedServiceType?.name || '',
+          serviceType: form.serviceTypeId,
           duration,
         })
         setAvailability(result)
