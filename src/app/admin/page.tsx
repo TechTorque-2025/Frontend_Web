@@ -108,13 +108,13 @@ export default function AdminDashboard() {
         </div>
 
         {error && (
-          <div className="mb-6 p-4 bg-red-50 dark:bg-red-900/20 rounded-lg border border-red-200 dark:border-red-800">
-            <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
+          <div className="mb-6 theme-alert-danger">
+            <p className="text-sm">{error}</p>
           </div>
         )}
 
         {success && (
-          <div className="mb-6 p-4 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800">
+          <div className="mb-6 theme-alert-success">
             <p className="text-sm text-green-600 dark:text-green-400">
               {success}
             </p>

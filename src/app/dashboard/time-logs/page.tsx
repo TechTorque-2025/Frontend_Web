@@ -114,7 +114,7 @@ export default function TimeLogsPage() {
   if (!hasAccess) {
     return (
       <div className="max-w-4xl mx-auto p-6">
-        <div className="rounded-xl border border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-900/20 p-8 text-center">
+        <div className="rounded-xl theme-alert-danger p-8 text-center">
           <svg
             className="mx-auto w-16 h-16 text-red-600 dark:text-red-400 mb-4"
             fill="none"
@@ -176,11 +176,11 @@ export default function TimeLogsPage() {
 
         {/* Add Time Log Form */}
         {showForm && (
-          <form onSubmit={handleSubmit} className="mb-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900/50 p-6">
-            <h3 className="text-lg font-semibold theme-text-primary mb-4">Log Work Hours</h3>
+          <form onSubmit={handleSubmit} className="mb-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-gradient-to-br from-blue-50 to-cyan-50 dark:from-gray-900/50 dark:to-gray-800/50 p-6 shadow-sm">
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Log Work Hours</h3>
             <div className="grid gap-4 sm:grid-cols-2">
               <div>
-                <label htmlFor="workDate" className="block text-sm font-semibold theme-text-primary mb-2">
+                <label htmlFor="workDate" className="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">
                   Work Date <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -190,11 +190,11 @@ export default function TimeLogsPage() {
                   value={formData.date}
                   onChange={(e) => setFormData({ ...formData, date: e.target.value })}
                   max={new Date().toISOString().split('T')[0]}
-                  className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 theme-text-primary focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="form-input"
                 />
               </div>
               <div>
-                <label htmlFor="hoursWorked" className="block text-sm font-semibold theme-text-primary mb-2">
+                <label htmlFor="hoursWorked" className="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">
                   Hours Worked <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -206,18 +206,18 @@ export default function TimeLogsPage() {
                   value={formData.hours || ''}
                   onChange={(e) => setFormData({ ...formData, hours: parseFloat(e.target.value) })}
                   placeholder="e.g., 8.5"
-                  className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 theme-text-primary focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="form-input"
                 />
               </div>
               <div>
-                <label htmlFor="taskType" className="block text-sm font-semibold theme-text-primary mb-2">
+                <label htmlFor="taskType" className="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">
                   Task Type
                 </label>
                 <select
                   id="taskType"
                   value={formData.workType}
                   onChange={(e) => setFormData({ ...formData, workType: e.target.value })}
-                  className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 theme-text-primary focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="form-select"
                 >
                   <option value="">Select type...</option>
                   <option value="Service">Service Work</option>
@@ -230,7 +230,7 @@ export default function TimeLogsPage() {
                 </select>
               </div>
               <div>
-                <label htmlFor="serviceId" className="block text-sm font-semibold theme-text-primary mb-2">
+                <label htmlFor="serviceId" className="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">
                   Service ID <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -240,12 +240,12 @@ export default function TimeLogsPage() {
                   value={formData.serviceId || ''}
                   onChange={(e) => setFormData({ ...formData, serviceId: e.target.value })}
                   placeholder="Enter service ID"
-                  className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 theme-text-primary focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="form-input"
                 />
               </div>
             </div>
             <div className="mt-4">
-              <label htmlFor="description" className="block text-sm font-semibold theme-text-primary mb-2">
+              <label htmlFor="description" className="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">
                 Description
               </label>
               <textarea
@@ -254,7 +254,7 @@ export default function TimeLogsPage() {
                 value={formData.description}
                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                 placeholder="Describe the work performed..."
-                className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 theme-text-primary focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+                className="form-textarea"
               />
             </div>
             <div className="mt-4 flex justify-end gap-3">
@@ -280,17 +280,17 @@ export default function TimeLogsPage() {
 
       {/* Stats */}
       <div className="grid gap-4 sm:grid-cols-3 mb-8">
-        <div className="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900/50 p-5">
-          <p className="text-xs uppercase tracking-wide theme-text-muted">Total hours</p>
-          <p className="text-2xl font-semibold theme-text-primary">{totalHours.toFixed(1)}h</p>
+        <div className="stat-card">
+          <p className="stat-card-label">Total hours</p>
+          <p className="stat-card-value">{totalHours.toFixed(1)}h</p>
         </div>
-        <div className="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900/50 p-5">
-          <p className="text-xs uppercase tracking-wide theme-text-muted">Total logs</p>
-          <p className="text-2xl font-semibold theme-text-primary">{filteredLogs.length}</p>
+        <div className="stat-card">
+          <p className="stat-card-label">Total logs</p>
+          <p className="stat-card-value">{filteredLogs.length}</p>
         </div>
-        <div className="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900/50 p-5">
-          <p className="text-xs uppercase tracking-wide theme-text-muted">This week</p>
-          <p className="text-2xl font-semibold theme-text-primary">
+        <div className="stat-card">
+          <p className="stat-card-label">This week</p>
+          <p className="stat-card-value">
             {filteredLogs
               .filter(l => {
                 const weekAgo = Date.now() - 7 * 24 * 60 * 60 * 1000;
@@ -303,15 +303,15 @@ export default function TimeLogsPage() {
       </div>
 
       {/* Time Logs Table */}
-      <div className="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900/50 overflow-hidden">
-        <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-800">
+      <div className="dashboard-content-card overflow-hidden">
+        <div className="px-6 py-4 border-b theme-border">
           <h2 className="text-lg font-semibold theme-text-primary">Recent Activity</h2>
         </div>
 
         {filteredLogs.length === 0 ? (
-          <div className="p-12 text-center">
+          <div className="empty-state">
             <svg
-              className="mx-auto w-16 h-16 text-gray-400 dark:text-gray-600 mb-4"
+              className="mx-auto w-16 h-16 theme-text-muted mb-4"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -324,7 +324,7 @@ export default function TimeLogsPage() {
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full">
-              <thead className="bg-gray-50 dark:bg-gray-800/50">
+              <thead className="theme-bg-tertiary">
                 <tr>
                   <th className="px-6 py-3 text-left text-xs font-semibold theme-text-muted uppercase tracking-wider">Date</th>
                   <th className="px-6 py-3 text-left text-xs font-semibold theme-text-muted uppercase tracking-wider">Hours</th>
@@ -347,7 +347,7 @@ export default function TimeLogsPage() {
                   filteredLogs.map((log, index) => {
                     const isOwnLog = profile?.username === log.employeeId;
                     return (
-                      <tr key={log.id || `log-${index}`} className="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
+                      <tr key={log.id || `log-${index}`} className="hover:theme-bg-hover transition-colors">
                         <td className="px-6 py-4 whitespace-nowrap theme-text-primary font-medium">
                           {formatDate(log.date)}
                         </td>
@@ -374,7 +374,7 @@ export default function TimeLogsPage() {
                               Delete
                             </button>
                           ) : (
-                            <span className="text-gray-400 dark:text-gray-600 text-sm">—</span>
+                            <span className="theme-text-muted text-sm">—</span>
                           )}
                         </td>
                       </tr>

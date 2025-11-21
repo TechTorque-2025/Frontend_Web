@@ -142,12 +142,12 @@ export default function ProjectDetailPage() {
   if (error || !project) {
     return (
       <div className="max-w-5xl mx-auto p-6">
-        <div className="rounded-xl border border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-900/20 p-8 text-center">
-          <h2 className="text-xl font-semibold text-red-700 dark:text-red-400 mb-2">Error Loading Project</h2>
-          <p className="text-red-600 dark:text-red-300 mb-4">{error || 'Project not found'}</p>
+        <div className="rounded-xl theme-alert-danger p-8 text-center">
+          <h2 className="text-xl font-semibold theme-text-danger mb-2">Error Loading Project</h2>
+          <p className="theme-text-danger mb-4">{error || 'Project not found'}</p>
           <button
             onClick={() => router.push('/dashboard/projects')}
-            className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition-colors"
+            className="px-6 py-3 theme-button-action rounded-lg font-semibold"
           >
             Back to Projects
           </button>

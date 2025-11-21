@@ -336,7 +336,7 @@ export default function AppointmentDetailPage() {
       </div>
 
       {error && (
-        <div className="mb-6 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 px-4 py-3 rounded-lg">
+        <div className="mb-6 theme-alert-danger">
           {error}
         </div>
       )}
@@ -468,7 +468,7 @@ export default function AppointmentDetailPage() {
             <p className="theme-text-muted text-sm mb-4">
               Select one or more employees to assign to this appointment. You can change the assigned employees at any time. Employees will receive notifications when assigned.
             </p>
-            <div className="mb-4 p-3 bg-blue-50 dark:bg-blue-900/10 border border-blue-200 dark:border-blue-800 rounded-lg">
+            <div className="mb-4 p-3 theme-alert-info">
               <p className="text-sm theme-text-secondary">
                 💡 <strong>Tip:</strong> Currently assigned employees are pre-selected below. Uncheck to remove them or add new employees.
               </p>
@@ -523,7 +523,7 @@ export default function AppointmentDetailPage() {
             <h2 className="text-xl font-semibold theme-text-primary mb-4">⏱️ Time Tracking</h2>
 
             {appointment.vehicleArrivedAt && (
-              <div className="mb-4 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+              <div className="mb-4 p-3 theme-alert-info">
                 <p className="text-sm theme-text-muted">
                   📍 Vehicle arrived: {new Date(appointment.vehicleArrivedAt).toLocaleString()}
                 </p>
@@ -571,7 +571,7 @@ export default function AppointmentDetailPage() {
                 />
               </div>
             ) : appointment.status === 'COMPLETED' ? (
-              <div className="p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg">
+              <div className="p-4 theme-alert-success">
                 <p className="text-green-700 dark:text-green-300 font-medium">
                   ✓ Work completed successfully
                 </p>
@@ -796,7 +796,7 @@ export default function AppointmentDetailPage() {
         )}
 
         {roles?.includes('CUSTOMER') && appointment?.status === 'CUSTOMER_CONFIRMED' && (
-          <section className="automotive-card p-6 border-2 border-green-200 dark:border-green-800 bg-green-50 dark:bg-green-900/10">
+          <section className="automotive-card p-6 border-2 theme-alert-success">
             <h2 className="text-xl font-semibold text-green-600 dark:text-green-400 mb-2">✓ Appointment Complete</h2>
             <p className="text-green-700 dark:text-green-300">
               Thank you! You have confirmed the completion of this appointment. The service is now finalized.

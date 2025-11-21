@@ -43,8 +43,8 @@ export default function ReportsPage() {
     return (
       <div className="max-w-4xl mx-auto p-6">
         <div className="animate-pulse space-y-4">
-          <div className="h-32 bg-gray-200 dark:bg-gray-800 rounded-lg"></div>
-          <div className="h-96 bg-gray-200 dark:bg-gray-800 rounded-lg"></div>
+          <div className="h-32 theme-bg-tertiary rounded-lg"></div>
+          <div className="h-96 theme-bg-tertiary rounded-lg"></div>
         </div>
       </div>
     );
@@ -79,7 +79,7 @@ export default function ReportsPage() {
         <p className="theme-text-muted">Generate business analytics and reports</p>
       </div>
 
-      <div className="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900/50 p-8">
+      <div className="dashboard-content-card">
         <h2 className="text-xl font-semibold theme-text-primary mb-6">Generate Report</h2>
         
         <div className="space-y-6">
@@ -88,7 +88,7 @@ export default function ReportsPage() {
             <select
               value={reportType}
               onChange={(e) => setReportType(e.target.value as typeof reportType)}
-              className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 theme-text-primary focus:ring-2 focus:ring-blue-500"
+              className="form-select"
             >
               <option value="REVENUE">Revenue Report</option>
               <option value="SERVICE_PERFORMANCE">Service Performance Report</option>
@@ -104,7 +104,7 @@ export default function ReportsPage() {
             <select
               value={format}
               onChange={(e) => setFormat(e.target.value as typeof format)}
-              className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 theme-text-primary focus:ring-2 focus:ring-blue-500"
+              className="form-select"
             >
               <option value="PDF">PDF</option>
               <option value="EXCEL">Excel</option>
@@ -120,7 +120,7 @@ export default function ReportsPage() {
                 type="date"
                 value={dateRange.fromDate}
                 onChange={(e) => setDateRange({ ...dateRange, fromDate: e.target.value })}
-                className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 theme-text-primary focus:ring-2 focus:ring-blue-500"
+                className="form-input"
               />
             </div>
             <div>
@@ -129,7 +129,7 @@ export default function ReportsPage() {
                 type="date"
                 value={dateRange.toDate}
                 onChange={(e) => setDateRange({ ...dateRange, toDate: e.target.value })}
-                className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 theme-text-primary focus:ring-2 focus:ring-blue-500"
+                className="form-input"
               />
             </div>
           </div>

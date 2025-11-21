@@ -10,7 +10,7 @@ interface VehicleCardProps {
 
 export default function VehicleCard({ vehicle, onDelete, onEdit }: VehicleCardProps) {
   return (
-    <div className="automotive-card p-6 hover:scale-[1.02] transition-transform">
+    <div className="automotive-card p-6 hover:scale-[1.02] hover:shadow-lg transition-all">
       <div className="flex justify-between items-start mb-4">
         <div>
           <h3 className="text-xl font-bold theme-text-primary mb-1">

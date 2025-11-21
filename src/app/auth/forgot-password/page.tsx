@@ -46,7 +46,7 @@ export default function ForgotPasswordPage() {
       <header className="sticky-header shadow-lg border-b theme-border">
         <div className="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center">
-            <Link href="/" className="flex items-center space-x-3 group"><div className="w-12 h-12 rounded-full bg-gradient-to-r from-blue-500 to-cyan-400 flex items-center justify-center shadow-lg transform transition-transform duration-300 group-hover:scale-110"><BoltIcon size={6} /></div><h1 className="text-2xl font-bold theme-text-primary hidden sm:block">TechTorque Auto</h1></Link>
+            <Link href="/" className="flex items-center space-x-3 group"><div className="automotive-accent w-12 h-12 rounded-full flex items-center justify-center shadow-lg transform transition-transform duration-300 group-hover:scale-110"><span className="text-white font-bold text-lg">TT</span></div><h1 className="text-2xl font-bold theme-text-primary hidden sm:block">TechTorque</h1></Link>
             <div className="flex items-center space-x-4"><Link href="/auth/login" className="theme-link hidden md:inline-block">Back to Sign In</Link><ThemeToggle /></div>
           </div>
         </div>
@@ -74,7 +74,7 @@ export default function ForgotPasswordPage() {
                 </div>
                 {error && (
                   <div className="mb-6 p-4 bg-red-50 dark:bg-red-900/20 rounded-lg border border-red-200 dark:border-red-800">
-                    <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
+                    <p className="text-sm theme-text-danger">{error}</p>
                   </div>
                 )}
                 <form className="space-y-6" onSubmit={handleSubmit}>

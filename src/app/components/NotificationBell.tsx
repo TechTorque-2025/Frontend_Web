@@ -102,7 +102,7 @@ export default function NotificationBell() {
           {loading ? (
             <div className="py-8 text-center theme-text-muted text-sm">Loading notifications...</div>
           ) : error ? (
-            <div className="py-8 text-center text-red-500 text-sm">{error}</div>
+            <div className="py-8 text-center theme-text-danger text-sm">{error}</div>
           ) : notifications.length === 0 ? (
             <div className="py-8 text-center theme-text-muted text-sm">No notifications yet.</div>
           ) : (

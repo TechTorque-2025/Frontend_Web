@@ -73,47 +73,45 @@ export default function ServicesPage() {
 
       {/* Stats */}
       <div className="grid gap-4 sm:grid-cols-4 mb-6">
-        <div className="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900/50 p-5">
-          <p className="text-xs uppercase tracking-wide theme-text-muted">Total jobs</p>
-          <p className="text-2xl font-semibold theme-text-primary">{services.length}</p>
+        <div className="stat-card">
+          <p className="stat-card-label">Total jobs</p>
+          <p className="stat-card-value">{services.length}</p>
         </div>
-        <div className="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900/50 p-5">
-          <p className="text-xs uppercase tracking-wide theme-text-muted">Pending</p>
-          <p className="text-2xl font-semibold text-yellow-600 dark:text-yellow-400">
+        <div className="stat-card">
+          <p className="stat-card-label">Pending</p>
+          <p className="stat-card-value text-yellow-600 dark:text-yellow-400">
             {services.filter(s => s.status === 'PENDING').length}
           </p>
         </div>
-        <div className="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900/50 p-5">
-          <p className="text-xs uppercase tracking-wide theme-text-muted">In Progress</p>
-          <p className="text-2xl font-semibold text-blue-600 dark:text-blue-400">
+        <div className="stat-card">
+          <p className="stat-card-label">In Progress</p>
+          <p className="stat-card-value text-blue-600 dark:text-blue-400">
             {services.filter(s => s.status === 'IN_PROGRESS').length}
           </p>
         </div>
-        <div className="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900/50 p-5">
-          <p className="text-xs uppercase tracking-wide theme-text-muted">Completed</p>
-          <p className="text-2xl font-semibold text-green-600 dark:text-green-400">
+        <div className="stat-card">
+          <p className="stat-card-label">Completed</p>
+          <p className="stat-card-value text-green-600 dark:text-green-400">
             {services.filter(s => s.status === 'COMPLETED').length}
           </p>
         </div>
       </div>
 
       {/* Filters */}
-      <div className="mb-6">
-        <div className="flex flex-wrap gap-2">
-          {statusFilters.map((filter) => (
-            <button
-              key={filter}
-              onClick={() => setStatusFilter(filter)}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                statusFilter === filter
-                  ? 'bg-blue-600 text-white'
-                  : 'theme-bg-secondary theme-text-secondary hover:bg-blue-50 dark:hover:bg-blue-900/30'
-              }`}
-            >
-              {filter === 'ALL' ? 'All' : filter.replace('_', ' ')}
-            </button>
-          ))}
-        </div>
+      <div className="filter-tabs-container mb-6">
+        {statusFilters.map((filter) => (
+          <button
+            key={filter}
+            onClick={() => setStatusFilter(filter)}
+            className={`filter-tab ${
+              statusFilter === filter
+                ? 'filter-tab-active'
+                : 'filter-tab-inactive'
+            }`}
+          >
+            {filter === 'ALL' ? 'All' : filter.replace('_', ' ')}
+          </button>
+        ))}
       </div>
 
       {/* Services List */}
@@ -121,7 +119,7 @@ export default function ServicesPage() {
         {filteredServices.length === 0 ? (
           <div className="rounded-xl border-2 border-dashed border-gray-300 dark:border-gray-700 p-12 text-center">
             <svg
-              className="mx-auto w-16 h-16 text-gray-400 dark:text-gray-600 mb-4"
+              className="mx-auto w-16 h-16 theme-text-muted mb-4"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -140,7 +138,7 @@ export default function ServicesPage() {
             <Link
               key={service.id}
               href={`/dashboard/services/${service.id}`}
-              className="block rounded-xl border border-gray-200 dark:border-gray-800 hover:border-blue-400 dark:hover:border-blue-500 transition-colors"
+              className="block rounded-xl border border-gray-200 dark:border-gray-800 hover:border-blue-400 dark:hover:border-blue-500 hover:shadow-lg transition-all"
             >
               <div className="p-6">
                 <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-4">

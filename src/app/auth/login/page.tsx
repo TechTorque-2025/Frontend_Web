@@ -74,11 +74,11 @@ export default function LoginPage() {
         <div className="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center">
             <Link href="/" className="flex items-center space-x-3 group">
-              <div className="w-12 h-12 rounded-full bg-gradient-to-r from-blue-500 to-cyan-400 flex items-center justify-center shadow-lg transform transition-transform duration-300 group-hover:scale-110">
-                <BoltIcon size={6} />
+              <div className="automotive-accent w-12 h-12 rounded-full flex items-center justify-center shadow-lg transform transition-transform duration-300 group-hover:scale-110">
+                <span className="text-white font-bold text-lg">TT</span>
               </div>
               <h1 className="text-2xl font-bold theme-text-primary hidden sm:block">
-                TechTorque Auto
+                TechTorque
               </h1>
             </Link>
             <div className="flex items-center space-x-4">
@@ -160,7 +160,7 @@ export default function LoginPage() {
                 </form>
                 {error && (
                   <div role="alert" className="mt-4 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
-                    <p className="text-sm text-red-600 dark:text-red-400 mb-2">{error}</p>
+                    <p className="text-sm theme-text-danger mb-2">{error}</p>
                     {unverifiedEmail && (
                       <Link 
                         href={`/auth/resend-verification?email=${encodeURIComponent(unverifiedEmail)}`}

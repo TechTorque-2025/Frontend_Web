@@ -52,7 +52,7 @@ export default function AuditLogsPage() {
       <div className="max-w-7xl mx-auto p-6">
         <div className="animate-pulse space-y-3">
           {[...Array(10)].map((_, i) => (
-            <div key={i} className="h-20 bg-gray-200 dark:bg-gray-800 rounded-lg"></div>
+            <div key={i} className="h-20 theme-bg-tertiary rounded-lg"></div>
           ))}
         </div>
       </div>
@@ -94,10 +94,10 @@ export default function AuditLogsPage() {
         </div>
       )}
 
-      <div className="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900/50 overflow-hidden">
+      <div className="dashboard-content-card overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full">
-            <thead className="bg-gray-50 dark:bg-gray-800/50">
+            <thead className="theme-bg-tertiary">
               <tr>
                 <th className="px-6 py-3 text-left text-xs font-semibold theme-text-muted uppercase">Timestamp</th>
                 <th className="px-6 py-3 text-left text-xs font-semibold theme-text-muted uppercase">User</th>
@@ -110,7 +110,7 @@ export default function AuditLogsPage() {
               {logs.length === 0 ? (
                 <tr>
                   <td colSpan={5} className="px-6 py-12 text-center">
-                    <svg className="mx-auto w-12 h-12 text-gray-400 dark:text-gray-600 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="mx-auto w-12 h-12 theme-text-muted mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                     </svg>
                     <p className="text-sm theme-text-muted">
@@ -123,7 +123,7 @@ export default function AuditLogsPage() {
                 </tr>
               ) : (
                 logs.map((log) => (
-                  <tr key={log.logId} className="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
+                  <tr key={log.logId} className="hover:theme-bg-hover transition-colors">
                     <td className="px-6 py-4 whitespace-nowrap text-sm theme-text-secondary">
                       {formatDateTime(log.timestamp)}
                     </td>

@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { Sparkles, Bolt } from 'lucide-react';
 import Cookies from 'js-cookie';
+import { config } from '@/config/runtime';
 import apiClient from '@/lib/apiClient';
 
 // --- Theme Simulation & Constants ---
@@ -27,8 +28,8 @@ interface ChatResponse {
     tool_executed?: string | null;
 }
 
-// Use the shared API client with a baseURL of `${API_BASE_URL}/api/v1`.
-// Then call the `ai/chat` endpoint relative to that base.
+// Use the runtime config to get the API Gateway URL
+const API_ENDPOINT = `${config.NEXT_PUBLIC_API_BASE_URL}/api/v1/ai/chat`;
 
 const AIChatWidget: React.FC = () => {
     // State Management
