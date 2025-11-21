@@ -58,11 +58,11 @@ export default function NotificationBell() {
       <button
         type="button"
         onClick={handleToggle}
-        className="relative inline-flex items-center justify-center w-10 h-10 rounded-full theme-button-secondary"
+        className="theme-toggle relative"
         aria-label="Notifications"
       >
         <svg
-          className="w-5 h-5 theme-text-primary"
+          className="w-5 h-5 transition-transform duration-300 hover:rotate-12"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -82,6 +82,8 @@ export default function NotificationBell() {
         {isConnected && (
           <span className="absolute bottom-0 right-0 w-2 h-2 bg-green-500 rounded-full border-2 border-white dark:border-gray-800" title="Real-time connected"></span>
         )}
+        {/* Ripple effect */}
+        <div className="absolute inset-0 rounded-full bg-current opacity-0 transition-opacity duration-200 pointer-events-none"></div>
       </button>
 
       {open && (
