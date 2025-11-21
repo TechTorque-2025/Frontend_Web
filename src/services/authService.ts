@@ -1,5 +1,6 @@
 "use client";
 import api from '../lib/apiClient';
+import axios from 'axios';
 import Cookies from 'js-cookie';
 import type { 
   LoginRequest, 
@@ -24,9 +25,9 @@ export const authService = {
         console.log('Token saved to cookie');
       }
       return res.data;
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Login error:', error);
-      if (error.response && error.response.data && error.response.data.message) {
+      if (axios.isAxiosError(error) && error.response?.data?.message) {
         throw new Error(error.response.data.message);
       }
       throw error;
