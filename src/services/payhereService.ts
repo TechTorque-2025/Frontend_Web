@@ -125,8 +125,13 @@ class PayHereService {
         sandbox: payment.sandbox,
         orderId: payment.order_id,
         amount: payment.amount,
-        merchantId: payment.merchant_id
+        merchantId: payment.merchant_id,
+        currency: payment.currency,
+        hash: payment.hash,
+        customerEmail: payment.email
       });
+
+      console.log('Full PayHere payment object:', payment);
 
       // Setup callbacks
       window.payhere.onCompleted = function (paymentId: string) {

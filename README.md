@@ -48,3 +48,11 @@ This repository contains the source code for the TechTorque 2025 customer and em
    npm run setup-hooks
    ```
    This configures automatic linting on commit and build checking on push. See [GIT_HOOKS.md](GIT_HOOKS.md) for details.
+
+   ### 🔌 Environment
+
+   - The frontend expects an API base to be available at runtime. You can configure this via the
+      `NEXT_PUBLIC_API_BASE_URL` environment variable. When not set, the runtime defaults to
+      `http://localhost:8080` (useful in development).
+
+   - The AI chat widget reaches the AI chat proxy at `/api/v1/ai/chat` (or `{{NEXT_PUBLIC_API_BASE_URL}}/api/v1/ai/chat` when the public API base is set). This ensures the frontend talks to the configured API gateway or the local Next.js proxy.

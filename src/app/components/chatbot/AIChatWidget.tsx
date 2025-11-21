@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { Sparkles, Bolt } from 'lucide-react';
 import Cookies from 'js-cookie';
 import { config } from '@/config/runtime';
+import apiClient from '@/lib/apiClient';
 
 // --- Theme Simulation & Constants ---
 const theme = {
@@ -72,21 +73,8 @@ const AIChatWidget: React.FC = () => {
                 token: currentToken,
             };
 
-            const response = await fetch(API_ENDPOINT, {
-                method: 'POST',
-                headers: { 
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${currentToken}`,
-                },
-                body: JSON.stringify(payload),
-            });
-
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.detail || `HTTP Error ${response.status}`);
-            }
-
-            const data: ChatResponse = await response.json();
+            // Let the shared `apiClient` add auth headers via request interceptor
+            const { data } = await apiClient.post<ChatResponse>('/ai/chat', payload);
 
             let replyText = data.reply;
             if (data.tool_executed) {
@@ -100,6 +88,9 @@ const AIChatWidget: React.FC = () => {
         } catch (error: unknown) {
             console.error("Chat Error:", error);
             const errorMessage: Message = {
+                // If axios/our apiClient already stripped the token on 401 it
+                // will redirect to /auth/login via the interceptor. Otherwise
+                // check HTTP status if available.
                 text: (error instanceof Error && error.message.includes('401'))
                     ? "🔒 Your session has expired. Please log in again to continue chatting!"
                     : "⚠️ Oops! I'm having trouble connecting to my services right now. Please try again in a moment! 🔄",
