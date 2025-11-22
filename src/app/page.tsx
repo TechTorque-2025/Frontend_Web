@@ -1,56 +1,5 @@
-'use client'
-
 import Link from "next/link";
-import React from 'react';
-import { useTheme } from './contexts/ThemeContext';
-
-// --- ThemeToggle Component (from ThemeToggle.tsx) ---
-function ThemeToggle() {
-  // isDark and toggleTheme will be provided by the ThemeProvider in layout.tsx
-  const { isDark, toggleTheme } = useTheme();
-
-  return (
-    <button
-      onClick={toggleTheme}
-      className="theme-toggle"
-      aria-label="Toggle theme"
-      title={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
-    >
-      <div className="flex items-center justify-center w-6 h-6">
-        {isDark ? (
-           <svg
-            className="w-5 h-5 transition-transform duration-300 hover:rotate-12"
-            fill="currentColor"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={1}
-              d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"
-            />
-          </svg>
-        ) : (
-          <svg
-            className="w-5 h-5 transition-transform duration-300 hover:rotate-12"
-            fill="currentColor"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={1}
-              d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"
-            />
-          </svg>
-        )}
-      </div>
-    </button>
-  );
-}
-
+import ThemeToggle from "./components/ThemeToggle";
 
 // --- Icon Components for better reusability ---
 const Icon = ({ d, className }: { d: string; className?: string }) => (
@@ -113,13 +62,13 @@ export default function Home() {
         <section className="automotive-hero relative py-28 px-4 sm:px-6 lg:px-8 overflow-hidden">
           <div className="absolute inset-0 bg-grid-pattern opacity-20 dark:opacity-10"></div>
           <div className="max-w-6xl mx-auto text-center relative z-10">
-            <div className="mb-8 animate-fadeInUp">
+            <div className="mb-8">
               <span className="inline-block px-6 py-2 accent-badge rounded-full border theme-text-primary font-semibold text-sm uppercase tracking-wider mb-6">
                 Next-Generation Auto Care
               </span>
             </div>
             
-            <h2 className="text-5xl lg:text-7xl font-black theme-text-primary mb-6 leading-tight animate-fadeInUp stagger-1">
+            <h2 className="text-5xl lg:text-7xl font-black theme-text-primary mb-6 leading-tight">
               Drive the Future of 
               <span className="block text-gradient-accent">
                 Vehicle Service
