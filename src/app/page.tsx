@@ -125,7 +125,7 @@ export default function Home() {
               
               <div className="automotive-card p-8 group">
                 <div className="flex justify-center mb-6">
-                  <div className="w-16 h-16 rounded-full bg-gradient-to-br from-emerald-500 to-teal-400 flex items-center justify-center shadow-lg">
+                  <div className="w-16 h-16 rounded-full bg-linear-to-br from-emerald-500 to-teal-400 flex items-center justify-center shadow-lg">
                     <ClockIcon />
                   </div>
                 </div>
@@ -139,7 +139,7 @@ export default function Home() {
               
               <div className="automotive-card p-8 group">
                 <div className="flex justify-center mb-6">
-                  <div className="w-16 h-16 rounded-full bg-gradient-to-br from-violet-500 to-purple-400 flex items-center justify-center shadow-lg">
+                  <div className="w-16 h-16 rounded-full bg-linear-to-br from-violet-500 to-purple-400 flex items-center justify-center shadow-lg">
                     <ShieldCheckIcon />
                   </div>
                 </div>

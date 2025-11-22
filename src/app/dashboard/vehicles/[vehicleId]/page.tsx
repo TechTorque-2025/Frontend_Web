@@ -105,7 +105,7 @@ export default function VehicleDetailsPage() {
         {/* Left: Images + gallery */}
         <div className="lg:col-span-2 space-y-6">
           <div className="automotive-card p-6">
-            <div className="w-full rounded-lg overflow-hidden shadow-md bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-800">
+            <div className="w-full rounded-lg overflow-hidden shadow-md bg-linear-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-800">
               {vehicle.photos && vehicle.photos.length > 0 ? (
                 <Image
                   src={vehicle.photos[0] as unknown as string}
