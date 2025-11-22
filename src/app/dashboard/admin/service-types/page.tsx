@@ -135,11 +135,6 @@ export default function ServiceTypesPage() {
       console.log(`Toggling service ${service.id} from ${service.active} to ${newStatus}`);
       
       await adminService.updateServiceType(service.id, {
-        name: service.name,
-        category: service.category,
-        description: service.description || '',
-        price: service.basePriceLKR,
-        durationMinutes: service.estimatedDurationMinutes,
         active: newStatus,
       });
       

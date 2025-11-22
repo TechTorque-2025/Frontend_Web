@@ -173,8 +173,8 @@ export default function VehicleDetailsPage() {
         </div>
 
         {/* Right: Details card */}
-        <aside className="space-y-6">
-          <div className="automotive-card p-6  sticky top-6">
+        <aside className="space-y-6 sticky top-6 h-fit">
+          <div className="automotive-card p-6">
             <div>
               <h1 className="text-2xl md:text-3xl font-bold theme-text-primary">{vehicle.year} {vehicle.make} {vehicle.model}</h1>
               <p className="text-sm theme-text-muted mt-1">VIN: <span className="font-medium theme-text-secondary">{vehicle.vin}</span></p>

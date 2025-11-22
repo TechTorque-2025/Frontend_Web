@@ -97,10 +97,8 @@ export default function EditVehicleForm({
             name="licensePlate"
             value={formData.licensePlate}
             onChange={handleChange}
-            className="w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-blue-500 transition-all theme-bg-primary theme-text-primary automotive-border opacity-60 cursor-not-allowed"
+            className="w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-blue-500 transition-all theme-bg-primary theme-text-primary automotive-border"
             placeholder="e.g., ABC-1234"
-            disabled
-            readOnly
           />
         </div>
       </div>
