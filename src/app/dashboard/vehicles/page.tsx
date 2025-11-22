@@ -57,7 +57,7 @@ export default function VehiclesPage() {
   if (loading) {
     return (
       <div className="flex justify-center items-center min-h-screen theme-bg-primary">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 theme-border-primary"></div>
       </div>
     );
   }
@@ -86,7 +86,7 @@ export default function VehiclesPage() {
 
       {/* Add Vehicle Modal */}
       {showAddForm && (
-        <div className="fixed inset-0 theme-bg-primary bg-opacity-70 dark:bg-blue-950 dark:bg-opacity-70 flex items-center justify-center p-4 z-50 backdrop-blur-sm">
+        <div className="fixed inset-0 modal-overlay flex items-center justify-center p-4 z-50 backdrop-blur-sm">
           <div className="automotive-card p-8 max-w-2xl w-full max-h-[90vh] overflow-y-auto">
             <AddVehicleForm
               onSuccess={handleAddSuccess}
@@ -98,7 +98,7 @@ export default function VehiclesPage() {
 
       {/* Edit Vehicle Modal */}
       {editingVehicle && (
-        <div className="fixed inset-0 theme-bg-primary bg-opacity-70 dark:bg-blue-950 dark:bg-opacity-70 flex items-center justify-center p-4 z-50 backdrop-blur-sm">
+        <div className="fixed inset-0 modal-overlay flex items-center justify-center p-4 z-50 backdrop-blur-sm">
           <div className="automotive-card p-8 max-w-md w-full">
             <EditVehicleForm
               vehicleId={editingVehicle.vehicleId}

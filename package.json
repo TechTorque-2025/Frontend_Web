@@ -7,6 +7,8 @@
     "build": "next build --turbopack",
     "start": "next start",
     "lint": "eslint",
+    "check:colors": "node ./scripts/check-hardcoded-colors.js",
+    "check:theme": "node ./scripts/check-theme-setup.js",
     "setup-hooks": "chmod +x .githooks/pre-commit .githooks/pre-push && git config core.hooksPath .githooks && echo '✅ Git hooks configured successfully!'"
   },
   "dependencies": {

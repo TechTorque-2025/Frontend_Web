@@ -94,7 +94,7 @@ export default function AdminDashboard() {
           <div className="flex gap-4">
             <button
               onClick={() => router.push("/profile")}
-              className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
+              className="px-4 py-2 theme-button-primary rounded-lg transition-colors"
             >
               My Profile
             </button>

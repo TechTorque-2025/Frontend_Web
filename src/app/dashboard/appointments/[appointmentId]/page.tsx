@@ -30,7 +30,7 @@ const STATUS_OPTIONS: StatusOption[] = [
 export default function AppointmentDetailPage() {
   const router = useRouter()
   const params = useParams<{ appointmentId: string }>()
-  const { toasts, success, error: showError, closeToast } = useToast()
+  const { toasts, success, closeToast } = useToast()
   const appointmentId = params.appointmentId
   const { roles, profile } = useDashboard()
 

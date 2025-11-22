@@ -57,7 +57,7 @@ const SuperAdminDashboard: React.FC<SuperAdminDashboardProps> = ({ profile }) =>
       </div>
 
       {error && (
-        <div className="mb-6 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 px-4 py-3 rounded-lg">
+        <div className="theme-alert-danger mb-6">
           {error}
         </div>
       )}
@@ -131,7 +131,7 @@ const SuperAdminDashboard: React.FC<SuperAdminDashboardProps> = ({ profile }) =>
               serviceTypes.map((service) => (
                 <div key={service.id} className="flex justify-between">
                   <span className="theme-text-muted">{service.name}</span>
-                  <span className={`text-xs font-semibold ${service.active ? 'text-green-600 dark:text-green-400' : 'text-gray-500'}`}>
+                  <span className={`text-xs font-semibold ${service.active ? 'theme-text-success' : 'theme-text-muted'}`}>
                     {service.active ? 'Active' : 'Inactive'}
                   </span>
                 </div>
@@ -154,7 +154,7 @@ const SuperAdminDashboard: React.FC<SuperAdminDashboardProps> = ({ profile }) =>
               <p className="theme-text-muted text-sm">No audit log entries yet.</p>
             ) : (
               auditLogs.map((log) => (
-                <div key={log.logId} className="border-b border-gray-200 dark:border-gray-700 pb-2">
+                <div key={log.logId} className="border-b theme-border pb-2">
                   <p className="theme-text-primary text-sm font-medium">{log.action}</p>
                   <p className="theme-text-muted text-xs">{log.username ?? log.userId} • {new Date(log.timestamp).toLocaleString()}</p>
                   {log.details && <p className="theme-text-muted text-xs mt-1">{log.details}</p>}

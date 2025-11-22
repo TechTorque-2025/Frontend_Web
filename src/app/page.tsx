@@ -82,7 +82,7 @@ export default function Home() {
         <div className="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center">
             <Link href="/" className="flex items-center space-x-3 group">
-              <div className="w-12 h-12 rounded-full bg-gradient-to-r from-blue-500 to-cyan-400 flex items-center justify-center shadow-lg transform transition-transform duration-300 group-hover:scale-110">
+              <div className="w-12 h-12 rounded-full automotive-accent flex items-center justify-center shadow-lg transform transition-transform duration-300 group-hover:scale-110">
                 <BoltIcon />
               </div>
               <h1 className="text-2xl font-bold theme-text-primary hidden sm:block">
@@ -114,14 +114,14 @@ export default function Home() {
           <div className="absolute inset-0 bg-grid-pattern opacity-20 dark:opacity-10"></div>
           <div className="max-w-6xl mx-auto text-center relative z-10">
             <div className="mb-8 animate-fadeInUp">
-              <span className="inline-block px-6 py-2 bg-gradient-to-r from-blue-500/20 to-cyan-500/20 rounded-full border border-blue-300/30 theme-text-primary font-semibold text-sm uppercase tracking-wider mb-6">
+              <span className="inline-block px-6 py-2 accent-badge rounded-full border theme-text-primary font-semibold text-sm uppercase tracking-wider mb-6">
                 Next-Generation Auto Care
               </span>
             </div>
             
             <h2 className="text-5xl lg:text-7xl font-black theme-text-primary mb-6 leading-tight animate-fadeInUp stagger-1">
               Drive the Future of 
-              <span className="block text-transparent bg-clip-text bg-gradient-to-r from-blue-500 via-purple-600 to-teal-500">
+              <span className="block text-gradient-accent">
                 Vehicle Service
               </span>
             </h2>
@@ -162,7 +162,7 @@ export default function Home() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
               <div className="automotive-card p-8 group">
                 <div className="flex justify-center mb-6">
-                  <div className="w-16 h-16 rounded-full bg-gradient-to-br from-blue-500 to-cyan-400 flex items-center justify-center shadow-lg">
+                  <div className="w-16 h-16 rounded-full automotive-accent flex items-center justify-center shadow-lg">
                     <WrenchIcon />
                   </div>
                 </div>
@@ -278,7 +278,7 @@ export default function Home() {
       <footer className="py-16 px-4 sm:px-6 lg:px-8 border-t theme-border theme-bg-tertiary">
         <div className="max-w-7xl mx-auto text-center">
            <div className="flex justify-center items-center space-x-3 mb-6">
-              <div className="w-10 h-10 rounded-full bg-gradient-to-r from-blue-500 to-cyan-400 flex items-center justify-center shadow-lg">
+              <div className="w-10 h-10 rounded-full automotive-accent flex items-center justify-center shadow-lg">
                 <BoltIcon />
               </div>
               <h2 className="text-2xl font-bold theme-text-primary">TechTorque Auto</h2>

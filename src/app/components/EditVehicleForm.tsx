@@ -59,7 +59,7 @@ export default function EditVehicleForm({
       </h2>
 
       {error && (
-        <div className="bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 px-4 py-3 rounded-lg">
+        <div className="theme-alert-danger mb-4">
           {error}
         </div>
       )}
@@ -72,7 +72,7 @@ export default function EditVehicleForm({
             name="color"
             value={formData.color}
             onChange={handleChange}
-            className="w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-blue-500 transition-all theme-bg-primary theme-text-primary automotive-border"
+            className="theme-input w-full"
             placeholder="e.g., Blue"
           />
         </div>
@@ -85,7 +85,7 @@ export default function EditVehicleForm({
             value={formData.mileage}
             onChange={handleChange}
             min="0"
-            className="w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-blue-500 transition-all theme-bg-primary theme-text-primary automotive-border"
+            className="theme-input w-full"
             placeholder="e.g., 50000"
           />
         </div>
@@ -97,7 +97,7 @@ export default function EditVehicleForm({
             name="licensePlate"
             value={formData.licensePlate}
             onChange={handleChange}
-            className="w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-blue-500 transition-all theme-bg-primary theme-text-primary automotive-border"
+            className="theme-input w-full"
             placeholder="e.g., ABC-1234"
           />
         </div>
@@ -107,7 +107,7 @@ export default function EditVehicleForm({
         <button
           type="button"
           onClick={onCancel}
-          className="theme-button-secondary px-6 py-3 font-medium rounded-xl"
+          className="theme-button-secondary"
           disabled={loading}
         >
           Cancel
@@ -115,7 +115,7 @@ export default function EditVehicleForm({
         <button
           type="submit"
           disabled={loading}
-          className="theme-button-primary px-6 py-3 font-medium rounded-xl disabled:opacity-60"
+          className="theme-button-primary disabled:opacity-60"
         >
           {loading ? 'Updating...' : 'Update Vehicle'}
         </button>

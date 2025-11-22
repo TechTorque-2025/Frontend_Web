@@ -57,9 +57,7 @@ function DashboardShell({ children }: { children: ReactNode }) {
             <Link
               href={item.href}
               className={`block rounded-lg px-3 py-2 text-sm font-medium transition-all duration-200 ${
-                active
-                  ? 'bg-gradient-to-r from-[#0EA3E7]/90 to-[#0386C9]/90 text-white shadow-lg shadow-blue-500/30'
-                  : 'theme-text-secondary hover:bg-gradient-to-r hover:from-[#0EA3E7]/10 hover:to-[#0386C9]/10 hover:text-[#0EA3E7] hover:shadow-md'
+                active ? 'nav-item-active' : 'nav-item-inactive'
               }`}
               onClick={() => setMobileNavOpen(false)}
             >

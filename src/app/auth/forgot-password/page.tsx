@@ -6,8 +6,8 @@ import Link from 'next/link'
 import authService from '../../../services/authService'
 import ThemeToggle from '../../components/ThemeToggle'
 
-const Icon = ({ d, size = 10 }: { d: string; size?: number }) => ( <svg className={`w-${size} h-${size} text-white`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={d} /></svg>);
-const BoltIcon = ({size = 10}) => <Icon d="M13 10V3L4 14h7v7l9-11h-7z" size={size} />;
+// (removed unused Icon helper)
+
 
 // --- Forgot Password Page Component ---
 export default function ForgotPasswordPage() {

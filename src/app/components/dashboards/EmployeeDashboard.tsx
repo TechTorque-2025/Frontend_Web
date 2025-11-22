@@ -170,7 +170,7 @@ const EmployeeDashboard: React.FC<EmployeeDashboardProps> = ({ profile }) => {
               <p className="theme-text-muted text-sm">No appointments assigned for today.</p>
             ) : (
               todaysAppointments.map((appointment) => (
-                <div key={appointment.appointmentId} className="border-b border-gray-200 dark:border-gray-700 pb-3">
+                <div key={appointment.appointmentId} className="border-b theme-border pb-3">
                   <div className="flex justify-between items-start">
                     <div>
                       <p className="theme-text-primary font-medium">{appointment.serviceType}</p>
@@ -183,7 +183,7 @@ const EmployeeDashboard: React.FC<EmployeeDashboardProps> = ({ profile }) => {
                     </div>
                     <Link
                       href={`/dashboard/appointments/${appointment.appointmentId}`}
-                      className="text-xs text-blue-600 dark:text-blue-400 hover:underline"
+                      className="text-xs theme-text-info hover:underline"
                     >
                       Open
                     </Link>
@@ -201,7 +201,7 @@ const EmployeeDashboard: React.FC<EmployeeDashboardProps> = ({ profile }) => {
               <p className="theme-text-muted text-sm">You haven&apos;t recorded any time logs yet.</p>
             ) : (
               timeLogs.slice(-5).reverse().map((log, index) => (
-                <div key={log.id || `timelog-${index}`} className="border border-gray-200 dark:border-gray-700 rounded-lg p-3">
+                <div key={log.id || `timelog-${index}`} className="border theme-border rounded-lg p-3">
                   <p className="theme-text-primary text-sm font-medium">
                     {new Date(log.date).toLocaleDateString()} • {(Number(log.hours) || 0).toFixed(1)} hrs
                   </p>

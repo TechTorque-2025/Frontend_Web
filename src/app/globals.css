@@ -332,6 +332,32 @@ body {
   border-color: #0CA0E4;
 }
 
+/* Navigation item classes (use theme variables for consistent theming) */
+.nav-item-active {
+  background: linear-gradient(135deg, var(--accent-primary), var(--accent-hover));
+  color: white;
+  font-weight: 600;
+  box-shadow: 0 8px 20px -6px var(--shadow-accent), 0 2px 6px -2px var(--shadow-color);
+}
+
+.nav-item-inactive {
+  background: transparent;
+  color: var(--text-secondary);
+  border: 1px solid transparent;
+}
+
+.nav-item-inactive:hover {
+  /* subtle hover that uses the accent color */
+  background: linear-gradient(135deg, rgba(14,165,233,0.06), rgba(3,134,201,0.06));
+  color: var(--accent-primary);
+  box-shadow: 0 6px 12px -6px var(--shadow-color);
+}
+
+html.dark .nav-item-inactive:hover {
+  background: linear-gradient(135deg, rgba(56,189,248,0.06), rgba(14,165,233,0.06));
+  color: var(--accent-primary);
+}
+
 /* Legacy support - keep for backward compatibility */
 .theme-filter-active {
   background: linear-gradient(135deg, #0CA0E4 0%, #0CA0E4 100%);
@@ -830,6 +856,26 @@ html.dark .bg-grid-pattern {
 /* Automotive accent gradient */
 .automotive-accent {
   background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+}
+
+/* Soft accent variants used for small badges and faded backgrounds */
+.accent-badge {
+  background: linear-gradient(135deg, rgba(14,165,233,0.12), rgba(3,134,201,0.12));
+  border: 1px solid rgba(14,165,233,0.12);
+  color: var(--text-primary);
+}
+
+/* Gradient text utility that uses accent colors */
+.text-gradient-accent {
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  background-image: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary));
+}
+
+/* Progress / load bars mapped to primary accent */
+.progress-accent {
+  background: linear-gradient(90deg, var(--accent-primary), var(--accent-hover));
 }
 
 /* New Tech Stack Item style */

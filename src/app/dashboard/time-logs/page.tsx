@@ -9,7 +9,7 @@ import { ToastContainer } from '@/components/Toast';
 
 export default function TimeLogsPage() {
   const { roles, loading: rolesLoading, profile } = useDashboard();
-  const { toasts, success, error: showError, closeToast } = useToast();
+  const { toasts, error: showError, closeToast } = useToast();
   const [allTimeLogs, setAllTimeLogs] = useState<TimeLogResponse[]>([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);

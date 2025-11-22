@@ -13,29 +13,29 @@ const roleConfig = {
   SUPER_ADMIN: {
     label: 'Super Admin',
     icon: '👑',
-    color: 'text-purple-600 dark:text-purple-400',
-    bgColor: 'bg-purple-100 dark:bg-purple-900/30',
+    color: 'theme-text-primary',
+    bgColor: 'theme-bg-secondary',
     dashboardPath: '/dashboard',
   },
   ADMIN: {
     label: 'Admin',
     icon: '⚙️',
-    color: 'text-blue-600 dark:text-blue-400',
-    bgColor: 'bg-blue-100 dark:bg-blue-900/30',
+    color: 'theme-text-info',
+    bgColor: 'theme-alert-info',
     dashboardPath: '/dashboard',
   },
   EMPLOYEE: {
     label: 'Employee',
     icon: '👷',
-    color: 'text-green-600 dark:text-green-400',
-    bgColor: 'bg-green-100 dark:bg-green-900/30',
+    color: 'theme-text-success',
+    bgColor: 'theme-alert-success',
     dashboardPath: '/dashboard',
   },
   CUSTOMER: {
     label: 'Customer',
     icon: '👤',
-    color: 'text-gray-600 dark:text-gray-400',
-    bgColor: 'bg-gray-100 dark:bg-gray-800',
+    color: 'theme-text-secondary',
+    bgColor: 'theme-bg-tertiary',
     dashboardPath: '/dashboard',
   },
 };
@@ -76,8 +76,8 @@ export default function RoleSwitcher({ roles, currentRole, onRoleChange }: RoleS
   const currentConfig = roleConfig[currentRole as keyof typeof roleConfig] || {
     label: currentRole,
     icon: '🔹',
-    color: 'text-gray-600',
-    bgColor: 'bg-gray-100',
+    color: 'theme-text-muted',
+    bgColor: 'theme-bg-secondary',
     dashboardPath: '/dashboard',
   };
 
@@ -112,17 +112,17 @@ export default function RoleSwitcher({ roles, currentRole, onRoleChange }: RoleS
 
       {/* Dropdown Menu */}
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-56 rounded-lg shadow-lg theme-bg-primary border border-gray-200 dark:border-gray-700 z-50">
+        <div className="absolute right-0 mt-2 w-56 rounded-lg shadow-lg theme-bg-primary border theme-border z-50">
           <div className="p-2">
-            <div className="px-3 py-2 text-xs font-semibold theme-text-muted uppercase tracking-wide border-b border-gray-200 dark:border-gray-700 mb-2">
+            <div className="px-3 py-2 text-xs font-semibold theme-text-muted uppercase tracking-wide border-b theme-border mb-2">
               Switch View
             </div>
             {sortedRoles.map((role) => {
               const config = roleConfig[role as keyof typeof roleConfig] || {
                 label: role,
                 icon: '🔹',
-                color: 'text-gray-600',
-                bgColor: 'bg-gray-100',
+                color: 'theme-text-muted',
+                bgColor: 'theme-bg-secondary',
               };
               const isActive = role === currentRole;
 
@@ -133,7 +133,7 @@ export default function RoleSwitcher({ roles, currentRole, onRoleChange }: RoleS
                   className={`w-full flex items-center gap-3 px-3 py-2 rounded-md text-sm transition-colors ${
                     isActive
                       ? `${config.bgColor} ${config.color} font-medium`
-                      : 'theme-text-secondary hover:bg-gray-100 dark:hover:bg-gray-800'
+                      : 'theme-text-secondary hover:theme-bg-hover'
                   }`}
                 >
                   <span className="text-lg">{config.icon}</span>
@@ -151,7 +151,7 @@ export default function RoleSwitcher({ roles, currentRole, onRoleChange }: RoleS
               );
             })}
           </div>
-          <div className="border-t border-gray-200 dark:border-gray-700 px-3 py-2">
+          <div className="border-t theme-border px-3 py-2">
             <p className="text-xs theme-text-muted">
               💡 Your current view affects the dashboard and available menu items
             </p>
