@@ -144,11 +144,11 @@ const AIChatWidget: React.FC = () => {
       </div>
 
       {/* Input area */}
-      <form onSubmit={handleSubmit} className="p-4 border-t theme-border rounded-b-xl bg-white">
+      <form onSubmit={handleSubmit} className="p-4 border-t theme-border rounded-b-xl theme-bg-primary">
         <div className="flex items-center gap-3">
           <textarea
             aria-label="Chat message"
-            className="flex-1 resize-none border theme-border rounded-md px-3 py-2 text-sm focus:outline-none"
+            className="flex-1 resize-none border theme-border rounded-md px-3 py-2 text-sm focus:outline-none theme-bg-secondary theme-text-primary"
             rows={1}
             value={inputMessage}
             onChange={(e) => setInputMessage(e.target.value)}
