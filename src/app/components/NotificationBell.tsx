@@ -4,9 +4,9 @@ import { useEffect, useRef, useState } from 'react'
 import { useNotifications } from '@/app/contexts/NotificationContext'
 
 export default function NotificationBell() {
-  const { notifications, unreadCount, loading, markAsRead, markAllAsRead, fetchNotifications, isConnected } = useNotifications()
+  const { notifications, unreadCount, loading, error, markAsRead, markAllAsRead, fetchNotifications, isConnected } = useNotifications()
   const [open, setOpen] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+  const [localError, setLocalError] = useState<string | null>(null)
   const panelRef = useRef<HTMLDivElement | null>(null)
 
   useEffect(() => {
@@ -29,6 +29,7 @@ export default function NotificationBell() {
     const nextState = !open
     setOpen(nextState)
     if (nextState) {
+      setLocalError(null)
       await fetchNotifications()
     }
   }
@@ -36,20 +37,20 @@ export default function NotificationBell() {
   const handleMarkAsRead = async (notificationId: string) => {
     try {
       await markAsRead(notificationId)
-      setError(null)
+      setLocalError(null)
     } catch (err: unknown) {
       const message = (err as { response?: { data?: { message?: string } } }).response?.data?.message || 'Failed to mark notification as read'
-      setError(message)
+      setLocalError(message)
     }
   }
 
   const handleMarkAllAsRead = async () => {
     try {
       await markAllAsRead()
-      setError(null)
+      setLocalError(null)
     } catch (err: unknown) {
       const message = (err as { response?: { data?: { message?: string } } }).response?.data?.message || 'Failed to mark notifications as read'
-      setError(message)
+      setLocalError(message)
     }
   }
 
@@ -103,8 +104,8 @@ export default function NotificationBell() {
 
           {loading ? (
             <div className="py-8 text-center theme-text-muted text-sm">Loading notifications...</div>
-          ) : error ? (
-            <div className="py-8 text-center theme-text-danger text-sm">{error}</div>
+          ) : (localError || error) ? (
+            <div className="py-8 text-center theme-text-danger text-sm">{localError || error}</div>
           ) : notifications.length === 0 ? (
             <div className="py-8 text-center theme-text-muted text-sm">No notifications yet.</div>
           ) : (

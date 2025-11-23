@@ -74,8 +74,23 @@ apiClient.interceptors.response.use(
       errorMessage = error.message;
     }
 
-    // Create a new error with the extracted message
-    const enhancedError = new Error(errorMessage);
+    // Create a new Error and attach useful response metadata so callers
+    // can inspect status / response details instead of only seeing
+    // the generic axios message (e.g. "Request failed with status code 502").
+    const enhancedError = new Error(errorMessage) as Error & {
+      status?: number;
+      response?: any;
+      config?: any;
+      original?: any;
+    };
+
+    // Preserve important axios error metadata so higher-level code can
+    // branch based on status, read a response body, etc.
+    enhancedError.status = error.response?.status;
+    enhancedError.response = error.response;
+    enhancedError.config = error.config;
+    enhancedError.original = error;
+
     return Promise.reject(enhancedError);
   }
 );
