@@ -79,9 +79,9 @@ apiClient.interceptors.response.use(
     // the generic axios message (e.g. "Request failed with status code 502").
     const enhancedError = new Error(errorMessage) as Error & {
       status?: number;
-      response?: any;
-      config?: any;
-      original?: any;
+      response?: unknown;
+      config?: Record<string, unknown> | undefined;
+      original?: unknown;
     };
 
     // Preserve important axios error metadata so higher-level code can
