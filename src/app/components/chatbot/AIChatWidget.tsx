@@ -116,7 +116,23 @@ const AIChatWidget: React.FC = () => {
 
         const status = getErrorStatus(error);
         const serverMessage = getServerMessage(error) ?? undefined;
-        console.error('Chat Error: status=%s message=%o', status ?? 'unknown', serverMessage ?? error);
+        // Sanitize the message before logging to avoid huge multi-line validation
+        // payloads from backend (e.g. Pydantic validation objects).
+        const sanitizeForLog = (v: unknown, maxLen = 300): string => {
+          if (typeof v === 'string') return v.split(/\r?\n/)[0].slice(0, maxLen);
+          try {
+            const s = JSON.stringify(v);
+            return s.split(/\r?\n/)[0].slice(0, maxLen);
+          } catch {
+            return String(v).split(/\r?\n/)[0].slice(0, maxLen);
+          }
+        };
+
+        console.error(
+          'Chat Error: status=%s message=%s',
+          status ?? 'unknown',
+          sanitizeForLog(serverMessage ?? error)
+        );
 
         // Build a user-facing message based on status and any server-provided message
         let displayText = "⚠️ Oops! I'm having trouble connecting to my services right now. Please try again in a moment! 🔄";
