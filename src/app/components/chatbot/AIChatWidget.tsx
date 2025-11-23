@@ -72,14 +72,66 @@ const AIChatWidget: React.FC = () => {
         // session_id may be undefined from the server — convert to null so it matches our state type
         setSessionId(data.session_id ?? null);
       } catch (error: unknown) {
-        console.error('Chat Error:', error);
-        const errorMessage: Message = {
-          text:
-            error instanceof Error && error.message.includes('401')
-              ? "🔒 Your session has expired. Please log in again to continue chatting!"
-              : "⚠️ Oops! I'm having trouble connecting to my services right now. Please try again in a moment! 🔄",
-          sender: 'system',
+        // Log a small, useful summary to the console — keep heavy objects off the top-level
+        const getErrorStatus = (e: unknown): number | undefined => {
+          if (typeof e !== 'object' || e === null) return undefined;
+          const obj = e as Record<string, unknown>;
+          if (typeof obj.status === 'number') return obj.status;
+          if (obj.response && typeof obj.response === 'object') {
+            const resp = obj.response as Record<string, unknown>;
+            if (typeof resp.status === 'number') return resp.status;
+          }
+          return undefined;
         };
+
+        const getServerMessage = (e: unknown): string | undefined => {
+          if (typeof e !== 'object' || e === null) return undefined;
+          const obj = e as Record<string, unknown>;
+
+          // Prefer top-level message if present
+          if (typeof obj.message === 'string') return obj.message;
+
+          // Try nested response -> data -> detail/message/error/msg
+          const resp = obj.response as Record<string, unknown> | undefined;
+          const data = resp?.data as Record<string, unknown> | undefined;
+          const detail = data?.detail ?? data?.message ?? data?.error ?? data?.msg;
+          if (typeof detail === 'string') return detail;
+
+          // If detail is an object (validation payload), stringify a small piece
+          if (typeof detail === 'object' && detail !== null) {
+            const keys = Object.keys(detail as Record<string, unknown>);
+            if (keys.length) {
+              const candidate = (detail as Record<string, unknown>)[keys[0]];
+              if (typeof candidate === 'string') return candidate;
+              try {
+                return JSON.stringify(candidate);
+              } catch {
+                return String(candidate);
+              }
+            }
+          }
+
+          return undefined;
+        };
+
+        const status = getErrorStatus(error);
+        const serverMessage = getServerMessage(error) ?? undefined;
+        console.error('Chat Error: status=%s message=%o', status ?? 'unknown', serverMessage ?? error);
+
+        // Build a user-facing message based on status and any server-provided message
+        let displayText = "⚠️ Oops! I'm having trouble connecting to my services right now. Please try again in a moment! 🔄";
+        if (status === 401) {
+          displayText = "🔒 Your session has expired. Please log in again to continue chatting!";
+        } else if (status === 422 || status === 400) {
+          // Validation errors are common — show a simple hint and any server-provided message
+          displayText = serverMessage
+            ? `⚠️ Validation failed: ${String(serverMessage)}`
+            : "⚠️ The data you sent wasn't valid. Please check and try again.";
+        } else if (typeof serverMessage === 'string' && serverMessage.length) {
+          displayText = `⚠️ ${serverMessage}`;
+        }
+
+        const errorMessage: Message = { text: displayText, sender: 'system' };
         setConversationHistory((prev) => [...prev, errorMessage]);
       } finally {
         setIsLoading(false);
