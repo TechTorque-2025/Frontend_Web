@@ -122,15 +122,19 @@ export interface ReportRequest {
 
 export interface ReportResponse {
   reportId: string;
-  reportType: string;
-  from: string;
-  to: string;
+  type: string;
+  title?: string;
+  fromDate: string;
+  toDate: string;
   format: string;
-  status: 'PENDING' | 'COMPLETED' | 'FAILED';
-  fileUrl?: string;
-  fileName?: string;
+  status: 'PENDING' | 'GENERATING' | 'COMPLETED' | 'FAILED';
+  generatedBy: string;
+  downloadUrl?: string;
+  fileSize?: number;
+  data?: string;
+  errorMessage?: string;
+  isScheduled?: boolean;
   createdAt: string;
-  createdBy: string;
   completedAt?: string;
 }
 
