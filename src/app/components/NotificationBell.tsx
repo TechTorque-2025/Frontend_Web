@@ -87,7 +87,7 @@ export default function NotificationBell() {
       </button>
 
       {open && (
-        <div className="fixed right-4 top-64 w-80 automotive-card p-4 shadow-xl z-50 max-h-[500px] flex flex-col origin-top-right">
+        <div className="fixed right-4 top-20 w-80 automotive-card p-4 shadow-xl z-50 max-h-[500px] flex flex-col origin-top-right">
           <div className="flex items-center justify-between mb-4">
             <span className="font-semibold theme-text-primary text-base">Notifications</span>
             {notifications.length > 0 && (
