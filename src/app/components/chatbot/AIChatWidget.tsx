@@ -22,7 +22,7 @@ const AIChatWidget: React.FC = () => {
   const [conversationHistory, setConversationHistory] = useState<Message[]>([
     {
       text:
-        "👋 Hello! I'm TechTorque Assistant, your friendly car service companion! 🚗\n\nI can help you with:\n✅ Booking appointments\n✅ Checking service status\n✅ Vehicle information\n✅ Pricing & estimates\n\nWhat can I do for you today? 😊",
+        "👋 Hello! I'm TechTorque Assistant, your friendly car service companion! 🚗\n\nI can help you with:\n✅ Booking vehicles\n✅ TechTorque site-related information\n✅ Service inquiries\n✅ General assistance\n\nWhat can I do for you today? 😊",
       sender: 'ai',
     },
   ]);
