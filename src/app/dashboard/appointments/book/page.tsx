@@ -107,7 +107,7 @@ export default function BookAppointmentPage() {
         setCheckingAvailability(true)
         const result = await appointmentService.checkAvailability({
           date: form.date,
-          serviceType: selectedServiceType?.name || '',
+          serviceType: form.serviceTypeId,
           duration,
         })
         setAvailability(result)
@@ -181,13 +181,13 @@ export default function BookAppointmentPage() {
       </div>
 
       {error && (
-        <div className="mb-6 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 px-4 py-3 rounded-lg">
+        <div className="mb-6 theme-alert-danger">
           {error}
         </div>
       )}
 
       {successMessage && (
-        <div className="mb-6 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 text-green-700 dark:text-green-300 px-4 py-3 rounded-lg">
+        <div className="mb-6 theme-alert-success">
           {successMessage}
         </div>
       )}
@@ -242,7 +242,7 @@ export default function BookAppointmentPage() {
         </label>
 
         {selectedServiceType && (
-          <div className="p-4 rounded-lg bg-blue-50 dark:bg-blue-900/20 text-sm theme-text-secondary">
+          <div className="p-4 rounded-lg theme-alert-info">
             <p className="font-medium theme-text-primary">Service details</p>
             <p>Duration: {selectedServiceType.estimatedDurationMinutes} minutes</p>
             {selectedServiceType.description && <p>{selectedServiceType.description}</p>}

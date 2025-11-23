@@ -6,21 +6,8 @@ import { useState } from "react";
 import authService from "../../../services/authService";
 import ThemeToggle from "../../components/ThemeToggle";
 
-// Icon Components
-const Icon = ({ d, size = 10 }: { d: string; size?: number }) => (
-  <svg
-    className={`w-${size} h-${size} text-white`}
-    fill="none"
-    stroke="currentColor"
-    viewBox="0 0 24 24"
-    xmlns="http://www.w3.org/2000/svg"
-  >
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={d} />
-  </svg>
-);
-const BoltIcon = ({ size = 10 }) => (
-  <Icon d="M13 10V3L4 14h7v7l9-11h-7z" size={size} />
-);
+// (removed unused Icon helper)
+
 const UserPlusIcon = () => (
   <svg
     className="w-5 h-5 mr-2"
@@ -132,11 +119,11 @@ export default function RegisterPage() {
         <div className="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center">
             <Link href="/" className="flex items-center space-x-3 group">
-              <div className="w-12 h-12 rounded-full bg-gradient-to-r from-blue-500 to-cyan-400 flex items-center justify-center shadow-lg transform transition-transform duration-300 group-hover:scale-110">
-                <BoltIcon size={6} />
+              <div className="automotive-accent w-12 h-12 rounded-full flex items-center justify-center shadow-lg transform transition-transform duration-300 group-hover:scale-110">
+                <span className="text-white font-bold text-lg">TT</span>
               </div>
               <h1 className="text-2xl font-bold theme-text-primary hidden sm:block">
-                TechTorque Auto
+                TechTorque
               </h1>
             </Link>
             <div className="flex items-center space-x-4">
@@ -178,7 +165,7 @@ export default function RegisterPage() {
                   Account Created!
                 </h2>
                 <p className="text-base theme-text-secondary mb-2">
-                  Welcome to TechTorque Auto, {formData.fullName}!
+                  Welcome to TechTorque, {formData.fullName}!
                 </p>
                 <div className="mb-6 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
                   <p className="text-sm font-semibold theme-text-primary mb-2">

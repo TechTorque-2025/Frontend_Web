@@ -4,11 +4,14 @@ import Image from 'next/image'
 import { useRouter, useParams } from 'next/navigation';
 import { vehicleService } from '@/services/vehicleService';
 import type { Vehicle, ServiceHistory } from '@/types/vehicle';
+import { useToast } from '@/hooks/useToast';
+import { ToastContainer } from '@/components/Toast';
 
 export default function VehicleDetailsPage() {
   const router = useRouter();
   const params = useParams();
   const vehicleId = params.vehicleId as string;
+  const { toasts, success, error: showError, closeToast } = useToast();
 
   const [vehicle, setVehicle] = useState<Vehicle | null>(null);
   const [serviceHistory, setServiceHistory] = useState<ServiceHistory[]>([]);
@@ -52,10 +55,10 @@ export default function VehicleDetailsPage() {
     try {
       const fileArray = Array.from(files);
       await vehicleService.uploadVehiclePhotos(vehicleId, fileArray);
-      alert('Photos uploaded successfully!');
+      success('Photos uploaded successfully!');
     } catch (err: unknown) {
       const errorMessage = (err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to upload photos';
-      alert(errorMessage);
+      showError(errorMessage);
     } finally {
       setUploadingPhotos(false);
     }
@@ -72,7 +75,7 @@ export default function VehicleDetailsPage() {
   if (error || !vehicle) {
     return (
       <div className="container mx-auto px-4 py-8 theme-bg-primary min-h-screen">
-        <div className="bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 px-4 py-3 rounded-lg">
+        <div className="theme-alert-danger">
           {error || 'Vehicle not found'}
         </div>
         <button
@@ -87,6 +90,7 @@ export default function VehicleDetailsPage() {
 
   return (
     <div className="container mx-auto px-4 py-8 theme-bg-primary min-h-screen">
+      <ToastContainer toasts={toasts} onClose={closeToast} />
       <div className="flex items-center justify-between mb-6">
         <button
           onClick={() => router.push('/dashboard/vehicles')}
@@ -101,7 +105,7 @@ export default function VehicleDetailsPage() {
         {/* Left: Images + gallery */}
         <div className="lg:col-span-2 space-y-6">
           <div className="automotive-card p-6">
-            <div className="w-full rounded-lg overflow-hidden shadow-md bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-800">
+            <div className="w-full rounded-lg overflow-hidden shadow-md bg-linear-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-800">
               {vehicle.photos && vehicle.photos.length > 0 ? (
                 <Image
                   src={vehicle.photos[0] as unknown as string}
@@ -169,8 +173,8 @@ export default function VehicleDetailsPage() {
         </div>
 
         {/* Right: Details card */}
-        <aside className="space-y-6">
-          <div className="automotive-card p-6  sticky top-6">
+        <aside className="space-y-6 sticky top-6 h-fit">
+          <div className="automotive-card p-6">
             <div>
               <h1 className="text-2xl md:text-3xl font-bold theme-text-primary">{vehicle.year} {vehicle.make} {vehicle.model}</h1>
               <p className="text-sm theme-text-muted mt-1">VIN: <span className="font-medium theme-text-secondary">{vehicle.vin}</span></p>

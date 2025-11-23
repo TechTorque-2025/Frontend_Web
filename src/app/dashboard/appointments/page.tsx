@@ -88,15 +88,15 @@ export default function AppointmentsPage() {
       </div>
 
       {/* Filter Tabs */}
-      <div className="flex gap-2 mb-6 overflow-x-auto pb-2">
+      <div className="filter-tabs-container mb-6">
         {(['ALL', 'PENDING', 'CONFIRMED', 'IN_PROGRESS', 'COMPLETED', 'CANCELLED'] as const).map((status) => (
           <button
             key={status}
             onClick={() => setFilter(status)}
-            className={`px-4 py-2 rounded-lg font-medium whitespace-nowrap transition-colors ${
+            className={`filter-tab ${
               filter === status
-                ? 'bg-blue-600 text-white'
-                : 'theme-bg-secondary theme-text-secondary hover:bg-blue-50 dark:hover:bg-blue-900/20'
+                ? 'filter-tab-active'
+                : 'filter-tab-inactive'
             }`}
           >
             {status.replace('_', ' ')}
@@ -106,9 +106,9 @@ export default function AppointmentsPage() {
 
       {/* Appointments List */}
       {appointments.length === 0 ? (
-        <div className="text-center py-16 automotive-card">
+        <div className="text-center py-16 automotive-card-static">
           <svg
-            className="mx-auto w-24 h-24 text-gray-400 dark:text-gray-600 mb-4"
+            className="mx-auto w-24 h-24 theme-text-muted mb-4"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -133,7 +133,7 @@ export default function AppointmentsPage() {
           {appointments.map((appointment) => (
             <div 
               key={appointment.id} 
-              className="automotive-card p-6 hover:shadow-lg transition-shadow cursor-pointer"
+              className="automotive-card p-6 hover:shadow-lg hover:border-blue-400 dark:hover:border-blue-500 transition-all cursor-pointer"
               onClick={() => router.push(`/dashboard/appointments/${appointment.id}`)}
             >
               <div className="flex items-start justify-between">
@@ -164,7 +164,7 @@ export default function AppointmentsPage() {
                   </div>
 
                   {appointment.specialInstructions && (
-                    <div className="mt-3 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+                    <div className="mt-3 p-3 theme-alert-info">
                       <p className="text-sm theme-text-secondary">
                         <strong>Notes:</strong> {appointment.specialInstructions}
                       </p>

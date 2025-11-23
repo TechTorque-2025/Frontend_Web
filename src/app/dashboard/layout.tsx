@@ -1,6 +1,7 @@
 'use client'
 import Link from 'next/link'
 import { useMemo, useState, type ReactNode } from 'react'
+import AIChatWidget from '@/app/components/chatbot/AIChatWidget'
 import { usePathname } from 'next/navigation'
 import ThemeToggle from '@/app/components/ThemeToggle'
 import NotificationBell from '@/app/components/NotificationBell'
@@ -41,6 +42,7 @@ function DashboardShell({ children }: { children: ReactNode }) {
   const { profile, loading, roles, activeRole, setActiveRole } = useDashboard()
   const pathname = usePathname()
   const [mobileNavOpen, setMobileNavOpen] = useState(false)
+  const [chatOpen, setChatOpen] = useState(false)
 
   const navSections = useMemo<NavSection[]>(() => buildNavigation(activeRole ? [activeRole] : roles), [roles, activeRole])
   const handleLogout = () => {
@@ -56,10 +58,8 @@ function DashboardShell({ children }: { children: ReactNode }) {
           <li key={item.href}>
             <Link
               href={item.href}
-              className={`block rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
-                active
-                  ? 'theme-button-primary'
-                  : 'theme-text-muted hover:theme-text-primary hover:bg-blue-100/50 dark:hover:bg-blue-900/20'
+              className={`block rounded-lg px-3 py-2 text-sm font-medium transition-all duration-200 ${
+                active ? 'nav-item-active' : 'nav-item-inactive'
               }`}
               onClick={() => setMobileNavOpen(false)}
             >
@@ -75,7 +75,7 @@ function DashboardShell({ children }: { children: ReactNode }) {
     <div className="min-h-screen theme-bg-primary">
       <div className="flex min-h-screen">
         {/* Desktop sidebar */}
-        <aside className="hidden lg:flex lg:flex-col lg:w-64 lg:border-r border-gray-200 dark:border-gray-800 p-6 space-y-6">
+        <aside className="hidden lg:flex lg:flex-col lg:w-64 lg:border-r theme-border p-6 space-y-6">
           <Link href="/" className="flex items-center">
             <div className="automotive-accent w-9 h-9 rounded-full mr-3 flex items-center justify-center">
               <span className="text-white font-bold text-sm">TT</span>
@@ -99,7 +99,7 @@ function DashboardShell({ children }: { children: ReactNode }) {
 
         {/* Content area */}
         <div className="flex-1 flex flex-col min-h-screen">
-          <header className="sticky top-0 z-30 backdrop-blur supports-[backdrop-filter]:bg-white/80 supports-[backdrop-filter]:dark:bg-slate-900/80 border-b border-gray-200 dark:border-gray-800">
+          <header className="sticky top-0 z-30 backdrop-blur theme-bg-secondary border-b theme-border">
             <div className="px-4 sm:px-6 lg:px-8">
               <div className="flex items-center justify-between h-16">
                 <div className="flex items-center gap-3">
@@ -131,7 +131,7 @@ function DashboardShell({ children }: { children: ReactNode }) {
 
             {/* Mobile nav drawer */}
             {mobileNavOpen && (
-              <div className="lg:hidden border-t border-gray-200 dark:border-gray-800 px-4 pb-4">
+              <div className="lg:hidden border-t theme-border px-4 pb-4">
                 {navSections.map((section) => (
                   <div key={section.title} className="py-3">
                     <p className="text-xs uppercase tracking-wide theme-text-muted mb-2">{section.title}</p>
@@ -149,6 +149,41 @@ function DashboardShell({ children }: { children: ReactNode }) {
               children
             )}
           </main>
+          {/* Make the chat available to customers on every dashboard page */}
+          {(activeRole === 'CUSTOMER' || (roles && roles.includes('CUSTOMER'))) && (
+            <div className="fixed bottom-6 right-6 z-50">
+              {chatOpen ? (
+                <div className="theme-bg-primary rounded-lg shadow-2xl w-[480px] h-[600px] flex flex-col border theme-border">
+                  <div className="flex items-center justify-between p-4 border-b theme-border">
+                    <h3 className="text-lg font-semibold theme-text-primary">TechTorque AI Assistant</h3>
+                    <button
+                      onClick={() => setChatOpen(false)}
+                      className="theme-text-muted hover:theme-text-primary transition-colors"
+                      aria-label="Close chat"
+                    >
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                      </svg>
+                    </button>
+                  </div>
+                  <div className="flex-1 overflow-hidden">
+                    <AIChatWidget />
+                  </div>
+                </div>
+              ) : (
+                <button
+                  onClick={() => setChatOpen(true)}
+                  className="theme-button-primary rounded-full p-4 shadow-lg transition-all hover:scale-110 flex items-center gap-2"
+                  aria-label="Open chat"
+                >
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+                  </svg>
+                  <span className="font-medium">Chat</span>
+                </button>
+              )}
+            </div>
+          )}
         </div>
       </div>
     </div>

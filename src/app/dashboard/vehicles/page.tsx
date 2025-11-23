@@ -5,8 +5,11 @@ import VehicleCard from '@/app/components/VehicleCard';
 import AddVehicleForm from '@/app/components/AddVehicleForm';
 import EditVehicleForm from '@/app/components/EditVehicleForm';
 import type { VehicleListItem } from '@/types/vehicle';
+import { useToast } from '@/hooks/useToast';
+import { ToastContainer } from '@/components/Toast';
 
 export default function VehiclesPage() {
+  const { toasts, error: showError, closeToast } = useToast();
   const [vehicles, setVehicles] = useState<VehicleListItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -37,7 +40,7 @@ export default function VehiclesPage() {
       await loadVehicles();
     } catch (err: unknown) {
       const errorMessage = (err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to delete vehicle';
-      alert(errorMessage);
+      showError(errorMessage);
     }
   };
 
@@ -54,13 +57,14 @@ export default function VehiclesPage() {
   if (loading) {
     return (
       <div className="flex justify-center items-center min-h-screen theme-bg-primary">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 theme-border-primary"></div>
       </div>
     );
   }
 
   return (
     <div className="container mx-auto px-4 py-8 theme-bg-primary min-h-screen">
+      <ToastContainer toasts={toasts} onClose={closeToast} />
       <div className="flex justify-between items-center mb-8">
         <div>
           <h1 className="text-3xl font-bold theme-text-primary mb-2">My Vehicles</h1>
@@ -75,14 +79,14 @@ export default function VehiclesPage() {
       </div>
 
       {error && (
-        <div className="bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 px-4 py-3 rounded-lg mb-6">
+        <div className="theme-alert-danger mb-6">
           {error}
         </div>
       )}
 
       {/* Add Vehicle Modal */}
       {showAddForm && (
-        <div className="fixed inset-0 theme-bg-primary bg-opacity-70 dark:bg-blue-950 dark:bg-opacity-70 flex items-center justify-center p-4 z-50 backdrop-blur-sm">
+        <div className="fixed inset-0 modal-overlay flex items-center justify-center p-4 z-50 backdrop-blur-sm">
           <div className="automotive-card p-8 max-w-2xl w-full max-h-[90vh] overflow-y-auto">
             <AddVehicleForm
               onSuccess={handleAddSuccess}
@@ -94,7 +98,7 @@ export default function VehiclesPage() {
 
       {/* Edit Vehicle Modal */}
       {editingVehicle && (
-        <div className="fixed inset-0 theme-bg-primary bg-opacity-70 dark:bg-blue-950 dark:bg-opacity-70 flex items-center justify-center p-4 z-50 backdrop-blur-sm">
+        <div className="fixed inset-0 modal-overlay flex items-center justify-center p-4 z-50 backdrop-blur-sm">
           <div className="automotive-card p-8 max-w-md w-full">
             <EditVehicleForm
               vehicleId={editingVehicle.vehicleId}
@@ -114,7 +118,7 @@ export default function VehiclesPage() {
       {vehicles.length === 0 ? (
         <div className="text-center py-16 automotive-card">
           <svg
-            className="mx-auto w-24 h-24 text-gray-400 dark:text-gray-600 mb-4"
+            className="mx-auto w-24 h-24 theme-text-muted mb-4"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"

@@ -57,7 +57,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ profile }) => {
       </div>
 
       {error && (
-        <div className="mb-6 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 px-4 py-3 rounded-lg">
+        <div className="theme-alert-danger mb-6">
           {error}
         </div>
       )}
@@ -137,7 +137,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ profile }) => {
               <p className="theme-text-muted text-sm">No pending appointments requiring attention.</p>
             ) : (
               pendingAppointments.map((appointment) => (
-                <div key={appointment.id} className="border-b border-gray-200 dark:border-gray-700 pb-3">
+                <div key={appointment.id} className="border-b theme-border pb-3">
                   <div className="flex justify-between items-start">
                     <div>
                       <p className="theme-text-primary font-medium">{appointment.serviceType}</p>
@@ -147,7 +147,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ profile }) => {
                     </div>
                     <Link
                       href={`/dashboard/appointments/${appointment.id}`}
-                      className="text-xs text-blue-600 dark:text-blue-400 hover:underline"
+                      className="text-xs theme-text-info hover:underline"
                     >
                       Review
                     </Link>
@@ -173,10 +173,10 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ profile }) => {
                     <span className="theme-text-muted">{entry.month}</span>
                     <span className="theme-text-primary font-semibold">LKR {entry.revenue.toLocaleString()}</span>
                   </div>
-                  <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                  <div className="w-full theme-bg-secondary rounded-full h-2">
                     <div
-                      className="bg-blue-500 h-2 rounded-full"
-                      style={{ width: `${Math.min(100, (entry.revenue / maxRevenue) * 100)}%` }}
+                      className="theme-bg-accent h-2 rounded-full"
+                      style={{ width: `${Math.min(100, (entry.revenue / maxRevenue) * 100)}%`, backgroundColor: 'var(--accent-primary)' }}
                     ></div>
                   </div>
                 </div>

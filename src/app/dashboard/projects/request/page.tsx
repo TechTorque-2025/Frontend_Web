@@ -118,7 +118,7 @@ export default function RequestProjectPage() {
           <p className="theme-text-muted mb-6">You need to add a vehicle before requesting a project.</p>
           <button
             onClick={() => router.push('/dashboard/vehicles/add')}
-            className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition-colors"
+            className="px-6 py-3 theme-button-action rounded-lg font-semibold"
           >
             Add Vehicle
           </button>
@@ -135,8 +135,8 @@ export default function RequestProjectPage() {
       </div>
 
       {error && (
-        <div className="mb-6 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
-          <p className="text-red-700 dark:text-red-400 text-sm">{error}</p>
+        <div className="mb-6 theme-alert-danger">
+          <p className="theme-text-danger text-sm">{error}</p>
         </div>
       )}
 
@@ -255,7 +255,7 @@ export default function RequestProjectPage() {
           <button
             type="submit"
             disabled={loading}
-            className="px-6 py-3 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white rounded-lg font-semibold transition-colors disabled:cursor-not-allowed flex items-center gap-2"
+            className="px-6 py-3 theme-button-action rounded-lg font-semibold flex items-center gap-2"
           >
             {loading ? (
               <>

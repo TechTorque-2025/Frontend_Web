@@ -4,9 +4,9 @@ import { useEffect, useRef, useState } from 'react'
 import { useNotifications } from '@/app/contexts/NotificationContext'
 
 export default function NotificationBell() {
-  const { notifications, unreadCount, loading, markAsRead, markAllAsRead, fetchNotifications, isConnected } = useNotifications()
+  const { notifications, unreadCount, loading, error, markAsRead, markAllAsRead, fetchNotifications, isConnected } = useNotifications()
   const [open, setOpen] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+  const [localError, setLocalError] = useState<string | null>(null)
   const panelRef = useRef<HTMLDivElement | null>(null)
 
   useEffect(() => {
@@ -29,6 +29,7 @@ export default function NotificationBell() {
     const nextState = !open
     setOpen(nextState)
     if (nextState) {
+      setLocalError(null)
       await fetchNotifications()
     }
   }
@@ -36,20 +37,20 @@ export default function NotificationBell() {
   const handleMarkAsRead = async (notificationId: string) => {
     try {
       await markAsRead(notificationId)
-      setError(null)
+      setLocalError(null)
     } catch (err: unknown) {
       const message = (err as { response?: { data?: { message?: string } } }).response?.data?.message || 'Failed to mark notification as read'
-      setError(message)
+      setLocalError(message)
     }
   }
 
   const handleMarkAllAsRead = async () => {
     try {
       await markAllAsRead()
-      setError(null)
+      setLocalError(null)
     } catch (err: unknown) {
       const message = (err as { response?: { data?: { message?: string } } }).response?.data?.message || 'Failed to mark notifications as read'
-      setError(message)
+      setLocalError(message)
     }
   }
 
@@ -58,11 +59,11 @@ export default function NotificationBell() {
       <button
         type="button"
         onClick={handleToggle}
-        className="relative inline-flex items-center justify-center w-10 h-10 rounded-full theme-button-secondary"
+        className="theme-toggle relative"
         aria-label="Notifications"
       >
         <svg
-          className="w-5 h-5 theme-text-primary"
+          className="w-5 h-5 transition-transform duration-300 hover:rotate-12"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -75,17 +76,19 @@ export default function NotificationBell() {
           />
         </svg>
         {unreadCount > 0 && (
-          <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full px-2 py-px">
+          <span className="absolute -top-1 -right-1 theme-badge-danger text-xs rounded-full px-2 py-px">
             {unreadCount}
           </span>
         )}
         {isConnected && (
-          <span className="absolute bottom-0 right-0 w-2 h-2 bg-green-500 rounded-full border-2 border-white dark:border-gray-800" title="Real-time connected"></span>
+          <span className="absolute bottom-0 right-0 w-2 h-2 theme-bg-success rounded-full border-2 border-[var(--bg-primary)]" title="Real-time connected"></span>
         )}
+        {/* Ripple effect */}
+        <div className="absolute inset-0 rounded-full bg-current opacity-0 transition-opacity duration-200 pointer-events-none"></div>
       </button>
 
       {open && (
-        <div className="absolute right-0 top-full mt-2 w-80 automotive-card p-4 shadow-xl z-50 max-h-[500px] flex flex-col">
+        <div className="fixed right-4 top-20 w-80 automotive-card p-4 shadow-xl z-50 max-h-[500px] flex flex-col origin-top-right">
           <div className="flex items-center justify-between mb-4">
             <span className="font-semibold theme-text-primary text-base">Notifications</span>
             {notifications.length > 0 && (
@@ -101,8 +104,8 @@ export default function NotificationBell() {
 
           {loading ? (
             <div className="py-8 text-center theme-text-muted text-sm">Loading notifications...</div>
-          ) : error ? (
-            <div className="py-8 text-center text-red-500 text-sm">{error}</div>
+          ) : (localError || error) ? (
+            <div className="py-8 text-center theme-text-danger text-sm">{localError || error}</div>
           ) : notifications.length === 0 ? (
             <div className="py-8 text-center theme-text-muted text-sm">No notifications yet.</div>
           ) : (
@@ -110,7 +113,7 @@ export default function NotificationBell() {
               {notifications.map((notification) => (
                 <li
                   key={notification.notificationId}
-                  className={`p-3 rounded-lg border ${notification.read ? 'border-transparent theme-bg-secondary' : 'border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-blue-900/30'} transition-colors`}
+                  className={`p-3 rounded-lg border ${notification.read ? 'border-transparent theme-bg-secondary' : 'theme-alert-info'} transition-colors`}
                 >
                   <div className="flex justify-between items-start gap-2">
                     <div className="flex-1 min-w-0">
@@ -126,7 +129,7 @@ export default function NotificationBell() {
                       <button
                         type="button"
                         onClick={() => handleMarkAsRead(notification.notificationId)}
-                        className="text-xs text-blue-600 dark:text-blue-400 hover:underline whitespace-nowrap shrink-0"
+                        className="text-xs theme-text-info hover:underline whitespace-nowrap shrink-0"
                       >
                         Mark as read
                       </button>
@@ -138,7 +141,7 @@ export default function NotificationBell() {
           )}
           <Link
             href="/dashboard/notifications"
-            className="block w-full text-center mt-4 px-4 py-2 rounded-lg text-sm font-medium transition-colors bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 theme-text-primary"
+            className="block w-full text-center mt-4 px-4 py-2 rounded-lg text-sm font-medium transition-colors theme-bg-tertiary hover:theme-bg-hover theme-text-primary"
           >
             View all notifications
           </Link>

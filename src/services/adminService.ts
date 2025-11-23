@@ -23,7 +23,8 @@ export const adminService = {
     search?: string;
   }): Promise<UserResponse[]> {
     const res = await api.get('/admin/users', { params });
-    return res.data.data || res.data;
+    const data = res.data.data || res.data;
+    return Array.isArray(data) ? data : (data.data || data.content || []);
   },
 
   async getUserDetails(userId: string): Promise<UserResponse> {
@@ -52,7 +53,8 @@ export const adminService = {
     const res = await api.get('/admin/service-types', {
       params: { activeOnly: false }
     });
-    return res.data.data || res.data;
+    const data = res.data.data || res.data;
+    return Array.isArray(data) ? data : (data.data || data.content || []);
   },
 
   async getServiceType(typeId: string): Promise<ServiceTypeResponse> {

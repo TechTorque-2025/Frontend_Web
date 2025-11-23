@@ -4,9 +4,12 @@ import { useState, useEffect } from 'react';
 import { adminService } from '@/services/adminService';
 import { ServiceTypeResponse, CreateServiceTypeRequest, UpdateServiceTypeRequest } from '@/types/admin';
 import { useDashboard } from '@/app/contexts/DashboardContext';
+import { useToast } from '@/hooks/useToast';
+import { ToastContainer } from '@/components/Toast';
 
 export default function ServiceTypesPage() {
   const { roles, loading: rolesLoading } = useDashboard();
+  const { toasts, success, error: showError, closeToast } = useToast();
   const [serviceTypes, setServiceTypes] = useState<ServiceTypeResponse[]>([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
@@ -80,7 +83,7 @@ export default function ServiceTypesPage() {
           active: editingService.active, // Keep existing active status
         };
         await adminService.updateServiceType(editingService.id, updateData);
-        alert('Service type updated successfully!');
+        success('Service type updated successfully!');
       } else {
         // Create new service - use CreateServiceTypeRequest format
         console.log('Creating service:', formData);
@@ -92,7 +95,7 @@ export default function ServiceTypesPage() {
           durationMinutes: formData.durationMinutes,
         };
         await adminService.createServiceType(createData);
-        alert('Service type created successfully!');
+        success('Service type created successfully!');
       }
       
       // Close modal first
@@ -106,7 +109,7 @@ export default function ServiceTypesPage() {
     } catch (err) {
       console.error('Failed to save service type:', err);
       const errorMessage = err instanceof Error ? err.message : 'Failed to save service type. Please try again.';
-      alert(errorMessage);
+      showError(errorMessage);
     }
   };
 
@@ -117,12 +120,12 @@ export default function ServiceTypesPage() {
 
     try {
       await adminService.removeServiceType(service.id);
-      alert('Service type deleted successfully!');
+      success('Service type deleted successfully!');
       await loadServiceTypes();
     } catch (err) {
       console.error('Failed to delete service type:', err);
       const errorMessage = err instanceof Error ? err.message : 'Failed to delete service type. Please try again.';
-      alert(errorMessage);
+      showError(errorMessage);
     }
   };
 
@@ -132,11 +135,6 @@ export default function ServiceTypesPage() {
       console.log(`Toggling service ${service.id} from ${service.active} to ${newStatus}`);
       
       await adminService.updateServiceType(service.id, {
-        name: service.name,
-        category: service.category,
-        description: service.description || '',
-        price: service.basePriceLKR,
-        durationMinutes: service.estimatedDurationMinutes,
         active: newStatus,
       });
       
@@ -144,7 +142,7 @@ export default function ServiceTypesPage() {
       await loadServiceTypes();
     } catch (err) {
       console.error('Failed to toggle service status:', err);
-      alert('Failed to update service status. Please try again.');
+      showError('Failed to update service status. Please try again.');
     }
   };
 
@@ -195,7 +193,7 @@ export default function ServiceTypesPage() {
         </div>
         <button
           onClick={handleCreate}
-          className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg flex items-center gap-2 transition-colors shadow-lg"
+          className="theme-button-action px-6 py-3 rounded-lg flex items-center gap-2 shadow-lg"
         >
           <span className="text-xl">+</span>
           Add Service Type
@@ -251,7 +249,7 @@ export default function ServiceTypesPage() {
               <div className="flex gap-2 pt-4 border-t border-gray-200 dark:border-gray-700">
                 <button
                   onClick={() => handleEdit(serviceType)}
-                  className="flex-1 bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded text-sm transition-colors"
+                  className="flex-1 theme-button-action px-3 py-2 rounded text-sm"
                 >
                   Edit
                 </button>
@@ -280,7 +278,7 @@ export default function ServiceTypesPage() {
       {/* Create/Edit Modal */}
       {showModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+          <div className="modal-content">
             <div className="p-6">
               <div className="flex justify-between items-center mb-6">
                 <h2 className="text-2xl font-bold theme-text-primary">
@@ -304,7 +302,7 @@ export default function ServiceTypesPage() {
                     required
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 theme-text-primary"
+                    className="form-input"
                     placeholder="e.g., Oil Change"
                   />
                 </div>
@@ -317,7 +315,7 @@ export default function ServiceTypesPage() {
                     required
                     value={formData.category}
                     onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 theme-text-primary"
+                    className="form-select"
                   >
                     <option value="MAINTENANCE">Maintenance</option>
                     <option value="REPAIR">Repair</option>
@@ -334,7 +332,7 @@ export default function ServiceTypesPage() {
                   <textarea
                     value={formData.description}
                     onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 theme-text-primary"
+                    className="form-textarea"
                     rows={3}
                     placeholder="Describe the service..."
                   />
@@ -352,7 +350,7 @@ export default function ServiceTypesPage() {
                       step="0.01"
                       value={formData.price}
                       onChange={(e) => setFormData({ ...formData, price: e.target.value })}
-                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 theme-text-primary"
+                      className="form-input"
                       placeholder="5000"
                     />
                   </div>
@@ -368,7 +366,7 @@ export default function ServiceTypesPage() {
                       max="480"
                       value={formData.durationMinutes}
                       onChange={(e) => setFormData({ ...formData, durationMinutes: parseInt(e.target.value) || 0 })}
-                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 theme-text-primary"
+                      className="form-input"
                       placeholder="60"
                     />
                     <p className="text-xs text-gray-500 mt-1">Min: 15 min, Max: 8 hours (480 min)</p>
@@ -379,13 +377,13 @@ export default function ServiceTypesPage() {
                   <button
                     type="button"
                     onClick={() => setShowModal(false)}
-                    className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors theme-text-primary"
+                    className="btn btn-secondary flex-1"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
-                    className="flex-1 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors"
+                    className="btn btn-primary flex-1"
                   >
                     {editingService ? 'Update Service' : 'Create Service'}
                   </button>
@@ -395,6 +393,7 @@ export default function ServiceTypesPage() {
           </div>
         </div>
       )}
+      <ToastContainer toasts={toasts} onClose={closeToast} />
     </div>
   );
 }

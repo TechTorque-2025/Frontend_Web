@@ -127,8 +127,8 @@ export default function ProfilePhotoUpload({
         onClick={() => fileInputRef.current?.click()}
         className={`relative border-2 border-dashed rounded-lg p-8 cursor-pointer transition-colors ${
           dragActive
-            ? "border-blue-500 bg-blue-50"
-            : "border-gray-300 hover:border-gray-400 bg-gray-50"
+            ? "theme-border-primary theme-bg-secondary"
+            : "theme-border theme-bg-primary hover:theme-bg-hover"
         }`}
       >
         <input
@@ -141,10 +141,10 @@ export default function ProfilePhotoUpload({
 
         <div className="text-center">
           <div className="text-4xl mb-2">📸</div>
-          <p className="text-lg font-semibold text-gray-700">
+          <p className="text-lg font-semibold theme-text-primary">
             Drag and drop your photo here
           </p>
-          <p className="text-sm text-gray-500">
+          <p className="text-sm theme-text-muted">
             or click to select a file (Max {maxSizeMB}MB)
           </p>
         </div>
@@ -162,26 +162,26 @@ export default function ProfilePhotoUpload({
 
       {/* Messages */}
       {uploadError && (
-        <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
+        <div className="theme-alert-danger text-sm">
           ❌ {uploadError}
         </div>
       )}
 
       {uploadSuccess && (
-        <div className="p-3 bg-green-50 border border-green-200 rounded-lg text-green-700 text-sm">
+        <div className="theme-alert-success text-sm">
           ✅ Photo uploaded successfully!
         </div>
       )}
 
       {error && (
-        <div className="p-3 bg-yellow-50 border border-yellow-200 rounded-lg text-yellow-700 text-sm">
+        <div className="theme-alert-warning text-sm">
           ⚠️ {error}
         </div>
       )}
 
       {/* Loading */}
       {loading && (
-        <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg text-blue-700 text-sm">
+        <div className="theme-alert-info text-sm">
           ⏳ Processing...
         </div>
       )}

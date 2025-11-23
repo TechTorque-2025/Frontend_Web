@@ -1,56 +1,5 @@
-'use client'
-
 import Link from "next/link";
-import React from 'react';
-import { useTheme } from './contexts/ThemeContext';
-
-// --- ThemeToggle Component (from ThemeToggle.tsx) ---
-function ThemeToggle() {
-  // isDark and toggleTheme will be provided by the ThemeProvider in layout.tsx
-  const { isDark, toggleTheme } = useTheme();
-
-  return (
-    <button
-      onClick={toggleTheme}
-      className="theme-toggle"
-      aria-label="Toggle theme"
-      title={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
-    >
-      <div className="flex items-center justify-center w-6 h-6">
-        {isDark ? (
-           <svg
-            className="w-5 h-5 transition-transform duration-300 hover:rotate-12"
-            fill="currentColor"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={1}
-              d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"
-            />
-          </svg>
-        ) : (
-          <svg
-            className="w-5 h-5 transition-transform duration-300 hover:rotate-12"
-            fill="currentColor"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={1}
-              d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"
-            />
-          </svg>
-        )}
-      </div>
-    </button>
-  );
-}
-
+import ThemeToggle from "./components/ThemeToggle";
 
 // --- Icon Components for better reusability ---
 const Icon = ({ d, className }: { d: string; className?: string }) => (
@@ -82,7 +31,7 @@ export default function Home() {
         <div className="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center">
             <Link href="/" className="flex items-center space-x-3 group">
-              <div className="w-12 h-12 rounded-full bg-gradient-to-r from-blue-500 to-cyan-400 flex items-center justify-center shadow-lg transform transition-transform duration-300 group-hover:scale-110">
+              <div className="w-12 h-12 rounded-full automotive-accent flex items-center justify-center shadow-lg transform transition-transform duration-300 group-hover:scale-110">
                 <BoltIcon />
               </div>
               <h1 className="text-2xl font-bold theme-text-primary hidden sm:block">
@@ -113,15 +62,15 @@ export default function Home() {
         <section className="automotive-hero relative py-28 px-4 sm:px-6 lg:px-8 overflow-hidden">
           <div className="absolute inset-0 bg-grid-pattern opacity-20 dark:opacity-10"></div>
           <div className="max-w-6xl mx-auto text-center relative z-10">
-            <div className="mb-8 animate-fadeInUp">
-              <span className="inline-block px-6 py-2 bg-gradient-to-r from-blue-500/20 to-cyan-500/20 rounded-full border border-blue-300/30 theme-text-primary font-semibold text-sm uppercase tracking-wider mb-6">
+            <div className="mb-8">
+              <span className="inline-block px-6 py-2 accent-badge rounded-full border theme-text-primary font-semibold text-sm uppercase tracking-wider mb-6">
                 Next-Generation Auto Care
               </span>
             </div>
             
-            <h2 className="text-5xl lg:text-7xl font-black theme-text-primary mb-6 leading-tight animate-fadeInUp stagger-1">
+            <h2 className="text-5xl lg:text-7xl font-black theme-text-primary mb-6 leading-tight">
               Drive the Future of 
-              <span className="block text-transparent bg-clip-text bg-gradient-to-r from-blue-500 via-purple-600 to-teal-500">
+              <span className="block text-gradient-accent">
                 Vehicle Service
               </span>
             </h2>
@@ -162,7 +111,7 @@ export default function Home() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
               <div className="automotive-card p-8 group">
                 <div className="flex justify-center mb-6">
-                  <div className="w-16 h-16 rounded-full bg-gradient-to-br from-blue-500 to-cyan-400 flex items-center justify-center shadow-lg">
+                  <div className="w-16 h-16 rounded-full automotive-accent flex items-center justify-center shadow-lg">
                     <WrenchIcon />
                   </div>
                 </div>
@@ -176,7 +125,7 @@ export default function Home() {
               
               <div className="automotive-card p-8 group">
                 <div className="flex justify-center mb-6">
-                  <div className="w-16 h-16 rounded-full bg-gradient-to-br from-emerald-500 to-teal-400 flex items-center justify-center shadow-lg">
+                  <div className="w-16 h-16 rounded-full bg-linear-to-br from-emerald-500 to-teal-400 flex items-center justify-center shadow-lg">
                     <ClockIcon />
                   </div>
                 </div>
@@ -190,7 +139,7 @@ export default function Home() {
               
               <div className="automotive-card p-8 group">
                 <div className="flex justify-center mb-6">
-                  <div className="w-16 h-16 rounded-full bg-gradient-to-br from-violet-500 to-purple-400 flex items-center justify-center shadow-lg">
+                  <div className="w-16 h-16 rounded-full bg-linear-to-br from-violet-500 to-purple-400 flex items-center justify-center shadow-lg">
                     <ShieldCheckIcon />
                   </div>
                 </div>
@@ -278,7 +227,7 @@ export default function Home() {
       <footer className="py-16 px-4 sm:px-6 lg:px-8 border-t theme-border theme-bg-tertiary">
         <div className="max-w-7xl mx-auto text-center">
            <div className="flex justify-center items-center space-x-3 mb-6">
-              <div className="w-10 h-10 rounded-full bg-gradient-to-r from-blue-500 to-cyan-400 flex items-center justify-center shadow-lg">
+              <div className="w-10 h-10 rounded-full automotive-accent flex items-center justify-center shadow-lg">
                 <BoltIcon />
               </div>
               <h2 className="text-2xl font-bold theme-text-primary">TechTorque Auto</h2>

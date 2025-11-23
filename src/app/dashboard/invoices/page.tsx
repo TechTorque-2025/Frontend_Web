@@ -134,42 +134,42 @@ export default function InvoicesPage() {
       </div>
 
       {error && (
-        <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 px-4 py-3 rounded-lg">
+        <div className="theme-alert-danger">
           {error}
         </div>
       )}
 
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <div className="automotive-card p-5">
-          <p className="text-xs uppercase tracking-wide theme-text-muted">Total invoices</p>
-          <p className="text-2xl font-semibold theme-text-primary">{summary.totalCount}</p>
+        <div className="stat-card">
+          <p className="stat-card-label">Total invoices</p>
+          <p className="stat-card-value">{summary.totalCount}</p>
         </div>
-        <div className="automotive-card p-5">
-          <p className="text-xs uppercase tracking-wide theme-text-muted">Outstanding invoices</p>
-          <p className="text-2xl font-semibold theme-text-primary">{summary.outstandingCount}</p>
+        <div className="stat-card">
+          <p className="stat-card-label">Outstanding invoices</p>
+          <p className="stat-card-value">{summary.outstandingCount}</p>
         </div>
-        <div className="automotive-card p-5">
-          <p className="text-xs uppercase tracking-wide theme-text-muted">Outstanding balance</p>
-          <p className="text-2xl font-semibold theme-text-primary">{formatCurrency(summary.outstandingTotal)}</p>
+        <div className="stat-card">
+          <p className="stat-card-label">Outstanding balance</p>
+          <p className="stat-card-value">{formatCurrency(summary.outstandingTotal)}</p>
         </div>
-        <div className="automotive-card p-5">
-          <p className="text-xs uppercase tracking-wide theme-text-muted">Paid totals</p>
-          <p className="text-2xl font-semibold theme-text-primary">{formatCurrency(summary.paidTotal)}</p>
+        <div className="stat-card">
+          <p className="stat-card-label">Paid totals</p>
+          <p className="stat-card-value">{formatCurrency(summary.paidTotal)}</p>
         </div>
       </div>
 
       <div className="automotive-card p-6 space-y-4">
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
-          <div className="flex flex-wrap gap-2">
+          <div className="filter-tabs-container">
             {STATUS_FILTERS.map((status) => (
               <button
                 key={status}
                 type="button"
                 onClick={() => setStatusFilter(status)}
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                className={`filter-tab ${
                   statusFilter === status
-                    ? 'bg-blue-600 text-white'
-                    : 'theme-bg-secondary theme-text-secondary hover:bg-blue-50 dark:hover:bg-blue-900/30'
+                    ? 'filter-tab-active'
+                    : 'filter-tab-inactive'
                 }`}
               >
                 {status === 'ALL' ? 'All' : status}
@@ -203,7 +203,7 @@ export default function InvoicesPage() {
               <Link
                 key={invoice.invoiceId}
                 href={`/dashboard/invoices/${invoice.invoiceId}`}
-                className="block rounded-xl border border-gray-200 dark:border-gray-800 hover:border-blue-400 dark:hover:border-blue-500 transition-colors"
+                className="block rounded-xl border border-gray-200 dark:border-gray-800 hover:border-blue-400 dark:hover:border-blue-500 hover:shadow-lg transition-all"
               >
                 <div className="p-5">
                   <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">

@@ -6,9 +6,12 @@ import { authService } from '@/services/authService';
 import { UserResponse } from '@/types/admin';
 import { CreateEmployeeRequest, CreateAdminRequest } from '@/types/api';
 import { useDashboard } from '@/app/contexts/DashboardContext';
+import { useToast } from '@/hooks/useToast';
+import { ToastContainer } from '@/components/Toast';
 
 export default function AdminUsersPage() {
   const { roles: currentUserRoles } = useDashboard();
+  const { toasts, success, error: showError, closeToast } = useToast();
   const [users, setUsers] = useState<UserResponse[]>([]);
   const [loading, setLoading] = useState(true);
   const [roleFilter, setRoleFilter] = useState<string>('ALL');
@@ -76,15 +79,23 @@ export default function AdminUsersPage() {
 
       setShowCreateModal(false);
       await loadUsers();
-      alert(`${createUserType === 'employee' ? 'Employee' : 'Admin'} created successfully!`);
+      success(`${createUserType === 'employee' ? 'Employee' : 'Admin'} created successfully!`);
     } catch (err) {
       console.error('Failed to create user:', err);
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const error = err as any;
-      const errorMessage = error?.response?.status === 403
-        ? 'Permission denied. You do not have the required permissions to create this user type.'
-        : error?.response?.data?.message || 'Failed to create user. Please try again.';
-      alert(errorMessage);
+      const unknownErr = err as unknown;
+      let errorMessage = 'Failed to create user. Please try again.';
+
+      if (unknownErr && typeof unknownErr === 'object' && 'response' in unknownErr) {
+        const resp = (unknownErr as { response?: { status?: number; data?: unknown } }).response;
+        if (resp?.status === 403) {
+          errorMessage = 'Permission denied. You do not have the required permissions to create this user type.';
+        } else if (resp?.data && typeof resp.data === 'object' && 'message' in resp.data) {
+          errorMessage = (resp.data as { message?: string }).message ?? errorMessage;
+        }
+      } else if (err instanceof Error) {
+        errorMessage = err.message;
+      }
+      showError(errorMessage);
     }
   };
 
@@ -102,7 +113,7 @@ export default function AdminUsersPage() {
     try {
       // Validation: Ensure at least one role is selected
       if (editingRoles.length === 0) {
-        alert('Please select at least one role for the user.');
+        showError('Please select at least one role for the user.');
         return;
       }
 
@@ -110,11 +121,11 @@ export default function AdminUsersPage() {
       setEditingUserId(null);
       setEditingRoles([]);
       await loadUsers();
-      alert('Roles updated successfully!');
+      success('Roles updated successfully!');
     } catch (err) {
       console.error('Failed to update roles:', err);
       const errorMessage = err instanceof Error ? err.message : 'Failed to update roles. Please try again.';
-      alert(errorMessage);
+      showError(errorMessage);
     }
   };
 
@@ -122,7 +133,7 @@ export default function AdminUsersPage() {
     if (editingRoles.includes(role)) {
       // Prevent removing the last role
       if (editingRoles.length === 1) {
-        alert('A user must have at least one role.');
+        showError('A user must have at least one role.');
         return;
       }
       setEditingRoles(editingRoles.filter(r => r !== role));
@@ -144,11 +155,11 @@ export default function AdminUsersPage() {
     try {
       await adminService.updateUser(user.userId, { enabled: !user.enabled });
       await loadUsers();
-      alert(`User ${action}d successfully!`);
+      success(`User ${action}d successfully!`);
     } catch (err) {
       console.error(`Failed to ${action} user:`, err);
       const errorMessage = err instanceof Error ? err.message : `Failed to ${action} user. Please try again.`;
-      alert(errorMessage);
+      showError(errorMessage);
     }
   };
 
@@ -235,46 +246,46 @@ export default function AdminUsersPage() {
 
       {/* Stats */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5 mb-6">
-        <div className="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900/50 p-5">
-          <p className="text-xs uppercase tracking-wide theme-text-muted">Total Users</p>
-          <p className="text-2xl font-semibold theme-text-primary">{users.length}</p>
+        <div className="stat-card">
+          <p className="stat-card-label">Total Users</p>
+          <p className="stat-card-value">{users.length}</p>
         </div>
-        <div className="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900/50 p-5">
-          <p className="text-xs uppercase tracking-wide theme-text-muted">Activated</p>
-          <p className="text-2xl font-semibold text-green-600 dark:text-green-400">
+        <div className="stat-card">
+          <p className="stat-card-label">Activated</p>
+          <p className="stat-card-value text-green-600 dark:text-green-400">
             {users.filter(u => u.enabled).length}
           </p>
         </div>
-        <div className="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900/50 p-5">
-          <p className="text-xs uppercase tracking-wide theme-text-muted">Deactivated</p>
-          <p className="text-2xl font-semibold text-red-600 dark:text-red-400">
+        <div className="stat-card">
+          <p className="stat-card-label">Deactivated</p>
+          <p className="stat-card-value text-red-600 dark:text-red-400">
             {users.filter(u => !u.enabled).length}
           </p>
         </div>
-        <div className="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900/50 p-5">
-          <p className="text-xs uppercase tracking-wide theme-text-muted">Email Verified</p>
-          <p className="text-2xl font-semibold text-blue-600 dark:text-blue-400">
+        <div className="stat-card">
+          <p className="stat-card-label">Email Verified</p>
+          <p className="stat-card-value text-blue-600 dark:text-blue-400">
             {users.filter(u => u.emailVerified).length}
           </p>
         </div>
-        <div className="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900/50 p-5">
-          <p className="text-xs uppercase tracking-wide theme-text-muted">Account Locked</p>
-          <p className="text-2xl font-semibold text-orange-600 dark:text-orange-400">
+        <div className="stat-card">
+          <p className="stat-card-label">Account Locked</p>
+          <p className="stat-card-value text-orange-600 dark:text-orange-400">
             {users.filter(u => u.accountLocked).length}
           </p>
         </div>
       </div>
 
       {/* Filters */}
-      <div className="mb-6 flex flex-wrap gap-2">
+      <div className="filter-tabs-container mb-6">
         {roleFilters.map((filter) => (
           <button
             key={filter}
             onClick={() => setRoleFilter(filter)}
-            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+            className={`filter-tab ${
               roleFilter === filter
-                ? 'bg-blue-600 text-white'
-                : 'theme-bg-secondary theme-text-secondary hover:bg-blue-50 dark:hover:bg-blue-900/30'
+                ? 'filter-tab-active'
+                : 'filter-tab-inactive'
             }`}
           >
             {filter.replace('_', ' ')}
@@ -286,14 +297,14 @@ export default function AdminUsersPage() {
       <div className="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900/50 overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full">
-            <thead className="bg-gray-50 dark:bg-gray-800/50">
+            <thead className="bg-slate-100 dark:bg-gray-800/50 border-b border-gray-200 dark:border-gray-700">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-semibold theme-text-muted uppercase">User</th>
-                <th className="px-6 py-3 text-left text-xs font-semibold theme-text-muted uppercase">Roles</th>
-                <th className="px-6 py-3 text-left text-xs font-semibold theme-text-muted uppercase">Status</th>
-                <th className="px-6 py-3 text-left text-xs font-semibold theme-text-muted uppercase">Last Login</th>
-                <th className="px-6 py-3 text-left text-xs font-semibold theme-text-muted uppercase">Created</th>
-                {isAdmin && <th className="px-6 py-3 text-left text-xs font-semibold theme-text-muted uppercase">Actions</th>}
+                <th className="px-6 py-3 text-left text-xs font-semibold text-slate-700 dark:text-gray-400 uppercase tracking-wide">User</th>
+                <th className="px-6 py-3 text-left text-xs font-semibold text-slate-700 dark:text-gray-400 uppercase tracking-wide">Roles</th>
+                <th className="px-6 py-3 text-left text-xs font-semibold text-slate-700 dark:text-gray-400 uppercase tracking-wide">Status</th>
+                <th className="px-6 py-3 text-left text-xs font-semibold text-slate-700 dark:text-gray-400 uppercase tracking-wide">Last Login</th>
+                <th className="px-6 py-3 text-left text-xs font-semibold text-slate-700 dark:text-gray-400 uppercase tracking-wide">Created</th>
+                {isAdmin && <th className="px-6 py-3 text-left text-xs font-semibold text-slate-700 dark:text-gray-400 uppercase tracking-wide">Actions</th>}
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200 dark:divide-gray-800">
@@ -430,7 +441,7 @@ export default function AdminUsersPage() {
                           <div className="flex flex-col gap-2">
                             <button
                               onClick={() => handleStartEditRoles(user)}
-                              className="px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white text-xs font-medium rounded transition-colors"
+                              className="px-3 py-1 theme-button-action text-xs font-medium rounded"
                             >
                               Edit Roles
                             </button>
@@ -462,7 +473,7 @@ export default function AdminUsersPage() {
       {/* Create User Modal */}
       {showCreateModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white dark:bg-gray-900 rounded-xl max-w-md w-full p-6 border border-gray-200 dark:border-gray-800">
+          <div className="modal-content p-6">
             <h2 className="text-2xl font-bold theme-text-primary mb-4">
               Create {createUserType === 'employee' ? 'Employee' : 'Admin'}
             </h2>
@@ -473,7 +484,7 @@ export default function AdminUsersPage() {
                   type="text"
                   name="username"
                   required
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-lg theme-bg-primary theme-text-primary"
+                  className="form-input"
                 />
               </div>
               <div>
@@ -482,7 +493,7 @@ export default function AdminUsersPage() {
                   type="email"
                   name="email"
                   required
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-lg theme-bg-primary theme-text-primary"
+                  className="form-input"
                 />
               </div>
               <div>
@@ -492,7 +503,7 @@ export default function AdminUsersPage() {
                   name="password"
                   required
                   minLength={6}
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-lg theme-bg-primary theme-text-primary"
+                  className="form-input"
                 />
               </div>
               <div>
@@ -501,7 +512,7 @@ export default function AdminUsersPage() {
                   type="text"
                   name="firstName"
                   required
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-lg theme-bg-primary theme-text-primary"
+                  className="form-input"
                 />
               </div>
               <div>
@@ -510,7 +521,7 @@ export default function AdminUsersPage() {
                   type="text"
                   name="lastName"
                   required
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-lg theme-bg-primary theme-text-primary"
+                  className="form-input"
                 />
               </div>
               {createUserType === 'employee' && (
@@ -520,7 +531,7 @@ export default function AdminUsersPage() {
                     type="text"
                     name="department"
                     required
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-lg theme-bg-primary theme-text-primary"
+                    className="form-input"
                   />
                 </div>
               )}
@@ -543,6 +554,7 @@ export default function AdminUsersPage() {
           </div>
         </div>
       )}
+      <ToastContainer toasts={toasts} onClose={closeToast} />
     </div>
   );
 }

@@ -142,58 +142,58 @@ export default function PaymentHistoryPage() {
       </div>
 
       {error && (
-        <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 px-4 py-3 rounded-lg">
+        <div className="theme-alert-danger">
           {error}
         </div>
       )}
 
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <div className="automotive-card p-5">
-          <p className="text-xs uppercase tracking-wide theme-text-muted">Payments recorded</p>
-          <p className="text-2xl font-semibold theme-text-primary">{summary.total}</p>
+        <div className="stat-card">
+          <p className="stat-card-label">Payments recorded</p>
+          <p className="stat-card-value">{summary.total}</p>
         </div>
-        <div className="automotive-card p-5">
-          <p className="text-xs uppercase tracking-wide theme-text-muted">Collected revenue</p>
-          <p className="text-2xl font-semibold theme-text-primary">{formatCurrency(summary.totalCollected)}</p>
+        <div className="stat-card">
+          <p className="stat-card-label">Collected revenue</p>
+          <p className="stat-card-value">{formatCurrency(summary.totalCollected)}</p>
         </div>
-        <div className="automotive-card p-5">
-          <p className="text-xs uppercase tracking-wide theme-text-muted">Pending payments</p>
-          <p className="text-2xl font-semibold theme-text-primary">{summary.pending}</p>
+        <div className="stat-card">
+          <p className="stat-card-label">Pending payments</p>
+          <p className="stat-card-value">{summary.pending}</p>
         </div>
-        <div className="automotive-card p-5">
-          <p className="text-xs uppercase tracking-wide theme-text-muted">Failed payments</p>
-          <p className="text-2xl font-semibold theme-text-primary">{summary.failed}</p>
+        <div className="stat-card">
+          <p className="stat-card-label">Failed payments</p>
+          <p className="stat-card-value">{summary.failed}</p>
         </div>
       </div>
 
       <div className="automotive-card p-6 space-y-4">
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
-          <div className="flex flex-wrap gap-2">
+          <div className="filter-tabs-container">
             {STATUS_FILTERS.map((status) => (
               <button
                 key={status}
                 type="button"
                 onClick={() => setStatusFilter(status)}
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                className={`filter-tab ${
                   statusFilter === status
-                    ? 'bg-blue-600 text-white'
-                    : 'theme-bg-secondary theme-text-secondary hover:bg-blue-50 dark:hover:bg-blue-900/30'
+                    ? 'filter-tab-active'
+                    : 'filter-tab-inactive'
                 }`}
               >
                 {status === 'ALL' ? 'All statuses' : status}
               </button>
             ))}
           </div>
-          <div className="flex flex-wrap gap-2">
+          <div className="filter-tabs-container">
             {METHOD_FILTERS.map((method) => (
               <button
                 key={method}
                 type="button"
                 onClick={() => setMethodFilter(method)}
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                className={`filter-tab ${
                   methodFilter === method
-                    ? 'bg-blue-600 text-white'
-                    : 'theme-bg-secondary theme-text-secondary hover:bg-blue-50 dark:hover:bg-blue-900/30'
+                    ? 'filter-tab-active'
+                    : 'filter-tab-inactive'
                 }`}
               >
                 {method === 'ALL' ? 'All methods' : method.replace('_', ' ')}

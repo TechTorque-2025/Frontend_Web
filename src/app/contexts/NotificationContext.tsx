@@ -1,6 +1,7 @@
 "use client";
 import React, { createContext, useContext, useState, useEffect, useCallback, ReactNode } from 'react';
 import websocketService from '@/services/websocketService';
+import type { AxiosError } from 'axios';
 import notificationService from '@/services/notificationService';
 import type { NotificationResponse } from '@/types/notification';
 
@@ -8,6 +9,7 @@ interface NotificationContextType {
   notifications: NotificationResponse[];
   unreadCount: number;
   loading: boolean;
+  error: string | null;
   isConnected: boolean;
   fetchNotifications: (unreadOnly?: boolean) => Promise<void>;
   markAsRead: (notificationId: string) => Promise<void>;
@@ -35,6 +37,7 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({ chil
   const [notifications, setNotifications] = useState<NotificationResponse[]>([]);
   const [unreadCount, setUnreadCount] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
   const [isConnected, setIsConnected] = useState<boolean>(false);
   const [toastNotification, setToastNotification] = useState<NotificationResponse | null>(null);
 
@@ -44,14 +47,25 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({ chil
 
     try {
       setLoading(true);
+      setError(null);
       const data = await notificationService.getNotifications(unreadOnly);
       setNotifications(data);
 
       // Also fetch unread count
       const count = await notificationService.getUnreadCount();
       setUnreadCount(count);
-    } catch (error) {
-      console.error('Failed to fetch notifications:', error);
+    } catch (err: unknown) {
+      // Prefer any attached `response?.data?.message` but fall back to
+      // the error message. Our apiClient now augments error objects with
+      // status/response fields so we can provide a better user message.
+      console.error('Failed to fetch notifications:', err);
+      const axiosErr = err as AxiosError<unknown> | undefined;
+      // Prefer response.data.message when available, otherwise use Error.message
+      const msg = axiosErr?.response?.data && typeof axiosErr.response.data === 'object' && 'message' in axiosErr.response.data
+        ? // response.data typing varies; narrow to { message?: string }
+          (axiosErr.response.data as { message?: string }).message ?? (err instanceof Error ? err.message : 'Failed to fetch notifications')
+        : (err instanceof Error ? err.message : 'Failed to fetch notifications');
+      setError(msg);
     } finally {
       setLoading(false);
     }
@@ -67,8 +81,13 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({ chil
         prev.map(n => n.notificationId === notificationId ? { ...n, read: true } : n)
       );
       setUnreadCount(prev => Math.max(0, prev - 1));
-    } catch (error) {
-      console.error('Failed to mark notification as read:', error);
+    } catch (err: unknown) {
+      console.error('Failed to mark notification as read:', err);
+      const axiosErr = err as AxiosError<unknown> | undefined;
+      const msg = axiosErr?.response?.data && typeof axiosErr.response.data === 'object' && 'message' in axiosErr.response.data
+        ? (axiosErr.response.data as { message?: string }).message ?? (err instanceof Error ? err.message : 'Failed to mark notification as read')
+        : (err instanceof Error ? err.message : 'Failed to mark notification as read');
+      setError(msg);
     }
   }, []);
 
@@ -80,8 +99,13 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({ chil
       // Update local state
       setNotifications(prev => prev.map(n => ({ ...n, read: true })));
       setUnreadCount(0);
-    } catch (error) {
-      console.error('Failed to mark all notifications as read:', error);
+    } catch (err: unknown) {
+      console.error('Failed to mark all notifications as read:', err);
+      const axiosErr = err as AxiosError<unknown> | undefined;
+      const msg = axiosErr?.response?.data && typeof axiosErr.response.data === 'object' && 'message' in axiosErr.response.data
+        ? (axiosErr.response.data as { message?: string }).message ?? (err instanceof Error ? err.message : 'Failed to mark all notifications as read')
+        : (err instanceof Error ? err.message : 'Failed to mark all notifications as read');
+      setError(msg);
     }
   }, []);
 
@@ -97,8 +121,13 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({ chil
       if (deletedNotification && !deletedNotification.read) {
         setUnreadCount(prev => Math.max(0, prev - 1));
       }
-    } catch (error) {
-      console.error('Failed to delete notification:', error);
+    } catch (err: unknown) {
+      console.error('Failed to delete notification:', err);
+      const axiosErr = err as AxiosError<unknown> | undefined;
+      const msg = axiosErr?.response?.data && typeof axiosErr.response.data === 'object' && 'message' in axiosErr.response.data
+        ? (axiosErr.response.data as { message?: string }).message ?? (err instanceof Error ? err.message : 'Failed to delete notification')
+        : (err instanceof Error ? err.message : 'Failed to delete notification');
+      setError(msg);
     }
   }, [notifications]);
 
@@ -154,6 +183,7 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({ chil
     notifications,
     unreadCount,
     loading,
+    error,
     isConnected,
     fetchNotifications,
     markAsRead,

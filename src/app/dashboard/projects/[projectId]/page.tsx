@@ -5,12 +5,15 @@ import { useParams, useRouter } from 'next/navigation';
 import { projectService } from '@/services/projectService';
 import { ProjectResponseDto, ProjectStatus } from '@/types/project';
 import { useDashboard } from '@/app/contexts/DashboardContext';
+import { useToast } from '@/hooks/useToast';
+import { ToastContainer } from '@/components/Toast';
 
 export default function ProjectDetailPage() {
   const params = useParams();
   const router = useRouter();
   const { profile, roles } = useDashboard();
   const projectId = params.projectId as string;
+  const { toasts, success, error: showError, closeToast } = useToast();
 
   const [project, setProject] = useState<ProjectResponseDto | null>(null);
   const [loading, setLoading] = useState(true);
@@ -42,10 +45,11 @@ export default function ProjectDetailPage() {
       setActionLoading(true);
       await projectService.approveQuote(projectId);
       await loadProject();
+      success('Quote approved successfully!');
     } catch (err) {
       console.error('Failed to approve quote:', err);
-      alert(err instanceof Error ? err.message : 'Failed to approve quote');
-    } finally {
+      showError(err instanceof Error ? err.message : 'Failed to approve quote');
+    } finally{
       setActionLoading(false);
     }
   };
@@ -59,7 +63,7 @@ export default function ProjectDetailPage() {
       await loadProject();
     } catch (err) {
       console.error('Failed to reject quote:', err);
-      alert(err instanceof Error ? err.message : 'Failed to reject quote');
+      showError(err instanceof Error ? err.message : 'Failed to reject quote');
     } finally {
       setActionLoading(false);
     }
@@ -72,10 +76,10 @@ export default function ProjectDetailPage() {
       setActionLoading(true);
       await projectService.adminApproveProject(projectId);
       await loadProject();
-      alert('Project approved successfully! Customer has been notified.');
+      success('Project approved successfully! Customer has been notified.');
     } catch (err) {
       console.error('Failed to approve project:', err);
-      alert(err instanceof Error ? err.message : 'Failed to approve project');
+      showError(err instanceof Error ? err.message : 'Failed to approve project');
     } finally {
       setActionLoading(false);
     }
@@ -93,10 +97,10 @@ export default function ProjectDetailPage() {
       setActionLoading(true);
       await projectService.adminRejectProject(projectId, reason || undefined);
       await loadProject();
-      alert('Project rejected. Customer has been notified.');
+      success('Project rejected. Customer has been notified.');
     } catch (err) {
       console.error('Failed to reject project:', err);
-      alert(err instanceof Error ? err.message : 'Failed to reject project');
+      showError(err instanceof Error ? err.message : 'Failed to reject project');
     } finally {
       setActionLoading(false);
     }
@@ -142,12 +146,12 @@ export default function ProjectDetailPage() {
   if (error || !project) {
     return (
       <div className="max-w-5xl mx-auto p-6">
-        <div className="rounded-xl border border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-900/20 p-8 text-center">
-          <h2 className="text-xl font-semibold text-red-700 dark:text-red-400 mb-2">Error Loading Project</h2>
-          <p className="text-red-600 dark:text-red-300 mb-4">{error || 'Project not found'}</p>
+        <div className="rounded-xl theme-alert-danger p-8 text-center">
+          <h2 className="text-xl font-semibold theme-text-danger mb-2">Error Loading Project</h2>
+          <p className="theme-text-danger mb-4">{error || 'Project not found'}</p>
           <button
             onClick={() => router.push('/dashboard/projects')}
-            className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition-colors"
+            className="px-6 py-3 theme-button-action rounded-lg font-semibold"
           >
             Back to Projects
           </button>
@@ -193,7 +197,7 @@ export default function ProjectDetailPage() {
       {canAdminApprove && (
         <div className="mb-6 p-6 rounded-xl border-2 border-purple-200 dark:border-purple-800 bg-purple-50 dark:bg-purple-900/20">
           <div className="flex items-start gap-4">
-            <div className="flex-shrink-0 w-12 h-12 rounded-full bg-purple-600 flex items-center justify-center">
+            <div className="shrink-0 w-12 h-12 rounded-full bg-purple-600 flex items-center justify-center">
               <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
@@ -229,7 +233,7 @@ export default function ProjectDetailPage() {
       {canApproveQuote && (
         <div className="mb-6 p-6 rounded-xl border-2 border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-blue-900/20">
           <div className="flex items-start gap-4">
-            <div className="flex-shrink-0 w-12 h-12 rounded-full bg-blue-600 flex items-center justify-center">
+            <div className="shrink-0 w-12 h-12 rounded-full bg-blue-600 flex items-center justify-center">
               <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
@@ -364,7 +368,7 @@ export default function ProjectDetailPage() {
                 <div className="flex items-center gap-4">
                   <div className="flex-1 h-3 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
                     <div
-                      className="h-full bg-gradient-to-r from-blue-500 to-blue-600 transition-all"
+                      className="h-full progress-accent transition-all"
                       style={{ width: `${project.progressPercentage}%` }}
                     />
                   </div>
@@ -375,6 +379,7 @@ export default function ProjectDetailPage() {
           </div>
         </div>
       </div>
+      <ToastContainer toasts={toasts} onClose={closeToast} />
     </div>
   );
 }

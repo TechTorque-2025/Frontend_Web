@@ -68,7 +68,8 @@ export const projectService = {
   
   async listCustomerProjects(): Promise<ProjectResponseDto[]> {
     const res = await api.get('/projects');
-    return res.data.data || [];
+    const data = res.data.data || res.data;
+    return Array.isArray(data) ? data : [];
   },
 
   async requestProject(data: ProjectRequestDto): Promise<ApiResponse> {
@@ -78,7 +79,7 @@ export const projectService = {
 
   async getProjectDetails(projectId: string): Promise<ProjectResponseDto> {
     const res = await api.get(`/projects/${projectId}`);
-    return res.data.data;
+    return res.data.data || res.data;
   },
 
   async submitQuote(projectId: string, quote: QuoteDto): Promise<ApiResponse> {

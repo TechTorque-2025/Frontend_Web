@@ -10,7 +10,7 @@ interface VehicleCardProps {
 
 export default function VehicleCard({ vehicle, onDelete, onEdit }: VehicleCardProps) {
   return (
-    <div className="automotive-card p-6 hover:scale-[1.02] transition-transform">
+    <div className="automotive-card p-6 hover:scale-[1.02] hover:shadow-lg transition-all">
       <div className="flex justify-between items-start mb-4">
         <div>
           <h3 className="text-xl font-bold theme-text-primary mb-1">
@@ -19,7 +19,7 @@ export default function VehicleCard({ vehicle, onDelete, onEdit }: VehicleCardPr
           <p className="theme-text-muted text-sm">License: {vehicle.licensePlate}</p>
         </div>
         {vehicle.color && (
-          <span className="px-3 py-1 bg-blue-100 dark:bg-blue-900/40 text-blue-800 dark:text-blue-300 text-sm rounded-full border border-blue-200 dark:border-blue-800 font-medium">
+          <span className="px-3 py-1 theme-alert-info text-sm rounded-full font-medium">
             {vehicle.color}
           </span>
         )}
@@ -51,7 +51,7 @@ export default function VehicleCard({ vehicle, onDelete, onEdit }: VehicleCardPr
               onDelete(vehicle.vehicleId);
             }
           }}
-          className="px-4 py-2.5 border automotive-border text-red-600 dark:text-red-400 rounded-xl hover:bg-red-50 dark:hover:bg-red-900/30 transition-colors font-medium"
+          className="px-4 py-2.5 border automotive-border theme-text-danger hover:theme-bg-hover transition-colors font-medium rounded-xl"
         >
           Delete
         </button>

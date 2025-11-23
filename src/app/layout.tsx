@@ -25,13 +25,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         suppressHydrationWarning
       >
         {/* Runtime configuration - injected at container startup */}
         <Script src="/runtime-config.js" strategy="beforeInteractive" />
+        {/* Ensure initial theme is applied before React hydration to avoid FOUC */}
+        <Script id="init-theme" strategy="beforeInteractive">{`(function(){try{const s=localStorage.getItem('theme');if(s==='dark'){document.documentElement.classList.add('dark')}else if(s==='light'){document.documentElement.classList.remove('dark')}else if(window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches){document.documentElement.classList.add('dark')} }catch(e){} })()`}</Script>
         <ThemeProvider>
           {children}
         </ThemeProvider>

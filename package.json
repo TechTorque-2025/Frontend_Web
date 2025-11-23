@@ -7,6 +7,8 @@
     "build": "next build --turbopack",
     "start": "next start",
     "lint": "eslint",
+    "check:colors": "node ./scripts/check-hardcoded-colors.js",
+    "check:theme": "node ./scripts/check-theme-setup.js",
     "setup-hooks": "chmod +x .githooks/pre-commit .githooks/pre-push && git config core.hooksPath .githooks && echo '✅ Git hooks configured successfully!'"
   },
   "dependencies": {
@@ -14,7 +16,7 @@
     "axios": "^1.12.2",
     "js-cookie": "^3.0.5",
     "lucide-react": "^0.553.0",
-    "next": "^16.0.1",
+    "next": "^16.0.3",
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "sockjs-client": "^1.6.1"

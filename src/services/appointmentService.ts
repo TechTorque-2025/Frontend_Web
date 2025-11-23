@@ -28,12 +28,13 @@ export const appointmentService = {
     toDate?: string;
   }): Promise<AppointmentResponseDto[]> {
     const res = await api.get('/appointments', { params });
-    return res.data;
+    const data = res.data.data || res.data;
+    return Array.isArray(data) ? data : (data.data || data.content || []);
   },
 
   async getAppointmentDetails(appointmentId: string): Promise<AppointmentResponseDto> {
     const res = await api.get(`/appointments/${appointmentId}`);
-    return res.data;
+    return res.data.data || res.data;
   },
 
   async updateAppointment(

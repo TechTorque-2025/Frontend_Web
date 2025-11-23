@@ -10,13 +10,13 @@ const STATUS_FILTERS = ['ALL', 'REQUESTED', 'QUOTE_PENDING', 'QUOTE_SUBMITTED', 
 type StatusFilter = typeof STATUS_FILTERS[number]
 
 const statusStyles: Record<string, string> = {
-  REQUESTED: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300',
-  QUOTE_PENDING: 'bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300',
-  QUOTE_SUBMITTED: 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300',
-  QUOTE_APPROVED: 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300',
-  IN_PROGRESS: 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300',
-  COMPLETED: 'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-300',
-  CANCELLED: 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300',
+  REQUESTED: 'bg-yellow-200 text-yellow-900 dark:bg-yellow-900/30 dark:text-yellow-300',
+  QUOTE_PENDING: 'bg-amber-200 text-amber-900 dark:bg-amber-900/30 dark:text-amber-300',
+  QUOTE_SUBMITTED: 'bg-blue-200 text-blue-900 dark:bg-blue-900/30 dark:text-blue-300',
+  QUOTE_APPROVED: 'bg-green-200 text-green-900 dark:bg-green-900/30 dark:text-green-300',
+  IN_PROGRESS: 'bg-purple-200 text-purple-900 dark:bg-purple-900/30 dark:text-purple-300',
+  COMPLETED: 'bg-gray-200 text-gray-900 dark:bg-gray-900/30 dark:text-gray-300',
+  CANCELLED: 'bg-red-200 text-red-900 dark:bg-red-900/30 dark:text-red-300',
 }
 
 const formatDate = (value?: string) => {
@@ -113,41 +113,41 @@ export default function ProjectsPage() {
       </div>
 
       {error && (
-        <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 px-4 py-3 rounded-lg">
+        <div className="theme-alert-danger">
           {error}
         </div>
       )}
 
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <div className="automotive-card p-5">
-          <p className="text-xs uppercase tracking-wide theme-text-muted">Total projects</p>
-          <p className="text-2xl font-semibold theme-text-primary">{summary.total}</p>
+        <div className="stat-card">
+          <p className="stat-card-label">Total projects</p>
+          <p className="stat-card-value">{summary.total}</p>
         </div>
-        <div className="automotive-card p-5">
-          <p className="text-xs uppercase tracking-wide theme-text-muted">Pending approval</p>
-          <p className="text-2xl font-semibold theme-text-primary">{summary.pending}</p>
+        <div className="stat-card">
+          <p className="stat-card-label">Pending approval</p>
+          <p className="stat-card-value">{summary.pending}</p>
         </div>
-        <div className="automotive-card p-5">
-          <p className="text-xs uppercase tracking-wide theme-text-muted">Active projects</p>
-          <p className="text-2xl font-semibold theme-text-primary">{summary.active}</p>
+        <div className="stat-card">
+          <p className="stat-card-label">Active projects</p>
+          <p className="stat-card-value">{summary.active}</p>
         </div>
-        <div className="automotive-card p-5">
-          <p className="text-xs uppercase tracking-wide theme-text-muted">Completed</p>
-          <p className="text-2xl font-semibold theme-text-primary">{summary.completed}</p>
+        <div className="stat-card">
+          <p className="stat-card-label">Completed</p>
+          <p className="stat-card-value">{summary.completed}</p>
         </div>
       </div>
 
       <div className="automotive-card p-6 space-y-4">
-        <div className="flex flex-wrap gap-2">
+        <div className="filter-tabs-container">
           {STATUS_FILTERS.map((status) => (
             <button
               key={status}
               type="button"
               onClick={() => setStatusFilter(status)}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+              className={`filter-tab ${
                 statusFilter === status
-                  ? 'bg-blue-600 text-white'
-                  : 'theme-bg-secondary theme-text-secondary hover:bg-blue-50 dark:hover:bg-blue-900/30'
+                  ? 'filter-tab-active'
+                  : 'filter-tab-inactive'
               }`}
             >
               {status === 'ALL' ? 'All' : status.replace('_', ' ')}
@@ -158,7 +158,7 @@ export default function ProjectsPage() {
         {filteredProjects.length === 0 ? (
           <div className="py-12 text-center">
             <svg
-              className="mx-auto w-24 h-24 text-gray-400 dark:text-gray-600 mb-4"
+              className="mx-auto w-24 h-24 theme-text-muted mb-4"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -183,7 +183,7 @@ export default function ProjectsPage() {
               <Link
                 key={project.id}
                 href={`/dashboard/projects/${project.id}`}
-                className="block rounded-xl border border-gray-200 dark:border-gray-800 hover:border-blue-400 dark:hover:border-blue-500 transition-colors"
+                className="block rounded-xl border border-gray-200 dark:border-gray-800 hover:border-blue-400 dark:hover:border-blue-500 hover:shadow-lg transition-all"
               >
                 <div className="p-5">
                   <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-4">

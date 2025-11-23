@@ -8,7 +8,6 @@ import type { AppointmentResponseDto } from "@/types/appointment";
 import type { UserDto } from "@/types/api";
 import type { InvoiceResponseDto } from "@/types/payment";
 import type { VehicleListItem } from "@/types/vehicle";
-import AIChatWidget from "@/app/components/chatbot/AIChatWidget";
 
 interface CustomerDashboardProps {
   profile: UserDto;
@@ -20,7 +19,6 @@ const CustomerDashboard: React.FC<CustomerDashboardProps> = ({ profile }) => {
   const [invoices, setInvoices] = useState<InvoiceResponseDto[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [chatOpen, setChatOpen] = useState(false);
 
   useEffect(() => {
     const loadDashboard = async () => {
@@ -75,7 +73,7 @@ const CustomerDashboard: React.FC<CustomerDashboardProps> = ({ profile }) => {
       </div>
 
       {error && (
-        <div className="mb-6 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 px-4 py-3 rounded-lg">
+        <div className="theme-alert-danger mb-6">
           {error}
         </div>
       )}
@@ -114,14 +112,14 @@ const CustomerDashboard: React.FC<CustomerDashboardProps> = ({ profile }) => {
               <p className="theme-text-muted text-sm">No upcoming appointments. Book your next service today.</p>
             ) : (
               upcomingAppointments.map((appointment) => (
-                <div key={appointment.id} className="border border-gray-200 dark:border-gray-700 rounded-lg p-3">
+                <div key={appointment.id} className="border theme-border rounded-lg p-3">
                   <p className="theme-text-primary font-medium text-sm">{appointment.serviceType}</p>
                   <p className="theme-text-muted text-xs">
                     {new Date(appointment.requestedDateTime).toLocaleString()}
                   </p>
                   <Link
                     href={`/dashboard/appointments/${appointment.id}`}
-                    className="text-xs text-blue-600 dark:text-blue-400 hover:underline mt-1 inline-block"
+                    className="text-xs theme-text-info hover:underline mt-1 inline-block"
                   >
                     View details
                   </Link>
@@ -153,12 +151,12 @@ const CustomerDashboard: React.FC<CustomerDashboardProps> = ({ profile }) => {
               <p className="theme-text-muted text-sm">No outstanding invoices.</p>
             ) : (
               overdueInvoices.slice(0, 3).map((invoice) => (
-                <div key={invoice.invoiceId} className="border border-gray-200 dark:border-gray-700 rounded-lg p-3">
+                <div key={invoice.invoiceId} className="border theme-border rounded-lg p-3">
                   <p className="theme-text-primary font-medium text-sm">Invoice {invoice.invoiceNumber}</p>
                   <p className="theme-text-muted text-xs mb-1">Amount due: LKR {(invoice.totalAmount ?? 0).toLocaleString()}</p>
                   <Link
                     href={`/dashboard/invoices/${invoice.invoiceId}`}
-                    className="text-xs text-blue-600 dark:text-blue-400 hover:underline"
+                    className="text-xs theme-text-info hover:underline"
                   >
                     Settle invoice
                   </Link>
@@ -182,9 +180,9 @@ const CustomerDashboard: React.FC<CustomerDashboardProps> = ({ profile }) => {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <Link
             href="/dashboard/vehicles"
-            className="p-4 border border-gray-200 dark:border-gray-700 rounded-lg hover:border-blue-500 transition-colors text-center"
+            className="p-4 border theme-border rounded-lg hover:border-(--accent-primary) transition-colors text-center"
           >
-            <svg className="mx-auto w-12 h-12 mb-2 text-gray-600 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <svg className="mx-auto w-12 h-12 mb-2 theme-text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 12l1.5-4.5A2 2 0 0 1 6.4 6h11.2a2 2 0 0 1 1.9 1.5L21 12" />
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M5 18a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3zM19 18a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3z" />
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 12h18v2H3v-2z" />
@@ -193,7 +191,7 @@ const CustomerDashboard: React.FC<CustomerDashboardProps> = ({ profile }) => {
           </Link>
           <Link
             href="/dashboard/appointments"
-            className="p-4 border border-gray-200 dark:border-gray-700 rounded-lg hover:border-blue-500 transition-colors text-center"
+            className="p-4 border theme-border rounded-lg hover:border-(--accent-primary) transition-colors text-center"
           >
             <svg className="mx-auto w-12 h-12 mb-2 theme-text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
@@ -202,7 +200,7 @@ const CustomerDashboard: React.FC<CustomerDashboardProps> = ({ profile }) => {
           </Link>
           <Link
             href="/dashboard/projects"
-            className="p-4 border border-gray-200 dark:border-gray-700 rounded-lg hover:border-blue-500 transition-colors text-center"
+            className="p-4 border theme-border rounded-lg hover:border-(--accent-primary) transition-colors text-center"
           >
             <svg className="mx-auto w-12 h-12 mb-2 theme-text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 7h18M3 12h18M3 17h18" />
@@ -211,7 +209,7 @@ const CustomerDashboard: React.FC<CustomerDashboardProps> = ({ profile }) => {
           </Link>
           <Link
             href="/profile"
-            className="p-4 border border-gray-200 dark:border-gray-700 rounded-lg hover:border-blue-500 transition-colors text-center"
+            className="p-4 border theme-border rounded-lg hover:border-(--accent-primary) transition-colors text-center"
           >
             <svg className="mx-auto w-12 h-12 mb-2 theme-text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
@@ -221,39 +219,7 @@ const CustomerDashboard: React.FC<CustomerDashboardProps> = ({ profile }) => {
         </div>
       </div>
 
-      {/* Floating AI Chat Widget */}
-      <div className="fixed bottom-6 right-6 z-50">
-        {chatOpen ? (
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-2xl w-[480px] h-[600px] flex flex-col border border-gray-200 dark:border-gray-700">
-            <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
-              <h3 className="text-lg font-semibold text-indigo-700 dark:text-indigo-400">TechTorque AI Assistant</h3>
-              <button
-                onClick={() => setChatOpen(false)}
-                className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-colors"
-                aria-label="Close chat"
-              >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
-            </div>
-            <div className="flex-1 overflow-hidden">
-              <AIChatWidget />
-            </div>
-          </div>
-        ) : (
-          <button
-            onClick={() => setChatOpen(true)}
-            className="bg-indigo-600 hover:bg-indigo-700 text-white rounded-full p-4 shadow-lg transition-all hover:scale-110 flex items-center gap-2"
-            aria-label="Open chat"
-          >
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
-            </svg>
-            <span className="font-medium">Chat</span>
-          </button>
-        )}
-      </div>
+      {/* Chat widget moved into dashboard layout so it appears across all dashboard pages */}
     </div>
   );
 };
