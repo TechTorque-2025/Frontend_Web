@@ -82,11 +82,19 @@ export default function AdminUsersPage() {
       success(`${createUserType === 'employee' ? 'Employee' : 'Admin'} created successfully!`);
     } catch (err) {
       console.error('Failed to create user:', err);
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const error = err as any;
-      const errorMessage = error?.response?.status === 403
-        ? 'Permission denied. You do not have the required permissions to create this user type.'
-        : error?.response?.data?.message || 'Failed to create user. Please try again.';
+      const unknownErr = err as unknown;
+      let errorMessage = 'Failed to create user. Please try again.';
+
+      if (unknownErr && typeof unknownErr === 'object' && 'response' in unknownErr) {
+        const resp = (unknownErr as { response?: { status?: number; data?: unknown } }).response;
+        if (resp?.status === 403) {
+          errorMessage = 'Permission denied. You do not have the required permissions to create this user type.';
+        } else if (resp?.data && typeof resp.data === 'object' && 'message' in resp.data) {
+          errorMessage = (resp.data as { message?: string }).message ?? errorMessage;
+        }
+      } else if (err instanceof Error) {
+        errorMessage = err.message;
+      }
       showError(errorMessage);
     }
   };
