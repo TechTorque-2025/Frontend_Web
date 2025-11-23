@@ -11,7 +11,7 @@ export default function ReportsPage() {
   const { roles, loading: rolesLoading } = useDashboard();
   const { toasts, success, error: showError, closeToast } = useToast();
   const [generating, setGenerating] = useState(false);
-  const [reportType, setReportType] = useState<'SERVICE_PERFORMANCE' | 'REVENUE' | 'EMPLOYEE_PRODUCTIVITY' | 'CUSTOMER_SATISFACTION' | 'INVENTORY' | 'APPOINTMENT_SUMMARY'>('REVENUE');
+  const [reportType, setReportType] = useState<'REVENUE' | 'APPOINTMENT_SUMMARY'>('REVENUE');
   const [format, setFormat] = useState<'JSON' | 'PDF' | 'EXCEL' | 'CSV'>('PDF');
   const [dateRange, setDateRange] = useState({
     fromDate: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
@@ -137,10 +137,6 @@ export default function ReportsPage() {
                 >
                   <option value="REVENUE">Revenue Report</option>
                   <option value="APPOINTMENT_SUMMARY">Appointment Summary</option>
-                  <option value="SERVICE_PERFORMANCE">Service Performance</option>
-                  <option value="EMPLOYEE_PRODUCTIVITY">Employee Productivity</option>
-                  <option value="CUSTOMER_SATISFACTION">Customer Satisfaction</option>
-                  <option value="INVENTORY">Inventory Report</option>
                 </select>
               </div>
 
