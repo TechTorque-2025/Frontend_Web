@@ -8,7 +8,6 @@ import type { AppointmentResponseDto } from "@/types/appointment";
 import type { UserDto } from "@/types/api";
 import type { InvoiceResponseDto } from "@/types/payment";
 import type { VehicleListItem } from "@/types/vehicle";
-import AIChatWidget from "@/app/components/chatbot/AIChatWidget";
 
 interface CustomerDashboardProps {
   profile: UserDto;
@@ -20,7 +19,6 @@ const CustomerDashboard: React.FC<CustomerDashboardProps> = ({ profile }) => {
   const [invoices, setInvoices] = useState<InvoiceResponseDto[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [chatOpen, setChatOpen] = useState(false);
 
   useEffect(() => {
     const loadDashboard = async () => {
@@ -221,39 +219,7 @@ const CustomerDashboard: React.FC<CustomerDashboardProps> = ({ profile }) => {
         </div>
       </div>
 
-      {/* Floating AI Chat Widget */}
-      <div className="fixed bottom-6 right-6 z-50">
-        {chatOpen ? (
-          <div className="theme-bg-primary rounded-lg shadow-2xl w-[480px] h-[600px] flex flex-col border theme-border">
-            <div className="flex items-center justify-between p-4 border-b theme-border">
-              <h3 className="text-lg font-semibold theme-text-primary">TechTorque AI Assistant</h3>
-              <button
-                onClick={() => setChatOpen(false)}
-                className="theme-text-muted hover:theme-text-primary transition-colors"
-                aria-label="Close chat"
-              >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
-            </div>
-            <div className="flex-1 overflow-hidden">
-              <AIChatWidget />
-            </div>
-          </div>
-        ) : (
-          <button
-            onClick={() => setChatOpen(true)}
-            className="theme-button-primary rounded-full p-4 shadow-lg transition-all hover:scale-110 flex items-center gap-2"
-            aria-label="Open chat"
-          >
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
-            </svg>
-            <span className="font-medium">Chat</span>
-          </button>
-        )}
-      </div>
+      {/* Chat widget moved into dashboard layout so it appears across all dashboard pages */}
     </div>
   );
 };
